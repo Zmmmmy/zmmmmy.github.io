@@ -1,0 +1,813 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZhiMy">
+  <meta name="keywords" content="技术博客,编程">
+  
+    <meta name="description" content="ForkJoinPool ℹ️ 信息: 衍生来源本笔记衍生自 线程池类型-WorkStealingPool  概述ForkJoinPool 是 Java 7 引入的特殊线程池，专为分治算法和并行计算设计。它是 ExecutorService 的实现，但采用了完全不同的任务调度策略。 1234567┌──────────────────────────────────────────────────">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Zmmmmy&#39;s Blog">
+<meta property="og:url" content="https://zmmmmy.github.io/2026/01/22/ForkJoinPool/index.html">
+<meta property="og:site_name" content="Zmmmmy&#39;s Blog">
+<meta property="og:description" content="ForkJoinPool ℹ️ 信息: 衍生来源本笔记衍生自 线程池类型-WorkStealingPool  概述ForkJoinPool 是 Java 7 引入的特殊线程池，专为分治算法和并行计算设计。它是 ExecutorService 的实现，但采用了完全不同的任务调度策略。 1234567┌──────────────────────────────────────────────────">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-01-22T07:15:46.098Z">
+<meta property="article:modified_time" content="2026-01-22T07:15:46.098Z">
+<meta property="article:author" content="ZhiMy">
+<meta property="article:tag" content="ForkJoinPool">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="分治算法">
+<meta property="article:tag" content="并发编程">
+<meta property="article:tag" content="线程池">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Zmmmmy&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zmmmmy.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2,"offset_top":300},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Zmmmmy&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text=""></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        ZhiMy
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-22 15:15" pubdate>
+          2026-01-22
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          11 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header"></h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="ForkJoinPool"><a href="#ForkJoinPool" class="headerlink" title="ForkJoinPool"></a>ForkJoinPool</h1><blockquote>
+<p><strong>ℹ️ 信息: 衍生来源</strong><br>本笔记衍生自 线程池类型-WorkStealingPool</p>
+</blockquote>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><code>ForkJoinPool</code> 是 Java 7 引入的特殊线程池，专为<strong>分治算法</strong>和<strong>并行计算</strong>设计。它是 <code>ExecutorService</code> 的实现，但采用了完全不同的任务调度策略。</p>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs nestedtext"><span class="hljs-attribute">┌────────────────────────────────────────────────────────────────┐</span><br><span class="hljs-attribute">│                        ForkJoinPool                            │</span><br><span class="hljs-attribute">├────────────────────────────────────────────────────────────────┤</span><br><span class="hljs-attribute">│  核心思想</span><span class="hljs-punctuation">:</span> <span class="hljs-string">Fork（拆分） + Join（合并）                          │</span><br><span class="hljs-attribute">│  调度策略</span><span class="hljs-punctuation">:</span> <span class="hljs-string">Work-Stealing（工作窃取）                            │</span><br><span class="hljs-attribute">│  适用场景</span><span class="hljs-punctuation">:</span> <span class="hljs-string">递归任务、并行计算、分治算法                          │</span><br>└────────────────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><h3 id="Fork-与-Join"><a href="#Fork-与-Join" class="headerlink" title="Fork 与 Join"></a>Fork 与 Join</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>说明</th>
+<th>方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Fork</strong></td>
+<td>将大任务拆分成小任务，异步执行</td>
+<td><code>task.fork()</code></td>
+</tr>
+<tr>
+<td><strong>Join</strong></td>
+<td>等待子任务完成，获取结果</td>
+<td><code>task.join()</code></td>
+</tr>
+</tbody></table>
+<h3 id="分治思想图解"><a href="#分治思想图解" class="headerlink" title="分治思想图解"></a>分治思想图解</h3><figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs perl">            ┌─────────────┐<br>            │   大任务    │<br>            └──────┬──────┘<br>                   │ <span class="hljs-keyword">fork</span><br>      ┌────────────┼────────────┐<br>      ▼            ▼            ▼<br>┌─────────┐  ┌─────────┐  ┌─────────┐<br>│ 子任务<span class="hljs-number">1</span> │  │ 子任务<span class="hljs-number">2</span> │  │ 子任务<span class="hljs-number">3</span> │<br>└────┬────┘  └────┬────┘  └────┬────┘<br>     │            │            │<br>     ▼            ▼            ▼<br>┌─────────┐  ┌─────────┐  ┌─────────┐<br>│ 结果<span class="hljs-number">1</span>   │  │ 结果<span class="hljs-number">2</span>   │  │ 结果<span class="hljs-number">3</span>   │<br>└────┬────┘  └────┬────┘  └────┬────┘<br>     │            │            │<br>     └────────────┼────────────┘<br>                  │ <span class="hljs-keyword">join</span><br>            ┌─────┴─────┐<br>            │  合并结果  │<br>            └───────────┘<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="工作窃取算法（Work-Stealing）"><a href="#工作窃取算法（Work-Stealing）" class="headerlink" title="工作窃取算法（Work-Stealing）"></a>工作窃取算法（Work-Stealing）</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>每个工作线程维护一个<strong>双端队列（Deque）</strong>：</p>
+<ul>
+<li><strong>自己的任务</strong>：从队列<strong>头部</strong>取（LIFO）</li>
+<li><strong>窃取他人任务</strong>：从队列<strong>尾部</strong>取（FIFO）</li>
+</ul>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs css">┌─────────────────────────────────────────────────────────────────┐<br>│                     ForkJoinPool                                │<br>│                                                                 │<br>│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │<br>│  │  Worker-<span class="hljs-number">1</span>   │    │  Worker-<span class="hljs-number">2</span>   │    │  Worker-<span class="hljs-number">3</span>   │         │<br>│  ├─────────────┤    ├─────────────┤    ├─────────────┤         │<br>│  │ 头 <span class="hljs-selector-attr">[T1]</span>     │    │ 头 <span class="hljs-selector-attr">[T4]</span>     │    │ 头 <span class="hljs-selector-attr">[空闲]</span>   │         │<br>│  │    <span class="hljs-selector-attr">[T2]</span>     │    │    <span class="hljs-selector-attr">[T5]</span>     │    │             │         │<br>│  │    <span class="hljs-selector-attr">[T3]</span>     │    │             │    │             │         │<br>│  │ 尾          │    │ 尾          │    │ 尾    ↑     │         │<br>│  └─────────────┘    └─────────────┘    └──────┼──────┘         │<br>│         │                  │                  │                │<br>│         │                  └──────────────────┘                │<br>│         │                    Worker-<span class="hljs-number">3</span> 从 Worker-<span class="hljs-number">2</span> 尾部窃取 T5   │<br>└─────────────────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+
+<h3 id="为什么从尾部窃取？"><a href="#为什么从尾部窃取？" class="headerlink" title="为什么从尾部窃取？"></a>为什么从尾部窃取？</h3><table>
+<thead>
+<tr>
+<th>原因</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>减少竞争</strong></td>
+<td>工作线程从头部取，窃取从尾部，避免锁争用</td>
+</tr>
+<tr>
+<td><strong>任务特性</strong></td>
+<td>尾部通常是较大的任务（刚 fork 出来的），窃取后可继续拆分</td>
+</tr>
+<tr>
+<td><strong>局部性</strong></td>
+<td>头部任务是最近提交的，缓存友好</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="核心类结构"><a href="#核心类结构" class="headerlink" title="核心类结构"></a>核心类结构</h2><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs scss">┌───────────────────────────────────────┐<br>│          ForkJoinTask&lt;V&gt;              │  抽象基类<br>│  ├── <span class="hljs-built_in">fork</span>()    异步执行               │<br>│  ├── <span class="hljs-built_in">join</span>()    等待结果               │<br>│  └── <span class="hljs-built_in">invoke</span>()  同步执行               │<br>└───────────────┬───────────────────────┘<br>                │<br>        ┌───────┴───────┐<br>        ▼               ▼<br>┌───────────────┐ ┌─────────────────┐<br>│RecursiveTask  │ │ RecursiveAction │<br>│   &lt;V&gt;         │ │                 │<br>├───────────────┤ ├─────────────────┤<br>│ 有返回值      │ │ 无返回值        │<br>│ <span class="hljs-built_in">compute</span>()→V   │ │ <span class="hljs-built_in">compute</span>()→void  │<br>└───────────────┘ └─────────────────┘<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h2><h3 id="1-RecursiveTask：有返回值（数组求和）"><a href="#1-RecursiveTask：有返回值（数组求和）" class="headerlink" title="1. RecursiveTask：有返回值（数组求和）"></a>1. RecursiveTask：有返回值（数组求和）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SumTask</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">RecursiveTask</span>&lt;Long&gt; &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">THRESHOLD</span> <span class="hljs-operator">=</span> <span class="hljs-number">1000</span>;  <span class="hljs-comment">// 阈值</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">long</span>[] array;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> start;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> end;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">SumTask</span><span class="hljs-params">(<span class="hljs-type">long</span>[] array, <span class="hljs-type">int</span> start, <span class="hljs-type">int</span> end)</span> &#123;<br>        <span class="hljs-built_in">this</span>.array = array;<br>        <span class="hljs-built_in">this</span>.start = start;<br>        <span class="hljs-built_in">this</span>.end = end;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">protected</span> Long <span class="hljs-title function_">compute</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">length</span> <span class="hljs-operator">=</span> end - start;<br>        <br>        <span class="hljs-comment">// 任务足够小，直接计算</span><br>        <span class="hljs-keyword">if</span> (length &lt;= THRESHOLD) &#123;<br>            <span class="hljs-type">long</span> <span class="hljs-variable">sum</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>            <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> start; i &lt; end; i++) &#123;<br>                sum += array[i];<br>            &#125;<br>            <span class="hljs-keyword">return</span> sum;<br>        &#125;<br>        <br>        <span class="hljs-comment">// 拆分任务</span><br>        <span class="hljs-type">int</span> <span class="hljs-variable">mid</span> <span class="hljs-operator">=</span> start + length / <span class="hljs-number">2</span>;<br>        <span class="hljs-type">SumTask</span> <span class="hljs-variable">leftTask</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SumTask</span>(array, start, mid);<br>        <span class="hljs-type">SumTask</span> <span class="hljs-variable">rightTask</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SumTask</span>(array, mid, end);<br>        <br>        <span class="hljs-comment">// 异步执行左半部分</span><br>        leftTask.fork();<br>        <br>        <span class="hljs-comment">// 同步执行右半部分（当前线程）</span><br>        <span class="hljs-type">Long</span> <span class="hljs-variable">rightResult</span> <span class="hljs-operator">=</span> rightTask.compute();<br>        <br>        <span class="hljs-comment">// 等待左半部分完成并合并结果</span><br>        <span class="hljs-type">Long</span> <span class="hljs-variable">leftResult</span> <span class="hljs-operator">=</span> leftTask.join();<br>        <br>        <span class="hljs-keyword">return</span> leftResult + rightResult;<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// 使用</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>    <span class="hljs-type">long</span>[] array = <span class="hljs-keyword">new</span> <span class="hljs-title class_">long</span>[<span class="hljs-number">10000000</span>];<br>    Arrays.fill(array, <span class="hljs-number">1</span>);<br>    <br>    <span class="hljs-type">ForkJoinPool</span> <span class="hljs-variable">pool</span> <span class="hljs-operator">=</span> ForkJoinPool.commonPool();<br>    <span class="hljs-type">SumTask</span> <span class="hljs-variable">task</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SumTask</span>(array, <span class="hljs-number">0</span>, array.length);<br>    <br>    <span class="hljs-type">long</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> pool.invoke(task);  <span class="hljs-comment">// 同步执行</span><br>    System.out.println(<span class="hljs-string">&quot;Sum: &quot;</span> + result);  <span class="hljs-comment">// 输出: Sum: 10000000</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-RecursiveAction：无返回值（并行排序）"><a href="#2-RecursiveAction：无返回值（并行排序）" class="headerlink" title="2. RecursiveAction：无返回值（并行排序）"></a>2. RecursiveAction：无返回值（并行排序）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ParallelMergeSort</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">RecursiveAction</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">THRESHOLD</span> <span class="hljs-operator">=</span> <span class="hljs-number">1024</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span>[] array;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> start;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> end;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">ParallelMergeSort</span><span class="hljs-params">(<span class="hljs-type">int</span>[] array, <span class="hljs-type">int</span> start, <span class="hljs-type">int</span> end)</span> &#123;<br>        <span class="hljs-built_in">this</span>.array = array;<br>        <span class="hljs-built_in">this</span>.start = start;<br>        <span class="hljs-built_in">this</span>.end = end;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">compute</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">if</span> (end - start &lt;= THRESHOLD) &#123;<br>            <span class="hljs-comment">// 小数组直接用 Arrays.sort</span><br>            Arrays.sort(array, start, end);<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br>        <br>        <span class="hljs-type">int</span> <span class="hljs-variable">mid</span> <span class="hljs-operator">=</span> (start + end) / <span class="hljs-number">2</span>;<br>        <br>        <span class="hljs-comment">// 并行排序两半</span><br>        <span class="hljs-type">ParallelMergeSort</span> <span class="hljs-variable">left</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ParallelMergeSort</span>(array, start, mid);<br>        <span class="hljs-type">ParallelMergeSort</span> <span class="hljs-variable">right</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ParallelMergeSort</span>(array, mid, end);<br>        <br>        invokeAll(left, right);  <span class="hljs-comment">// 并行执行两个任务</span><br>        <br>        <span class="hljs-comment">// 合并已排序的两半</span><br>        merge(array, start, mid, end);<br>    &#125;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">merge</span><span class="hljs-params">(<span class="hljs-type">int</span>[] array, <span class="hljs-type">int</span> start, <span class="hljs-type">int</span> mid, <span class="hljs-type">int</span> end)</span> &#123;<br>        <span class="hljs-comment">// 合并逻辑...</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="ForkJoinPool-创建方式"><a href="#ForkJoinPool-创建方式" class="headerlink" title="ForkJoinPool 创建方式"></a>ForkJoinPool 创建方式</h2><h3 id="1-公共池（推荐）"><a href="#1-公共池（推荐）" class="headerlink" title="1. 公共池（推荐）"></a>1. 公共池（推荐）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 获取公共池（JVM 共享，线程数 = CPU核心数 - 1）</span><br><span class="hljs-type">ForkJoinPool</span> <span class="hljs-variable">commonPool</span> <span class="hljs-operator">=</span> ForkJoinPool.commonPool();<br><br><span class="hljs-comment">// 直接使用</span><br><span class="hljs-type">Long</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> commonPool.invoke(task);<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-自定义池"><a href="#2-自定义池" class="headerlink" title="2. 自定义池"></a>2. 自定义池</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 自定义线程数</span><br><span class="hljs-type">ForkJoinPool</span> <span class="hljs-variable">customPool</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ForkJoinPool</span>(<span class="hljs-number">4</span>);<br><br><span class="hljs-comment">// 完整构造函数</span><br><span class="hljs-type">ForkJoinPool</span> <span class="hljs-variable">pool</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ForkJoinPool</span>(<br>    <span class="hljs-number">4</span>,                                    <span class="hljs-comment">// 并行度</span><br>    ForkJoinPool.defaultForkJoinWorkerThreadFactory,  <span class="hljs-comment">// 线程工厂</span><br>    <span class="hljs-literal">null</span>,                                 <span class="hljs-comment">// 异常处理器</span><br>    <span class="hljs-literal">true</span>                                  <span class="hljs-comment">// asyncMode（true=FIFO，false=LIFO）</span><br>);<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-通过-Executors-工厂"><a href="#3-通过-Executors-工厂" class="headerlink" title="3. 通过 Executors 工厂"></a>3. 通过 Executors 工厂</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// Java 8+ WorkStealingPool 底层就是 ForkJoinPool</span><br><span class="hljs-type">ExecutorService</span> <span class="hljs-variable">executor</span> <span class="hljs-operator">=</span> Executors.newWorkStealingPool();<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="提交任务的方式"><a href="#提交任务的方式" class="headerlink" title="提交任务的方式"></a>提交任务的方式</h2><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+<th>返回值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>invoke(task)</code></td>
+<td>同步执行，阻塞直到完成</td>
+<td>任务结果</td>
+</tr>
+<tr>
+<td><code>execute(task)</code></td>
+<td>异步执行，不等待结果</td>
+<td>void</td>
+</tr>
+<tr>
+<td><code>submit(task)</code></td>
+<td>异步执行，返回 Future</td>
+<td><code>ForkJoinTask&lt;V&gt;</code></td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">ForkJoinPool</span> <span class="hljs-variable">pool</span> <span class="hljs-operator">=</span> ForkJoinPool.commonPool();<br><span class="hljs-type">SumTask</span> <span class="hljs-variable">task</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SumTask</span>(array, <span class="hljs-number">0</span>, array.length);<br><br><span class="hljs-comment">// 方式1：同步</span><br><span class="hljs-type">Long</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> pool.invoke(task);<br><br><span class="hljs-comment">// 方式2：异步提交</span><br>ForkJoinTask&lt;Long&gt; future = pool.submit(task);<br><span class="hljs-type">Long</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> future.get();  <span class="hljs-comment">// 阻塞等待</span><br><br><span class="hljs-comment">// 方式3：异步执行（不关心结果）</span><br>pool.execute(task);<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="与普通线程池对比"><a href="#与普通线程池对比" class="headerlink" title="与普通线程池对比"></a>与普通线程池对比</h2><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>ThreadPoolExecutor</th>
+<th>ForkJoinPool</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>任务队列</strong></td>
+<td>共享队列（单一）</td>
+<td>每线程独立双端队列</td>
+</tr>
+<tr>
+<td><strong>调度策略</strong></td>
+<td>先进先出</td>
+<td>工作窃取</td>
+</tr>
+<tr>
+<td><strong>适用任务</strong></td>
+<td>独立任务</td>
+<td>可拆分的递归任务</td>
+</tr>
+<tr>
+<td><strong>负载均衡</strong></td>
+<td>依赖队列调度</td>
+<td>工作窃取自动均衡</td>
+</tr>
+<tr>
+<td><strong>CPU 利用</strong></td>
+<td>可能有线程空闲</td>
+<td>更高效（减少空闲）</td>
+</tr>
+<tr>
+<td><strong>任务粒度</strong></td>
+<td>任意</td>
+<td>适合可拆分任务</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="实际应用场景"><a href="#实际应用场景" class="headerlink" title="实际应用场景"></a>实际应用场景</h2><h3 id="1-Java-8-并行流"><a href="#1-Java-8-并行流" class="headerlink" title="1. Java 8 并行流"></a>1. Java 8 并行流</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// parallelStream() 底层使用 ForkJoinPool.commonPool()</span><br>List&lt;Integer&gt; numbers = Arrays.asList(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">6</span>, <span class="hljs-number">7</span>, <span class="hljs-number">8</span>, <span class="hljs-number">9</span>, <span class="hljs-number">10</span>);<br><br><span class="hljs-type">int</span> <span class="hljs-variable">sum</span> <span class="hljs-operator">=</span> numbers.parallelStream()<br>                 .mapToInt(Integer::intValue)<br>                 .sum();<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-CompletableFuture-默认执行器"><a href="#2-CompletableFuture-默认执行器" class="headerlink" title="2. CompletableFuture 默认执行器"></a>2. CompletableFuture 默认执行器</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 默认使用 ForkJoinPool.commonPool()</span><br>CompletableFuture&lt;String&gt; future = CompletableFuture.supplyAsync(() -&gt; &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Hello&quot;</span>;<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-大数据处理"><a href="#3-大数据处理" class="headerlink" title="3. 大数据处理"></a>3. 大数据处理</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 并行处理大量数据</span><br>Arrays.parallelSort(largeArray);<br>Arrays.parallelSetAll(array, i -&gt; i * <span class="hljs-number">2</span>);<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><h3 id="1-阈值设置"><a href="#1-阈值设置" class="headerlink" title="1. 阈值设置"></a>1. 阈值设置</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 阈值太小：拆分开销 &gt; 并行收益</span><br><span class="hljs-comment">// 阈值太大：无法充分利用多核</span><br><span class="hljs-comment">// 经验值：根据任务复杂度和数据量测试确定</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">THRESHOLD</span> <span class="hljs-operator">=</span> <span class="hljs-number">1000</span>;  <span class="hljs-comment">// 需要根据实际情况调整</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="2-避免阻塞操作"><a href="#2-避免阻塞操作" class="headerlink" title="2. 避免阻塞操作"></a>2. 避免阻塞操作</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// ❌ 错误：在 ForkJoinPool 中执行阻塞 IO</span><br><span class="hljs-keyword">protected</span> Long <span class="hljs-title function_">compute</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-comment">// 不要在这里做 IO 操作！</span><br>    <span class="hljs-type">String</span> <span class="hljs-variable">data</span> <span class="hljs-operator">=</span> httpClient.get(url);  <span class="hljs-comment">// 阻塞，浪费线程</span><br>    <span class="hljs-keyword">return</span> process(data);<br>&#125;<br><br><span class="hljs-comment">// ✅ 正确：ForkJoinPool 只用于 CPU 计算</span><br><span class="hljs-comment">// IO 操作使用其他线程池</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="3-公共池的风险"><a href="#3-公共池的风险" class="headerlink" title="3. 公共池的风险"></a>3. 公共池的风险</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 所有并行流共享 commonPool</span><br><span class="hljs-comment">// 如果某个任务阻塞，会影响其他任务</span><br><br><span class="hljs-comment">// 解决方案：为关键任务创建独立的 ForkJoinPool</span><br><span class="hljs-type">ForkJoinPool</span> <span class="hljs-variable">customPool</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ForkJoinPool</span>(<span class="hljs-number">8</span>);<br>customPool.submit(() -&gt; &#123;<br>    <span class="hljs-comment">// 独立执行，不影响 commonPool</span><br>    myParallelStream.forEach(...);<br>&#125;).get();<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
+<li><strong>上一篇</strong>：03-线程池类型</li>
+<li><strong>线程池原理</strong>：02-线程池原理</li>
+<li><strong>线程池简介</strong>：01-线程池简介</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Java/" class="print-no-link">#Java</a>
+      
+        <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" class="print-no-link">#并发编程</a>
+      
+        <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" class="print-no-link">#线程池</a>
+      
+        <a href="/tags/ForkJoinPool/" class="print-no-link">#ForkJoinPool</a>
+      
+        <a href="/tags/%E5%88%86%E6%B2%BB%E7%AE%97%E6%B3%95/" class="print-no-link">#分治算法</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div></div>
+      <div>https://zmmmmy.github.io/2026/01/22/ForkJoinPool/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZhiMy</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026-01-22</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                    <i class="iconfont icon-cc-nc"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/01/22/%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" title="">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/01/22/ReentrantLock%E5%8E%9F%E7%90%86/" title="">
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener">Hexo</a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">Fluid</a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,974 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZhiMy">
+  <meta name="keywords" content="技术博客,编程">
+  
+    <meta name="description" content="AQS 原理详解 💡 提示: 知识图谱查看 AQS知识图谱 获取可视化知识结构  什么是 AQS？AQS（AbstractQueuedSynchronizer，抽象队列同步器）是 Java 并发包 java.util.concurrent.locks 中的核心基础框架。 一句话理解 AQS 就像一个排队系统：想要获取资源的线程，如果资源被占用，就乖乖排队等待；资源释放后，排在最前面的线程被唤醒去">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AQS原理详解">
+<meta property="og:url" content="https://zmmmmy.github.io/2026/01/12/AQS%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Zmmmmy&#39;s Blog">
+<meta property="og:description" content="AQS 原理详解 💡 提示: 知识图谱查看 AQS知识图谱 获取可视化知识结构  什么是 AQS？AQS（AbstractQueuedSynchronizer，抽象队列同步器）是 Java 并发包 java.util.concurrent.locks 中的核心基础框架。 一句话理解 AQS 就像一个排队系统：想要获取资源的线程，如果资源被占用，就乖乖排队等待；资源释放后，排在最前面的线程被唤醒去">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-01-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-01-22T07:15:46.089Z">
+<meta property="article:author" content="ZhiMy">
+<meta property="article:tag" content="AQS">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="同步器">
+<meta property="article:tag" content="并发编程">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>AQS原理详解 - Zmmmmy&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zmmmmy.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2,"offset_top":300},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Zmmmmy&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="AQS原理详解"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        ZhiMy
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-12 00:00" pubdate>
+          2026-01-12
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          16 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">AQS原理详解</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于2026年1月22日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="AQS-原理详解"><a href="#AQS-原理详解" class="headerlink" title="AQS 原理详解"></a>AQS 原理详解</h1><blockquote>
+<p><strong>💡 提示: 知识图谱</strong><br>查看 AQS知识图谱 获取可视化知识结构</p>
+</blockquote>
+<h2 id="什么是-AQS？"><a href="#什么是-AQS？" class="headerlink" title="什么是 AQS？"></a>什么是 AQS？</h2><p><strong>AQS</strong>（AbstractQueuedSynchronizer，抽象队列同步器）是 Java 并发包 <code>java.util.concurrent.locks</code> 中的核心基础框架。</p>
+<h3 id="一句话理解"><a href="#一句话理解" class="headerlink" title="一句话理解"></a>一句话理解</h3><blockquote>
+<p>AQS 就像一个<strong>排队系统</strong>：想要获取资源的线程，如果资源被占用，就乖乖排队等待；资源释放后，排在最前面的线程被唤醒去获取资源。</p>
+</blockquote>
+<h3 id="为什么需要-AQS？"><a href="#为什么需要-AQS？" class="headerlink" title="为什么需要 AQS？"></a>为什么需要 AQS？</h3><p>在 AQS 出现之前，如果我们想实现一个锁或者同步器，需要自己处理：</p>
+<ul>
+<li>线程的阻塞与唤醒</li>
+<li>等待队列的维护</li>
+<li>状态的管理</li>
+</ul>
+<p>AQS 把这些<strong>通用逻辑</strong>抽取出来，我们只需要关注<strong>资源的获取和释放规则</strong>即可。</p>
+<hr>
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><h3 id="1-State（同步状态）"><a href="#1-State（同步状态）" class="headerlink" title="1. State（同步状态）"></a>1. State（同步状态）</h3><p>AQS 使用一个 <code>int</code> 类型的变量 <code>state</code> 来表示同步状态：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">volatile</span> <span class="hljs-type">int</span> state;<br></code></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>同步器类型</th>
+<th>state 含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ReentrantLock</td>
+<td>0 表示未锁定，&gt;0 表示锁定次数（可重入）</td>
+</tr>
+<tr>
+<td>Semaphore</td>
+<td>表示可用的许可数量</td>
+</tr>
+<tr>
+<td>CountDownLatch</td>
+<td>表示需要等待的计数</td>
+</tr>
+</tbody></table>
+<h3 id="2-CLH-队列（等待队列）"><a href="#2-CLH-队列（等待队列）" class="headerlink" title="2. CLH 队列（等待队列）"></a>2. CLH 队列（等待队列）</h3><p>当线程获取资源失败时，会被包装成一个 <strong>Node 节点</strong>，加入到一个 <strong>FIFO 双向队列</strong> 中等待。</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs gherkin">     +------+  prev +------+  prev +------+<br>head |<span class="hljs-string">      </span>|<span class="hljs-string"> &lt;---- </span>|<span class="hljs-string">      </span>|<span class="hljs-string"> &lt;---- </span>|<span class="hljs-string">      </span>|<span class="hljs-string">  tail</span><br><span class="hljs-string">     </span>|<span class="hljs-string"> Node </span>|<span class="hljs-string">       </span>|<span class="hljs-string"> Node </span>|<span class="hljs-string">       </span>|<span class="hljs-string"> Node </span>|<br>     |<span class="hljs-string">      </span>|<span class="hljs-string"> ----&gt; </span>|<span class="hljs-string">      </span>|<span class="hljs-string"> ----&gt; </span>|<span class="hljs-string">      </span>|<br>     +------+  next +------+  next +------+<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-Node-节点"><a href="#3-Node-节点" class="headerlink" title="3. Node 节点"></a>3. Node 节点</h3><p>每个等待的线程都被封装成一个 Node：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Node</span> &#123;<br>    <span class="hljs-comment">// 等待状态</span><br>    <span class="hljs-keyword">volatile</span> <span class="hljs-type">int</span> waitStatus;<br>    <span class="hljs-comment">// 前驱节点</span><br>    <span class="hljs-keyword">volatile</span> Node prev;<br>    <span class="hljs-comment">// 后继节点</span><br>    <span class="hljs-keyword">volatile</span> Node next;<br>    <span class="hljs-comment">// 等待的线程</span><br>    <span class="hljs-keyword">volatile</span> Thread thread;<br>    <span class="hljs-comment">// 共享模式 or 独占模式</span><br>    Node nextWaiter;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>waitStatus 的取值：</strong></p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>常量名</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>-</td>
+<td>初始状态</td>
+</tr>
+<tr>
+<td>1</td>
+<td>CANCELLED</td>
+<td>线程已取消</td>
+</tr>
+<tr>
+<td>-1</td>
+<td>SIGNAL</td>
+<td>后继节点需要被唤醒</td>
+</tr>
+<tr>
+<td>-2</td>
+<td>CONDITION</td>
+<td>在条件队列中等待</td>
+</tr>
+<tr>
+<td>-3</td>
+<td>PROPAGATE</td>
+<td>共享模式下传播唤醒</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="两种资源共享模式"><a href="#两种资源共享模式" class="headerlink" title="两种资源共享模式"></a>两种资源共享模式</h2><h3 id="独占模式（Exclusive）"><a href="#独占模式（Exclusive）" class="headerlink" title="独占模式（Exclusive）"></a>独占模式（Exclusive）</h3><p><strong>同一时刻只有一个线程能获取资源</strong></p>
+<p>典型实现：<code>ReentrantLock</code></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs css">线程<span class="hljs-selector-tag">A</span>获取锁 → 成功，执行业务<br>线程<span class="hljs-selector-tag">B</span>获取锁 → 失败，进入队列等待<br>线程C获取锁 → 失败，进入队列等待<br>线程<span class="hljs-selector-tag">A</span>释放锁 → 唤醒线程<span class="hljs-selector-tag">B</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="共享模式（Shared）"><a href="#共享模式（Shared）" class="headerlink" title="共享模式（Shared）"></a>共享模式（Shared）</h3><p><strong>同一时刻可以有多个线程获取资源</strong></p>
+<p>典型实现：<code>Semaphore</code>、<code>CountDownLatch</code>、<code>ReadWriteLock</code>（读锁）</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-function"><span class="hljs-title">Semaphore</span><span class="hljs-params">(<span class="hljs-number">3</span>)</span></span> - 允许<span class="hljs-number">3</span>个线程同时访问<br>线程A获取 → 成功，剩余<span class="hljs-number">2</span>个许可<br>线程B获取 → 成功，剩余<span class="hljs-number">1</span>个许可<br>线程C获取 → 成功，剩余<span class="hljs-number">0</span>个许可<br>线程D获取 → 失败，进入队列等待<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="核心方法解析"><a href="#核心方法解析" class="headerlink" title="核心方法解析"></a>核心方法解析</h2><h3 id="需要子类实现的方法"><a href="#需要子类实现的方法" class="headerlink" title="需要子类实现的方法"></a>需要子类实现的方法</h3><p>AQS 采用<strong>模板方法模式</strong>，子类需要实现以下方法：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>模式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>tryAcquire(int)</code></td>
+<td>独占</td>
+<td>尝试获取资源</td>
+</tr>
+<tr>
+<td><code>tryRelease(int)</code></td>
+<td>独占</td>
+<td>尝试释放资源</td>
+</tr>
+<tr>
+<td><code>tryAcquireShared(int)</code></td>
+<td>共享</td>
+<td>尝试获取共享资源</td>
+</tr>
+<tr>
+<td><code>tryReleaseShared(int)</code></td>
+<td>共享</td>
+<td>尝试释放共享资源</td>
+</tr>
+<tr>
+<td><code>isHeldExclusively()</code></td>
+<td>-</td>
+<td>是否独占持有</td>
+</tr>
+</tbody></table>
+<h3 id="AQS-提供的模板方法"><a href="#AQS-提供的模板方法" class="headerlink" title="AQS 提供的模板方法"></a>AQS 提供的模板方法</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>acquire(int)</code></td>
+<td>独占式获取（会阻塞）</td>
+</tr>
+<tr>
+<td><code>acquireInterruptibly(int)</code></td>
+<td>独占式获取（可中断）</td>
+</tr>
+<tr>
+<td><code>tryAcquireNanos(int, long)</code></td>
+<td>独占式获取（带超时）</td>
+</tr>
+<tr>
+<td><code>release(int)</code></td>
+<td>独占式释放</td>
+</tr>
+<tr>
+<td><code>acquireShared(int)</code></td>
+<td>共享式获取</td>
+</tr>
+<tr>
+<td><code>releaseShared(int)</code></td>
+<td>共享式释放</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="独占模式源码分析"><a href="#独占模式源码分析" class="headerlink" title="独占模式源码分析"></a>独占模式源码分析</h2><h3 id="acquire-获取资源"><a href="#acquire-获取资源" class="headerlink" title="acquire() - 获取资源"></a>acquire() - 获取资源</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">acquire</span><span class="hljs-params">(<span class="hljs-type">int</span> arg)</span> &#123;<br>    <span class="hljs-keyword">if</span> (!tryAcquire(arg) &amp;&amp;<br>        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))<br>        selfInterrupt();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>执行流程：</strong></p>
+<pre><code class=" mermaid">flowchart TD
+    A[调用 acquire] --&gt; B&#123;tryAcquire 尝试获取&#125;
+    B --&gt;|成功| C[直接返回，获取到资源]
+    B --&gt;|失败| D[addWaiter 创建节点加入队列]
+    D --&gt; E[acquireQueued 在队列中自旋等待]
+    E --&gt; F&#123;是否被中断过&#125;
+    F --&gt;|是| G[selfInterrupt 补上中断]
+    F --&gt;|否| H[返回]
+</code></pre>
+
+<h3 id="addWaiter-加入等待队列"><a href="#addWaiter-加入等待队列" class="headerlink" title="addWaiter() - 加入等待队列"></a>addWaiter() - 加入等待队列</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">private</span> Node <span class="hljs-title function_">addWaiter</span><span class="hljs-params">(Node mode)</span> &#123;<br>    <span class="hljs-type">Node</span> <span class="hljs-variable">node</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Node</span>(Thread.currentThread(), mode);<br>    <span class="hljs-comment">// 快速尝试在尾部添加</span><br>    <span class="hljs-type">Node</span> <span class="hljs-variable">pred</span> <span class="hljs-operator">=</span> tail;<br>    <span class="hljs-keyword">if</span> (pred != <span class="hljs-literal">null</span>) &#123;<br>        node.prev = pred;<br>        <span class="hljs-keyword">if</span> (compareAndSetTail(pred, node)) &#123;<br>            pred.next = node;<br>            <span class="hljs-keyword">return</span> node;<br>        &#125;<br>    &#125;<br>    <span class="hljs-comment">// 快速添加失败，进入完整入队流程</span><br>    enq(node);<br>    <span class="hljs-keyword">return</span> node;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="acquireQueued-队列中等待获取"><a href="#acquireQueued-队列中等待获取" class="headerlink" title="acquireQueued() - 队列中等待获取"></a>acquireQueued() - 队列中等待获取</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">final</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">acquireQueued</span><span class="hljs-params">(<span class="hljs-keyword">final</span> Node node, <span class="hljs-type">int</span> arg)</span> &#123;<br>    <span class="hljs-type">boolean</span> <span class="hljs-variable">failed</span> <span class="hljs-operator">=</span> <span class="hljs-literal">true</span>;<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-type">boolean</span> <span class="hljs-variable">interrupted</span> <span class="hljs-operator">=</span> <span class="hljs-literal">false</span>;<br>        <span class="hljs-keyword">for</span> (;;) &#123;  <span class="hljs-comment">// 自旋</span><br>            <span class="hljs-keyword">final</span> <span class="hljs-type">Node</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> node.predecessor();<br>            <span class="hljs-comment">// 只有前驱是head才有资格尝试获取</span><br>            <span class="hljs-keyword">if</span> (p == head &amp;&amp; tryAcquire(arg)) &#123;<br>                setHead(node);<br>                p.next = <span class="hljs-literal">null</span>; <span class="hljs-comment">// help GC</span><br>                failed = <span class="hljs-literal">false</span>;<br>                <span class="hljs-keyword">return</span> interrupted;<br>            &#125;<br>            <span class="hljs-comment">// 判断是否需要阻塞</span><br>            <span class="hljs-keyword">if</span> (shouldParkAfterFailedAcquire(p, node) &amp;&amp;<br>                parkAndCheckInterrupt())<br>                interrupted = <span class="hljs-literal">true</span>;<br>        &#125;<br>    &#125; <span class="hljs-keyword">finally</span> &#123;<br>        <span class="hljs-keyword">if</span> (failed)<br>            cancelAcquire(node);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>关键点：</strong></p>
+<ol>
+<li>只有<strong>前驱节点是 head</strong> 的节点才有资格尝试获取资源</li>
+<li>获取失败后会调用 <code>LockSupport.park()</code> 阻塞线程</li>
+<li>被唤醒后继续自旋尝试获取</li>
+</ol>
+<h3 id="release-释放资源"><a href="#release-释放资源" class="headerlink" title="release() - 释放资源"></a>release() - 释放资源</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">release</span><span class="hljs-params">(<span class="hljs-type">int</span> arg)</span> &#123;<br>    <span class="hljs-keyword">if</span> (tryRelease(arg)) &#123;<br>        <span class="hljs-type">Node</span> <span class="hljs-variable">h</span> <span class="hljs-operator">=</span> head;<br>        <span class="hljs-keyword">if</span> (h != <span class="hljs-literal">null</span> &amp;&amp; h.waitStatus != <span class="hljs-number">0</span>)<br>            unparkSuccessor(h);  <span class="hljs-comment">// 唤醒后继节点</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="图解：完整的获取-释放流程"><a href="#图解：完整的获取-释放流程" class="headerlink" title="图解：完整的获取-释放流程"></a>图解：完整的获取-释放流程</h2><h3 id="场景：三个线程竞争一把锁"><a href="#场景：三个线程竞争一把锁" class="headerlink" title="场景：三个线程竞争一把锁"></a>场景：三个线程竞争一把锁</h3><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc">初始状态：state = 0，队列为空<br><br><span class="hljs-section">=== 线程A 获取锁 ===</span><br>1. tryAcquire(1) → CAS(0, 1) 成功<br>2. state = 1，线程A持有锁<br>3. 队列仍为空<br><br><span class="hljs-section">=== 线程B 获取锁 ===</span><br>1. tryAcquire(1) → 失败（state=1）<br>2. addWaiter() → 创建Node(B)，初始化队列<br><span class="hljs-code">   </span><br><span class="hljs-code">   +------+      +------+</span><br><span class="hljs-code">   | head | ---&gt; | B    |</span><br><span class="hljs-code">   | 空   |      | 等待 |</span><br><span class="hljs-code">   +------+      +------+</span><br><span class="hljs-code">   </span><br>3. acquireQueued() → park阻塞<br><br><span class="hljs-section">=== 线程C 获取锁 ===</span><br>1. tryAcquire(1) → 失败<br>2. addWaiter() → 创建Node(C)加入队尾<br><span class="hljs-code">   </span><br><span class="hljs-code">   +------+      +------+      +------+</span><br><span class="hljs-code">   | head | ---&gt; | B    | ---&gt; | C    |</span><br><span class="hljs-code">   | 空   |      | 等待 |      | 等待 |</span><br><span class="hljs-code">   +------+      +------+      +------+</span><br><span class="hljs-code">   </span><br>3. acquireQueued() → park阻塞<br><br><span class="hljs-section">=== 线程A 释放锁 ===</span><br>1. tryRelease(1) → state = 0<br>2. unparkSuccessor(head) → 唤醒线程B<br>3. 线程B被唤醒，tryAcquire成功<br>4. 线程B成为新的head<br><span class="hljs-code">   </span><br><span class="hljs-code">   +------+      +------+</span><br><span class="hljs-code">   | B    | ---&gt; | C    |</span><br><span class="hljs-code">   | head |      | 等待 |</span><br><span class="hljs-code">   +------+      +------+</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="实战：手写一个简单的互斥锁"><a href="#实战：手写一个简单的互斥锁" class="headerlink" title="实战：手写一个简单的互斥锁"></a>实战：手写一个简单的互斥锁</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SimpleLock</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">Sync</span> <span class="hljs-variable">sync</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Sync</span>();<br>    <br>    <span class="hljs-comment">// 继承AQS</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Sync</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractQueuedSynchronizer</span> &#123;<br>        <br>        <span class="hljs-comment">// 尝试获取锁</span><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">protected</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">tryAcquire</span><span class="hljs-params">(<span class="hljs-type">int</span> arg)</span> &#123;<br>            <span class="hljs-comment">// CAS 将 state 从 0 改为 1</span><br>            <span class="hljs-keyword">if</span> (compareAndSetState(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)) &#123;<br>                <span class="hljs-comment">// 设置当前线程为独占线程</span><br>                setExclusiveOwnerThread(Thread.currentThread());<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>            &#125;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>        &#125;<br>        <br>        <span class="hljs-comment">// 尝试释放锁</span><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">protected</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">tryRelease</span><span class="hljs-params">(<span class="hljs-type">int</span> arg)</span> &#123;<br>            <span class="hljs-keyword">if</span> (getState() == <span class="hljs-number">0</span>) &#123;<br>                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalMonitorStateException</span>();<br>            &#125;<br>            <span class="hljs-comment">// 清除独占线程</span><br>            setExclusiveOwnerThread(<span class="hljs-literal">null</span>);<br>            <span class="hljs-comment">// 释放锁</span><br>            setState(<span class="hljs-number">0</span>);<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>        &#125;<br>        <br>        <span class="hljs-comment">// 是否独占持有</span><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">protected</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">isHeldExclusively</span><span class="hljs-params">()</span> &#123;<br>            <span class="hljs-keyword">return</span> getExclusiveOwnerThread() == Thread.currentThread();<br>        &#125;<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">lock</span><span class="hljs-params">()</span> &#123;<br>        sync.acquire(<span class="hljs-number">1</span>);<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">unlock</span><span class="hljs-params">()</span> &#123;<br>        sync.release(<span class="hljs-number">1</span>);<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">tryLock</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> sync.tryAcquire(<span class="hljs-number">1</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>使用示例：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">SimpleLock</span> <span class="hljs-variable">lock</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SimpleLock</span>();<br><br>lock.lock();<br><span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-comment">// 临界区代码</span><br>    System.out.println(<span class="hljs-string">&quot;获取到锁，执行业务逻辑&quot;</span>);<br>&#125; <span class="hljs-keyword">finally</span> &#123;<br>    lock.unlock();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="AQS-的经典实现类"><a href="#AQS-的经典实现类" class="headerlink" title="AQS 的经典实现类"></a>AQS 的经典实现类</h2><table>
+<thead>
+<tr>
+<th>实现类</th>
+<th>模式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ReentrantLock</td>
+<td>独占</td>
+<td>可重入互斥锁</td>
+</tr>
+<tr>
+<td>ReentrantReadWriteLock</td>
+<td>共享+独占</td>
+<td>读写锁</td>
+</tr>
+<tr>
+<td>CountDownLatch</td>
+<td>共享</td>
+<td>倒计时门闩</td>
+</tr>
+<tr>
+<td>Semaphore</td>
+<td>共享</td>
+<td>信号量</td>
+</tr>
+<tr>
+<td>CyclicBarrier</td>
+<td>-</td>
+<td>循环栅栏（内部用ReentrantLock）</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="核心要点总结"><a href="#核心要点总结" class="headerlink" title="核心要点总结"></a>核心要点总结</h2><h3 id="AQS-的设计精髓"><a href="#AQS-的设计精髓" class="headerlink" title="AQS 的设计精髓"></a>AQS 的设计精髓</h3><ol>
+<li><strong>模板方法模式</strong>：AQS 定义算法骨架，子类实现具体逻辑</li>
+<li><strong>CLH 队列变体</strong>：高效的 FIFO 等待队列</li>
+<li><strong>CAS + volatile</strong>：保证线程安全的无锁操作</li>
+<li><strong>LockSupport</strong>：精确的线程阻塞&#x2F;唤醒控制</li>
+</ol>
+<h3 id="记忆口诀"><a href="#记忆口诀" class="headerlink" title="记忆口诀"></a>记忆口诀</h3><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs erlang">AQS三要素：状态、队列、CAS<br>独占看<span class="hljs-keyword">try</span>Acquire，共享看<span class="hljs-keyword">try</span>AcquireShared<br>获取失败进队列，前驱是head才能抢<br>释放资源唤后继，FIFO保公平<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="常见面试题"><a href="#常见面试题" class="headerlink" title="常见面试题"></a>常见面试题</h2><h3 id="Q1：AQS-为什么使用双向链表？"><a href="#Q1：AQS-为什么使用双向链表？" class="headerlink" title="Q1：AQS 为什么使用双向链表？"></a>Q1：AQS 为什么使用双向链表？</h3><ul>
+<li><strong>方便取消操作</strong>：取消节点时需要修改前驱的 next 指针</li>
+<li><strong>方便判断前驱状态</strong>：只有前驱是 head 才能尝试获取资源</li>
+<li><strong>方便从尾部遍历</strong>：某些场景需要从后向前遍历</li>
+</ul>
+<h3 id="Q2：为什么-head-节点是虚节点？"><a href="#Q2：为什么-head-节点是虚节点？" class="headerlink" title="Q2：为什么 head 节点是虚节点？"></a>Q2：为什么 head 节点是虚节点？</h3><ul>
+<li>head 代表<strong>当前持有资源的线程</strong>（或初始空节点）</li>
+<li>真正等待的线程从 head.next 开始</li>
+<li>这样设计简化了边界条件处理</li>
+</ul>
+<h3 id="Q3：公平锁和非公平锁的区别？"><a href="#Q3：公平锁和非公平锁的区别？" class="headerlink" title="Q3：公平锁和非公平锁的区别？"></a>Q3：公平锁和非公平锁的区别？</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>实现方式</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>公平锁</td>
+<td>tryAcquire 时先检查队列</td>
+<td>严格 FIFO，吞吐量较低</td>
+</tr>
+<tr>
+<td>非公平锁</td>
+<td>tryAcquire 时直接 CAS 抢锁</td>
+<td>可能插队，吞吐量较高</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 非公平锁的 tryAcquire（简化版）</span><br><span class="hljs-keyword">if</span> (state == <span class="hljs-number">0</span> &amp;&amp; CAS(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br><br><span class="hljs-comment">// 公平锁的 tryAcquire（简化版）</span><br><span class="hljs-keyword">if</span> (state == <span class="hljs-number">0</span> &amp;&amp; !hasQueuedPredecessors() &amp;&amp; CAS(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li>ReentrantLock 原理 - AQS 的典型独占实现</li>
+<li>CountDownLatch 原理 - AQS 的典型共享实现</li>
+<li>CAS 原理 - AQS 的底层原子操作</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Java/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" class="category-chain-item">并发编程</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Java/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%90%8C%E6%AD%A5%E5%B7%A5%E5%85%B7/" class="category-chain-item">同步工具</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Java/" class="print-no-link">#Java</a>
+      
+        <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" class="print-no-link">#并发编程</a>
+      
+        <a href="/tags/AQS/" class="print-no-link">#AQS</a>
+      
+        <a href="/tags/%E5%90%8C%E6%AD%A5%E5%99%A8/" class="print-no-link">#同步器</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>AQS原理详解</div>
+      <div>https://zmmmmy.github.io/2026/01/12/AQS原理详解/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZhiMy</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026-01-12</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>更新于</div>
+          <div>2026-01-22</div>
+        </div>
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                    <i class="iconfont icon-cc-nc"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/01/14/Agent%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/" title="Agent工具调用技术详解">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Agent工具调用技术详解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/01/12/Agent%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F%E8%AF%A6%E8%A7%A3/" title="Agent架构模式详解">
+                        <span class="hidden-mobile">Agent架构模式详解</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener">Hexo</a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">Fluid</a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,1063 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZhiMy">
+  <meta name="keywords" content="技术博客,编程">
+  
+    <meta name="description" content="Maven 多模块项目设计核心概念Maven 多模块项目是一个父项目包含多个子模块的结构，通过统一的 POM 文件管理依赖版本、编译配置等，实现代码复用和项目解耦。 为什么使用多模块？   优势 说明    依赖管理 统一管理版本号，避免版本冲突   代码复用 公共代码提取到独立模块   模块解耦 各模块职责清晰，便于维护   构建优化 支持增量构建，提高效率   团队协作 不同团队可独立开发不同">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Zmmmmy&#39;s Blog">
+<meta property="og:url" content="https://zmmmmy.github.io/2026/01/22/%E5%A4%9A%E6%A8%A1%E5%9D%97%E9%A1%B9%E7%9B%AE%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="Zmmmmy&#39;s Blog">
+<meta property="og:description" content="Maven 多模块项目设计核心概念Maven 多模块项目是一个父项目包含多个子模块的结构，通过统一的 POM 文件管理依赖版本、编译配置等，实现代码复用和项目解耦。 为什么使用多模块？   优势 说明    依赖管理 统一管理版本号，避免版本冲突   代码复用 公共代码提取到独立模块   模块解耦 各模块职责清晰，便于维护   构建优化 支持增量构建，提高效率   团队协作 不同团队可独立开发不同">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-01-22T07:15:46.063Z">
+<meta property="article:modified_time" content="2026-01-22T07:15:46.063Z">
+<meta property="article:author" content="ZhiMy">
+<meta property="article:tag" content="Maven">
+<meta property="article:tag" content="多模块">
+<meta property="article:tag" content="项目架构">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Zmmmmy&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zmmmmy.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2,"offset_top":300},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Zmmmmy&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text=""></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        ZhiMy
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-22 15:15" pubdate>
+          2026-01-22
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          51 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header"></h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Maven-多模块项目设计"><a href="#Maven-多模块项目设计" class="headerlink" title="Maven 多模块项目设计"></a>Maven 多模块项目设计</h1><h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><p>Maven 多模块项目是一个<strong>父项目</strong>包含多个<strong>子模块</strong>的结构，通过统一的 POM 文件管理依赖版本、编译配置等，实现代码复用和项目解耦。</p>
+<h3 id="为什么使用多模块？"><a href="#为什么使用多模块？" class="headerlink" title="为什么使用多模块？"></a>为什么使用多模块？</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>依赖管理</strong></td>
+<td>统一管理版本号，避免版本冲突</td>
+</tr>
+<tr>
+<td><strong>代码复用</strong></td>
+<td>公共代码提取到独立模块</td>
+</tr>
+<tr>
+<td><strong>模块解耦</strong></td>
+<td>各模块职责清晰，便于维护</td>
+</tr>
+<tr>
+<td><strong>构建优化</strong></td>
+<td>支持增量构建，提高效率</td>
+</tr>
+<tr>
+<td><strong>团队协作</strong></td>
+<td>不同团队可独立开发不同模块</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="典型的多模块结构"><a href="#典型的多模块结构" class="headerlink" title="典型的多模块结构"></a>典型的多模块结构</h2><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">my-project/                    <span class="hljs-comment"># 父项目</span><br>├── pom.<span class="hljs-keyword">xml</span>                    <span class="hljs-title"># 父 POM</span>（聚合和依赖管理）<br>├── my-common/                 <span class="hljs-comment"># 公共模块</span><br>│   ├── pom.<span class="hljs-keyword">xml</span><br><span class="hljs-title">│   └── src</span>/<br>├── my-service/                <span class="hljs-comment"># 业务服务模块</span><br>│   ├── pom.<span class="hljs-keyword">xml</span><br><span class="hljs-title">│   └── src</span>/<br>├── my-web/                    <span class="hljs-comment"># Web 模块</span><br>│   ├── pom.<span class="hljs-keyword">xml</span><br><span class="hljs-title">│   └── src</span>/<br>└── my-app/                    <span class="hljs-comment"># 应用启动模块</span><br>    ├── pom.<span class="hljs-keyword">xml</span><br>    <span class="hljs-title">└── src</span>/<br></code></pre></td></tr></table></figure>
+
+<h3 id="模块分类"><a href="#模块分类" class="headerlink" title="模块分类"></a>模块分类</h3><ul>
+<li><strong>父模块</strong>：只包含 POM，不含源代码</li>
+<li><strong>公共模块</strong>：提供通用工具、常量、基类等</li>
+<li><strong>业务模块</strong>：核心业务逻辑</li>
+<li><strong>Web&#x2F;API 模块</strong>：对外接口层</li>
+<li><strong>启动模块</strong>：应用入口</li>
+</ul>
+<hr>
+<h2 id="父-POM-配置"><a href="#父-POM-配置" class="headerlink" title="父 POM 配置"></a>父 POM 配置</h2><h3 id="1-聚合配置（Aggregation）"><a href="#1-聚合配置（Aggregation）" class="headerlink" title="1. 聚合配置（Aggregation）"></a>1. 聚合配置（Aggregation）</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">project</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">modelVersion</span>&gt;</span>4.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">modelVersion</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>my-project<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">packaging</span>&gt;</span>pom<span class="hljs-tag">&lt;/<span class="hljs-name">packaging</span>&gt;</span>  <span class="hljs-comment">&lt;!-- 父模块必须是 pom --&gt;</span><br>    <br>    <span class="hljs-comment">&lt;!-- 聚合子模块 --&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">modules</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>my-common<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>my-service<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>my-web<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>my-app<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">modules</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">project</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>作用</strong>：执行 <code>mvn clean install</code> 时，会自动构建所有子模块</p>
+<h3 id="2-依赖管理（Dependency-Management）"><a href="#2-依赖管理（Dependency-Management）" class="headerlink" title="2. 依赖管理（Dependency Management）"></a>2. 依赖管理（Dependency Management）</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependencyManagement</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependencies</span>&gt;</span><br>        <span class="hljs-comment">&lt;!-- 定义版本，子模块不需要指定版本 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-dependencies<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>2.7.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">type</span>&gt;</span>pom<span class="hljs-tag">&lt;/<span class="hljs-name">type</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">scope</span>&gt;</span>import<span class="hljs-tag">&lt;/<span class="hljs-name">scope</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>my-common<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>$&#123;project.version&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependencies</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependencyManagement</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>关键点</strong>：</p>
+<ul>
+<li>只声明版本，不引入依赖</li>
+<li>子模块可选择是否使用</li>
+<li>避免版本冲突</li>
+</ul>
+<h3 id="3-插件管理（Plugin-Management）"><a href="#3-插件管理（Plugin-Management）" class="headerlink" title="3. 插件管理（Plugin Management）"></a>3. 插件管理（Plugin Management）</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">pluginManagement</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">plugins</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">plugin</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>maven-compiler-plugin<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>3.8.1<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">configuration</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">source</span>&gt;</span>11<span class="hljs-tag">&lt;/<span class="hljs-name">source</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">target</span>&gt;</span>11<span class="hljs-tag">&lt;/<span class="hljs-name">target</span>&gt;</span><br>            <span class="hljs-tag">&lt;/<span class="hljs-name">configuration</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">plugin</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">plugins</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">pluginManagement</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="子模块-POM-配置"><a href="#子模块-POM-配置" class="headerlink" title="子模块 POM 配置"></a>子模块 POM 配置</h2><h3 id="基本结构"><a href="#基本结构" class="headerlink" title="基本结构"></a>基本结构</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">project</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">modelVersion</span>&gt;</span>4.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">modelVersion</span>&gt;</span><br>    <br>    <span class="hljs-comment">&lt;!-- 继承父模块 --&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">parent</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>my-project<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">relativePath</span>&gt;</span>../pom.xml<span class="hljs-tag">&lt;/<span class="hljs-name">relativePath</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">parent</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>my-common<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>Common Module<span class="hljs-tag">&lt;/<span class="hljs-name">name</span>&gt;</span><br>    <br>    <span class="hljs-comment">&lt;!-- 依赖（版本从父 POM 继承） --&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependencies</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-comment">&lt;!-- 不需要指定版本 --&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependencies</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">project</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="模块间依赖"><a href="#模块间依赖" class="headerlink" title="模块间依赖"></a>模块间依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- my-service 模块依赖 my-common --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">dependencies</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>my-common<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-comment">&lt;!-- 版本从 dependencyManagement 继承 --&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependencies</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="设计最佳实践"><a href="#设计最佳实践" class="headerlink" title="设计最佳实践"></a>设计最佳实践</h2><h3 id="1-模块职责划分"><a href="#1-模块职责划分" class="headerlink" title="1. 模块职责划分"></a>1. 模块职责划分</h3><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs applescript"><span class="hljs-keyword">my</span>-project/<br>├── <span class="hljs-keyword">my</span>-common/           <span class="hljs-comment"># 工具类、常量、基类</span><br>├── <span class="hljs-keyword">my</span>-domain/           <span class="hljs-comment"># 领域模型、实体</span><br>├── <span class="hljs-keyword">my</span>-repository/       <span class="hljs-comment"># 数据访问层</span><br>├── <span class="hljs-keyword">my</span>-service/          <span class="hljs-comment"># 业务逻辑层</span><br>├── <span class="hljs-keyword">my</span>-controller/       <span class="hljs-comment"># 控制层</span><br>└── <span class="hljs-keyword">my</span>-app/              <span class="hljs-comment"># 启动模块</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>依赖流向</strong>：<code>app → controller → service → repository → domain ← common</code></p>
+<h3 id="2-版本管理策略"><a href="#2-版本管理策略" class="headerlink" title="2. 版本管理策略"></a>2. 版本管理策略</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- 父 POM 中定义版本变量 --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">properties</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">project.version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">project.version</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">spring-boot.version</span>&gt;</span>2.7.0<span class="hljs-tag">&lt;/<span class="hljs-name">spring-boot.version</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">java.version</span>&gt;</span>11<span class="hljs-tag">&lt;/<span class="hljs-name">java.version</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">properties</span>&gt;</span><br><br><span class="hljs-comment">&lt;!-- 子模块引用 --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-starter<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>$&#123;spring-boot.version&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="3-避免循环依赖"><a href="#3-避免循环依赖" class="headerlink" title="3. 避免循环依赖"></a>3. 避免循环依赖</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs css">❌ 错误：<span class="hljs-selector-tag">A</span> → <span class="hljs-selector-tag">B</span> → <span class="hljs-selector-tag">A</span><br>✅ 正确：<span class="hljs-selector-tag">A</span> → <span class="hljs-selector-tag">B</span> → C（单向依赖）<br></code></pre></td></tr></table></figure>
+
+<p><strong>检查命令</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">mvn dependency:tree<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-模块粒度控制"><a href="#4-模块粒度控制" class="headerlink" title="4. 模块粒度控制"></a>4. 模块粒度控制</h3><table>
+<thead>
+<tr>
+<th>粒度</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>粗粒度</strong></td>
+<td>构建快，管理简单</td>
+<td>模块职责混乱</td>
+</tr>
+<tr>
+<td><strong>细粒度</strong></td>
+<td>职责清晰，复用性好</td>
+<td>构建复杂，依赖管理困难</td>
+</tr>
+</tbody></table>
+<p><strong>建议</strong>：根据团队规模和项目复杂度平衡</p>
+<hr>
+<h2 id="常用-Maven-命令"><a href="#常用-Maven-命令" class="headerlink" title="常用 Maven 命令"></a>常用 Maven 命令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 构建所有模块</span><br>mvn clean install<br><br><span class="hljs-comment"># 构建特定模块</span><br>mvn clean install -pl my-common<br><br><span class="hljs-comment"># 构建模块及其依赖</span><br>mvn clean install -pl my-service -am<br><br><span class="hljs-comment"># 跳过测试</span><br>mvn clean install -DskipTests<br><br><span class="hljs-comment"># 查看依赖树</span><br>mvn dependency:tree<br><br><span class="hljs-comment"># 检查循环依赖</span><br>mvn dependency:tree | grep <span class="hljs-string">&quot;CIRCULAR&quot;</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="实战示例：电商系统"><a href="#实战示例：电商系统" class="headerlink" title="实战示例：电商系统"></a>实战示例：电商系统</h2><figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs nix">ecommerce-platform<span class="hljs-symbol">/</span><br>├── pom.xml                    <span class="hljs-comment"># 父 POM</span><br>├── ecommerce-common<span class="hljs-symbol">/</span>          <span class="hljs-comment"># 通用工具、常量</span><br>├── ecommerce-domain<span class="hljs-symbol">/</span>          <span class="hljs-comment"># 领域模型</span><br>├── ecommerce-repository<span class="hljs-symbol">/</span>      <span class="hljs-comment"># 数据访问</span><br>├── ecommerce-service<span class="hljs-symbol">/</span>         <span class="hljs-comment"># 业务逻辑</span><br>├── ecommerce-api<span class="hljs-symbol">/</span>             <span class="hljs-comment"># REST API</span><br>└── ecommerce-app<span class="hljs-symbol">/</span>             <span class="hljs-comment"># Spring Boot 启动类</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="依赖关系"><a href="#依赖关系" class="headerlink" title="依赖关系"></a>依赖关系</h3><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs armasm"><span class="hljs-symbol">ecommerce</span>-app<br>  ├── ecommerce-api<br>  │   ├── ecommerce-service<br>  │   │   ├── ecommerce-repository<br>  │   │   │   └── ecommerce-domain<br>  │   │   └── ecommerce-<span class="hljs-meta">common</span><br>  │   └── ecommerce-<span class="hljs-meta">common</span><br>  └── ...<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="Q1-子模块如何访问其他子模块的资源？"><a href="#Q1-子模块如何访问其他子模块的资源？" class="headerlink" title="Q1: 子模块如何访问其他子模块的资源？"></a>Q1: 子模块如何访问其他子模块的资源？</h3><p><strong>A</strong>: 通过依赖声明，不要直接引用文件路径</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- ✅ 正确 --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>my-common<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br><br><span class="hljs-comment">&lt;!-- ❌ 错误 --&gt;</span><br><span class="hljs-comment">&lt;!-- 不要使用相对路径 --&gt;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="Q2-如何只构建某个模块？"><a href="#Q2-如何只构建某个模块？" class="headerlink" title="Q2: 如何只构建某个模块？"></a>Q2: 如何只构建某个模块？</h3><p><strong>A</strong>: 使用 <code>-pl</code> 参数</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">mvn clean install -pl my-service<br></code></pre></td></tr></table></figure>
+
+<h3 id="Q3-子模块版本与父模块不同可以吗？"><a href="#Q3-子模块版本与父模块不同可以吗？" class="headerlink" title="Q3: 子模块版本与父模块不同可以吗？"></a>Q3: 子模块版本与父模块不同可以吗？</h3><p><strong>A</strong>: 不建议。应该保持一致，使用 <code>${project.version}</code></p>
+<h3 id="Q4-如何处理模块间的版本冲突？"><a href="#Q4-如何处理模块间的版本冲突？" class="headerlink" title="Q4: 如何处理模块间的版本冲突？"></a>Q4: 如何处理模块间的版本冲突？</h3><p><strong>A</strong>: 在父 POM 的 <code>dependencyManagement</code> 中统一定义</p>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><table>
+<thead>
+<tr>
+<th>要点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>聚合</strong></td>
+<td>父 POM 通过 <code>&lt;modules&gt;</code> 统一构建</td>
+</tr>
+<tr>
+<td><strong>继承</strong></td>
+<td>子模块通过 <code>&lt;parent&gt;</code> 继承配置</td>
+</tr>
+<tr>
+<td><strong>依赖管理</strong></td>
+<td>使用 <code>&lt;dependencyManagement&gt;</code> 统一版本</td>
+</tr>
+<tr>
+<td><strong>模块划分</strong></td>
+<td>按职责清晰划分，避免循环依赖</td>
+</tr>
+<tr>
+<td><strong>版本策略</strong></td>
+<td>统一版本号，便于维护和发布</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="框架类型项目设计（SPI-模式）"><a href="#框架类型项目设计（SPI-模式）" class="headerlink" title="框架类型项目设计（SPI 模式）"></a>框架类型项目设计（SPI 模式）</h2><p>框架类型项目与普通业务系统不同，需要支持<strong>可插拔</strong>和<strong>扩展性</strong>。典型场景：</p>
+<ul>
+<li>RAG 系统：多种向量数据库（ES、PG、Neo4j、Milvus）</li>
+<li>ORM 框架：多种数据库方言（MySQL、PostgreSQL、Oracle）</li>
+<li>消息队列：多种实现（Kafka、RabbitMQ、RocketMQ）</li>
+</ul>
+<h3 id="核心设计思想"><a href="#核心设计思想" class="headerlink" title="核心设计思想"></a>核心设计思想</h3><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs scss">┌─────────────────────────────────────────────────────────────┐<br>│                      用户应用层                              │<br>│                  (只依赖 API + 需要的实现)                    │<br>└─────────────────────────────────────────────────────────────┘<br>                              │<br>                              ▼<br>┌─────────────────────────────────────────────────────────────┐<br>│                    rag-core (核心模块)                       │<br>│              定义接口 + 默认实现 + SPI 加载机制               │<br>└─────────────────────────────────────────────────────────────┘<br>                              │<br>          ┌───────────────────┼───────────────────┐<br>          ▼                   ▼                   ▼<br>┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐<br>│  rag-store-es   │ │  rag-store-pg   │ │ rag-store-neo4j │<br>│   (ES 实现)      │ │  (PgVector)     │ │   (Neo4j 实现)   │<br>└─────────────────┘ └─────────────────┘ └─────────────────┘<br></code></pre></td></tr></table></figure>
+
+<p><strong>关键原则</strong>：</p>
+<ul>
+<li><strong>依赖倒置</strong>：核心模块定义接口，实现模块依赖核心</li>
+<li><strong>按需引入</strong>：用户只引入需要的实现模块</li>
+<li><strong>SPI 发现</strong>：运行时自动发现并加载实现</li>
+</ul>
+<hr>
+<h3 id="实战示例：RAG-系统模块结构"><a href="#实战示例：RAG-系统模块结构" class="headerlink" title="实战示例：RAG 系统模块结构"></a>实战示例：RAG 系统模块结构</h3><figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs nix">rag-framework<span class="hljs-symbol">/</span><br>├── pom.xml                        <span class="hljs-comment"># 父 POM</span><br>│<br>├── rag-core<span class="hljs-symbol">/</span>                      <span class="hljs-comment"># 核心模块</span><br>│   ├── pom.xml<br>│   └── src<span class="hljs-operator">/</span>main<span class="hljs-operator">/</span>java<span class="hljs-symbol">/</span><br>│       └── com<span class="hljs-operator">/</span>example<span class="hljs-operator">/</span>rag<span class="hljs-symbol">/</span><br>│           ├── api<span class="hljs-symbol">/</span>               <span class="hljs-comment"># 核心接口定义</span><br>│           │   ├── VectorStore.java<br>│           │   └── DocumentSplitter.java<br>│           ├── spi<span class="hljs-symbol">/</span>               <span class="hljs-comment"># SPI 加载机制</span><br>│           │   └── SpiLoader.java<br>│           └── model<span class="hljs-symbol">/</span>             <span class="hljs-comment"># 领域模型</span><br>│               └── Document.java<br>│<br>├── rag-store-elasticsearch<span class="hljs-symbol">/</span>       <span class="hljs-comment"># ES 实现</span><br>│   ├── pom.xml<br>│   └── src<span class="hljs-operator">/</span>main<span class="hljs-symbol">/</span><br>│       ├── java<span class="hljs-symbol">/.../ElasticsearchVectorStore.java</span><br>│       └── resources<span class="hljs-operator">/</span>META-INF<span class="hljs-operator">/</span>services<span class="hljs-symbol">/</span><br>│           └── com.example.rag.api.VectorStore<br>│<br>├── rag-store-pgvector<span class="hljs-symbol">/</span>            <span class="hljs-comment"># PgVector 实现</span><br>│   ├── pom.xml<br>│   └── src<span class="hljs-operator">/</span>main<span class="hljs-symbol">/</span><br>│       ├── java<span class="hljs-symbol">/.../PgVectorStore.java</span><br>│       └── resources<span class="hljs-operator">/</span>META-INF<span class="hljs-operator">/</span>services<span class="hljs-symbol">/</span><br>│           └── com.example.rag.api.VectorStore<br>│<br>├── rag-store-neo4j<span class="hljs-symbol">/</span>               <span class="hljs-comment"># Neo4j 实现</span><br>│   └── ...<br>│<br>├── rag-splitter-fixed<span class="hljs-symbol">/</span>            <span class="hljs-comment"># 固定长度切片</span><br>│   └── ...<br>│<br>├── rag-splitter-sentence<span class="hljs-symbol">/</span>         <span class="hljs-comment"># 按句子切片</span><br>│   └── ...<br>│<br>├── rag-splitter-semantic<span class="hljs-symbol">/</span>         <span class="hljs-comment"># 语义切片</span><br>│   └── ...<br>│<br>└── rag-spring-boot-starter<span class="hljs-symbol">/</span>       <span class="hljs-comment"># Spring Boot 自动配置</span><br>    └── ...<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="核心模块设计（rag-core）"><a href="#核心模块设计（rag-core）" class="headerlink" title="核心模块设计（rag-core）"></a>核心模块设计（rag-core）</h3><h4 id="1-定义-SPI-接口"><a href="#1-定义-SPI-接口" class="headerlink" title="1. 定义 SPI 接口"></a>1. 定义 SPI 接口</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// VectorStore.java - 向量存储接口</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">VectorStore</span> &#123;<br>    <br>    <span class="hljs-comment">/** SPI 扩展点标识 */</span><br>    String <span class="hljs-title function_">getType</span><span class="hljs-params">()</span>;<br>    <br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">store</span><span class="hljs-params">(List&lt;Document&gt; documents)</span>;<br>    <br>    List&lt;Document&gt; <span class="hljs-title function_">search</span><span class="hljs-params">(String query, <span class="hljs-type">int</span> topK)</span>;<br>&#125;<br><br><span class="hljs-comment">// DocumentSplitter.java - 文档切片接口</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">DocumentSplitter</span> &#123;<br>    <br>    String <span class="hljs-title function_">getType</span><span class="hljs-params">()</span>;<br>    <br>    List&lt;Document&gt; <span class="hljs-title function_">split</span><span class="hljs-params">(Document document)</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-SPI-加载器"><a href="#2-SPI-加载器" class="headerlink" title="2. SPI 加载器"></a>2. SPI 加载器</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SpiLoader</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Map&lt;Class&lt;?&gt;, Map&lt;String, Object&gt;&gt; CACHE = <br>        <span class="hljs-keyword">new</span> <span class="hljs-title class_">ConcurrentHashMap</span>&lt;&gt;();<br>    <br>    <span class="hljs-meta">@SuppressWarnings(&quot;unchecked&quot;)</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> &lt;T&gt; T <span class="hljs-title function_">load</span><span class="hljs-params">(Class&lt;T&gt; clazz, String type)</span> &#123;<br>        Map&lt;String, Object&gt; implementations = CACHE.computeIfAbsent(<br>            clazz, <br>            k -&gt; loadImplementations(clazz)<br>        );<br>        <br>        <span class="hljs-type">T</span> <span class="hljs-variable">impl</span> <span class="hljs-operator">=</span> (T) implementations.get(type);<br>        <span class="hljs-keyword">if</span> (impl == <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(<br>                <span class="hljs-string">&quot;No implementation found for type: &quot;</span> + type<br>            );<br>        &#125;<br>        <span class="hljs-keyword">return</span> impl;<br>    &#125;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> &lt;T&gt; Map&lt;String, Object&gt; <span class="hljs-title function_">loadImplementations</span><span class="hljs-params">(Class&lt;T&gt; clazz)</span> &#123;<br>        Map&lt;String, Object&gt; map = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;();<br>        ServiceLoader&lt;T&gt; loader = ServiceLoader.load(clazz);<br>        <br>        <span class="hljs-keyword">for</span> (T impl : loader) &#123;<br>            <span class="hljs-comment">// 假设接口有 getType() 方法</span><br>            <span class="hljs-type">String</span> <span class="hljs-variable">type</span> <span class="hljs-operator">=</span> getType(impl);<br>            map.put(type, impl);<br>        &#125;<br>        <span class="hljs-keyword">return</span> map;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="3-核心模块-POM"><a href="#3-核心模块-POM" class="headerlink" title="3. 核心模块 POM"></a>3. 核心模块 POM</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- rag-core/pom.xml --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">project</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">parent</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-framework<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">parent</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-core<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>RAG Core<span class="hljs-tag">&lt;/<span class="hljs-name">name</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependencies</span>&gt;</span><br>        <span class="hljs-comment">&lt;!-- 只放最基础的依赖 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.slf4j<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>slf4j-api<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependencies</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">project</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="实现模块设计"><a href="#实现模块设计" class="headerlink" title="实现模块设计"></a>实现模块设计</h3><h4 id="1-ES-实现模块"><a href="#1-ES-实现模块" class="headerlink" title="1. ES 实现模块"></a>1. ES 实现模块</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// ElasticsearchVectorStore.java</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ElasticsearchVectorStore</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">VectorStore</span> &#123;<br>    <br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getType</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;elasticsearch&quot;</span>;<br>    &#125;<br>    <br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">store</span><span class="hljs-params">(List&lt;Document&gt; documents)</span> &#123;<br>        <span class="hljs-comment">// ES 特定实现</span><br>    &#125;<br>    <br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> List&lt;Document&gt; <span class="hljs-title function_">search</span><span class="hljs-params">(String query, <span class="hljs-type">int</span> topK)</span> &#123;<br>        <span class="hljs-comment">// ES 特定实现</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="2-SPI-配置文件"><a href="#2-SPI-配置文件" class="headerlink" title="2. SPI 配置文件"></a>2. SPI 配置文件</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">src/main/resources/META-INF/services/com.example.rag.api.VectorStore</span><br>com.example.rag.store.es.ElasticsearchVectorStore<br></code></pre></td></tr></table></figure>
+
+<h4 id="3-实现模块-POM"><a href="#3-实现模块-POM" class="headerlink" title="3. 实现模块 POM"></a>3. 实现模块 POM</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- rag-store-elasticsearch/pom.xml --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">project</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">parent</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-framework<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">parent</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-store-elasticsearch<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependencies</span>&gt;</span><br>        <span class="hljs-comment">&lt;!-- 依赖核心模块 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-core<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <br>        <span class="hljs-comment">&lt;!-- ES 特定依赖 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>co.elastic.clients<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>elasticsearch-java<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>8.10.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependencies</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">project</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="用户使用方式"><a href="#用户使用方式" class="headerlink" title="用户使用方式"></a>用户使用方式</h3><h4 id="按需引入"><a href="#按需引入" class="headerlink" title="按需引入"></a>按需引入</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- 用户项目 pom.xml --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">dependencies</span>&gt;</span><br>    <span class="hljs-comment">&lt;!-- 核心（必需） --&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-core<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>    <br>    <span class="hljs-comment">&lt;!-- 只引入需要的实现 --&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-store-pgvector<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-splitter-semantic<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependencies</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="代码使用"><a href="#代码使用" class="headerlink" title="代码使用"></a>代码使用</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 通过 SPI 自动加载</span><br><span class="hljs-type">VectorStore</span> <span class="hljs-variable">store</span> <span class="hljs-operator">=</span> SpiLoader.load(VectorStore.class, <span class="hljs-string">&quot;pgvector&quot;</span>);<br><span class="hljs-type">DocumentSplitter</span> <span class="hljs-variable">splitter</span> <span class="hljs-operator">=</span> SpiLoader.load(DocumentSplitter.class, <span class="hljs-string">&quot;semantic&quot;</span>);<br><br><span class="hljs-comment">// 或通过配置文件指定</span><br><span class="hljs-meta">@Value(&quot;$&#123;rag.store.type&#125;&quot;)</span><br><span class="hljs-keyword">private</span> String storeType;<br><br><span class="hljs-type">VectorStore</span> <span class="hljs-variable">store</span> <span class="hljs-operator">=</span> SpiLoader.load(VectorStore.class, storeType);<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="依赖关系图"><a href="#依赖关系图" class="headerlink" title="依赖关系图"></a>依赖关系图</h3><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs scss">用户项目<br>    │<br>    ├── rag-core (必需)<br>    │<br>    ├── rag-store-xxx (选一个)<br>    │   └── rag-core<br>    │<br>    └── rag-splitter-xxx (选一个)<br>        └── rag-core<br></code></pre></td></tr></table></figure>
+
+<p><strong>关键点</strong>：</p>
+<ul>
+<li>用户<strong>不需要</strong>同时引入所有实现</li>
+<li>运行时通过 SPI 自动发现引入的实现</li>
+<li>新增实现只需要添加新模块，不修改核心代码</li>
+</ul>
+<hr>
+<h3 id="Spring-Boot-Starter-封装"><a href="#Spring-Boot-Starter-封装" class="headerlink" title="Spring Boot Starter 封装"></a>Spring Boot Starter 封装</h3><p>为了更好的集成体验，可以提供 Starter：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- rag-spring-boot-starter/pom.xml --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">dependencies</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-core<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-autoconfigure<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependencies</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// RagAutoConfiguration.java</span><br><span class="hljs-meta">@Configuration</span><br><span class="hljs-meta">@EnableConfigurationProperties(RagProperties.class)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RagAutoConfiguration</span> &#123;<br>    <br>    <span class="hljs-meta">@Bean</span><br>    <span class="hljs-meta">@ConditionalOnMissingBean</span><br>    <span class="hljs-keyword">public</span> VectorStore <span class="hljs-title function_">vectorStore</span><span class="hljs-params">(RagProperties props)</span> &#123;<br>        <span class="hljs-keyword">return</span> SpiLoader.load(VectorStore.class, props.getStore().getType());<br>    &#125;<br>    <br>    <span class="hljs-meta">@Bean</span><br>    <span class="hljs-meta">@ConditionalOnMissingBean</span><br>    <span class="hljs-keyword">public</span> DocumentSplitter <span class="hljs-title function_">documentSplitter</span><span class="hljs-params">(RagProperties props)</span> &#123;<br>        <span class="hljs-keyword">return</span> SpiLoader.load(DocumentSplitter.class, props.getSplitter().getType());<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># 用户配置 application.yml</span><br><span class="hljs-attr">rag:</span><br>  <span class="hljs-attr">store:</span><br>    <span class="hljs-attr">type:</span> <span class="hljs-string">pgvector</span><br>  <span class="hljs-attr">splitter:</span><br>    <span class="hljs-attr">type:</span> <span class="hljs-string">semantic</span><br>    <span class="hljs-attr">chunk-size:</span> <span class="hljs-number">500</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="框架设计对比"><a href="#框架设计对比" class="headerlink" title="框架设计对比"></a>框架设计对比</h3><table>
+<thead>
+<tr>
+<th>设计模式</th>
+<th>适用场景</th>
+<th>典型框架</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>SPI + 多实现模块</strong></td>
+<td>同一接口多种实现</td>
+<td>JDBC、SLF4J</td>
+</tr>
+<tr>
+<td><strong>策略模式</strong></td>
+<td>算法&#x2F;行为可替换</td>
+<td>切片方式、嵌入模型</td>
+</tr>
+<tr>
+<td><strong>模板方法</strong></td>
+<td>固定流程可扩展步骤</td>
+<td>Spring Template</td>
+</tr>
+<tr>
+<td><strong>工厂模式</strong></td>
+<td>对象创建解耦</td>
+<td>各种 Factory</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="扩展性设计要点"><a href="#扩展性设计要点" class="headerlink" title="扩展性设计要点"></a>扩展性设计要点</h3><ol>
+<li><strong>接口隔离</strong>：核心接口放在独立模块，无第三方依赖</li>
+<li><strong>可选依赖</strong>：使用 <code>&lt;optional&gt;true&lt;/optional&gt;</code> 避免传递依赖</li>
+<li><strong>默认实现</strong>：核心模块提供简单默认实现</li>
+<li><strong>配置驱动</strong>：通过配置切换实现，而非代码修改</li>
+<li><strong>版本兼容</strong>：接口变更需考虑向后兼容</li>
+</ol>
+<hr>
+<h2 id="完整框架结构（含应用层）"><a href="#完整框架结构（含应用层）" class="headerlink" title="完整框架结构（含应用层）"></a>完整框架结构（含应用层）</h2><p>实际项目中，除了可插拔的底层模块，还需要<strong>应用层</strong>来组合这些模块并对外提供服务。</p>
+<h3 id="完整模块结构"><a href="#完整模块结构" class="headerlink" title="完整模块结构"></a>完整模块结构</h3><figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs nix">rag-framework<span class="hljs-symbol">/</span><br>├── pom.xml                        <span class="hljs-comment"># 父 POM</span><br>│<br>│  <span class="hljs-operator">==</span><span class="hljs-operator">==</span><span class="hljs-operator">=</span> 框架层（可独立发布给第三方使用）<span class="hljs-operator">==</span><span class="hljs-operator">==</span><span class="hljs-operator">=</span><br>│<br>├── rag-core<span class="hljs-symbol">/</span>                      <span class="hljs-comment"># 核心接口 + SPI</span><br>│   └── 无外部依赖，纯接口定义<br>│<br>├── rag-stores<span class="hljs-symbol">/</span>                    <span class="hljs-comment"># 向量存储实现（聚合模块）</span><br>│   ├── pom.xml                    <span class="hljs-comment"># packaging=pom，聚合子模块</span><br>│   ├── rag-store-core<span class="hljs-symbol">/</span>            <span class="hljs-comment"># 🔑 抽象层：基类 + 公共工具</span><br>│   ├── rag-store-elasticsearch<span class="hljs-symbol">/</span>   <span class="hljs-comment"># 继承抽象层</span><br>│   ├── rag-store-pgvector<span class="hljs-symbol">/</span><br>│   └── rag-store-neo4j<span class="hljs-symbol">/</span><br>│<br>├── rag-splitters<span class="hljs-symbol">/</span>                 <span class="hljs-comment"># 切片策略实现（聚合模块）</span><br>│   ├── pom.xml<br>│   ├── rag-splitter-core<span class="hljs-symbol">/</span>         <span class="hljs-comment"># 🔑 抽象层</span><br>│   ├── rag-splitter-fixed<span class="hljs-symbol">/</span><br>│   ├── rag-splitter-sentence<span class="hljs-symbol">/</span><br>│   └── rag-splitter-semantic<span class="hljs-symbol">/</span><br>│<br>├── rag-embeddings<span class="hljs-symbol">/</span>                <span class="hljs-comment"># 嵌入模型实现（聚合模块）</span><br>│   ├── pom.xml<br>│   ├── rag-embedding-core<span class="hljs-symbol">/</span>        <span class="hljs-comment"># 🔑 抽象层</span><br>│   ├── rag-embedding-openai<span class="hljs-symbol">/</span><br>│   └── rag-embedding-local<span class="hljs-symbol">/</span><br>│<br>├── rag-spring-boot-starter<span class="hljs-symbol">/</span>       <span class="hljs-comment"># Spring Boot 自动配置</span><br>│<br>│  <span class="hljs-operator">==</span><span class="hljs-operator">==</span><span class="hljs-operator">=</span> 应用层（组合模块，对外提供服务）<span class="hljs-operator">==</span><span class="hljs-operator">==</span><span class="hljs-operator">=</span><br>│<br>├── rag-service<span class="hljs-symbol">/</span>                   <span class="hljs-comment"># 业务服务层</span><br>├── rag-api<span class="hljs-symbol">/</span>                       <span class="hljs-comment"># Controller 层（REST API）</span><br>└── rag-server<span class="hljs-symbol">/</span>                    <span class="hljs-comment"># 启动模块</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="抽象层设计（rag-store-core）"><a href="#抽象层设计（rag-store-core）" class="headerlink" title="抽象层设计（rag-store-core）"></a>抽象层设计（rag-store-core）</h3><p>抽象层的职责：</p>
+<ul>
+<li><strong>抽象基类</strong>：实现公共逻辑，子类只需实现差异部分</li>
+<li><strong>工具类</strong>：连接池管理、序列化、重试机制等</li>
+<li><strong>配置基类</strong>：公共配置项</li>
+</ul>
+<h4 id="依赖关系-1"><a href="#依赖关系-1" class="headerlink" title="依赖关系"></a>依赖关系</h4><figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs llvm">rag-<span class="hljs-keyword">store</span>-elasticsearch<br>        │<br>        ▼<br>rag-<span class="hljs-keyword">store</span>-core (抽象层)<br>        │<br>        ▼<br>   rag-core (接口)<br></code></pre></td></tr></table></figure>
+
+<h4 id="抽象层代码示例"><a href="#抽象层代码示例" class="headerlink" title="抽象层代码示例"></a>抽象层代码示例</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// rag-store-core 模块</span><br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * VectorStore 抽象基类</span><br><span class="hljs-comment"> * 实现公共逻辑，子类只需关注特定数据库操作</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AbstractVectorStore</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">VectorStore</span> &#123;<br>    <br>    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">final</span> VectorStoreConfig config;<br>    <br>    <span class="hljs-keyword">protected</span> <span class="hljs-title function_">AbstractVectorStore</span><span class="hljs-params">(VectorStoreConfig config)</span> &#123;<br>        <span class="hljs-built_in">this</span>.config = config;<br>    &#125;<br>    <br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">store</span><span class="hljs-params">(List&lt;Document&gt; documents)</span> &#123;<br>        <span class="hljs-comment">// 1. 公共逻辑：参数校验</span><br>        validateDocuments(documents);<br>        <br>        <span class="hljs-comment">// 2. 公共逻辑：批量处理</span><br>        List&lt;List&lt;Document&gt;&gt; batches = partition(documents, config.getBatchSize());<br>        <br>        <span class="hljs-keyword">for</span> (List&lt;Document&gt; batch : batches) &#123;<br>            <span class="hljs-comment">// 3. 调用子类实现的具体存储逻辑</span><br>            doStore(batch);<br>        &#125;<br>    &#125;<br>    <br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> List&lt;Document&gt; <span class="hljs-title function_">search</span><span class="hljs-params">(String query, <span class="hljs-type">int</span> topK)</span> &#123;<br>        <span class="hljs-comment">// 公共逻辑：参数校验</span><br>        <span class="hljs-keyword">if</span> (topK &lt;= <span class="hljs-number">0</span> || topK &gt; config.getMaxTopK()) &#123;<br>            topK = config.getDefaultTopK();<br>        &#125;<br>        <br>        <span class="hljs-comment">// 调用子类实现</span><br>        <span class="hljs-keyword">return</span> doSearch(query, topK);<br>    &#125;<br>    <br>    <span class="hljs-comment">// ===== 子类必须实现的抽象方法 =====</span><br>    <br>    <span class="hljs-comment">/** 具体的存储实现 */</span><br>    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doStore</span><span class="hljs-params">(List&lt;Document&gt; documents)</span>;<br>    <br>    <span class="hljs-comment">/** 具体的搜索实现 */</span><br>    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">abstract</span> List&lt;Document&gt; <span class="hljs-title function_">doSearch</span><span class="hljs-params">(String query, <span class="hljs-type">int</span> topK)</span>;<br>    <br>    <span class="hljs-comment">// ===== 公共工具方法 =====</span><br>    <br>    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">validateDocuments</span><span class="hljs-params">(List&lt;Document&gt; docs)</span> &#123;<br>        <span class="hljs-keyword">if</span> (docs == <span class="hljs-literal">null</span> || docs.isEmpty()) &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(<span class="hljs-string">&quot;Documents cannot be empty&quot;</span>);<br>        &#125;<br>    &#125;<br>    <br>    <span class="hljs-keyword">protected</span> &lt;T&gt; List&lt;List&lt;T&gt;&gt; <span class="hljs-title function_">partition</span><span class="hljs-params">(List&lt;T&gt; list, <span class="hljs-type">int</span> size)</span> &#123;<br>        <span class="hljs-comment">// 分批工具方法</span><br>        List&lt;List&lt;T&gt;&gt; result = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; list.size(); i += size) &#123;<br>            result.add(list.subList(i, Math.min(i + size, list.size())));<br>        &#125;<br>        <span class="hljs-keyword">return</span> result;<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 公共配置基类</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">@Data</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">VectorStoreConfig</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-variable">batchSize</span> <span class="hljs-operator">=</span> <span class="hljs-number">100</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-variable">defaultTopK</span> <span class="hljs-operator">=</span> <span class="hljs-number">5</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-variable">maxTopK</span> <span class="hljs-operator">=</span> <span class="hljs-number">100</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-variable">connectTimeout</span> <span class="hljs-operator">=</span> <span class="hljs-number">5000</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-variable">readTimeout</span> <span class="hljs-operator">=</span> <span class="hljs-number">30000</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="具体实现（继承抽象层）"><a href="#具体实现（继承抽象层）" class="headerlink" title="具体实现（继承抽象层）"></a>具体实现（继承抽象层）</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// rag-store-pgvector 模块</span><br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">PgVectorStore</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractVectorStore</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> JdbcTemplate jdbcTemplate;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">PgVectorStore</span><span class="hljs-params">(PgVectorConfig config, JdbcTemplate jdbcTemplate)</span> &#123;<br>        <span class="hljs-built_in">super</span>(config);  <span class="hljs-comment">// 调用父类构造器</span><br>        <span class="hljs-built_in">this</span>.jdbcTemplate = jdbcTemplate;<br>    &#125;<br>    <br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getType</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;pgvector&quot;</span>;<br>    &#125;<br>    <br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doStore</span><span class="hljs-params">(List&lt;Document&gt; documents)</span> &#123;<br>        <span class="hljs-comment">// 只需实现 PgVector 特定的存储逻辑</span><br>        <span class="hljs-type">String</span> <span class="hljs-variable">sql</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;INSERT INTO documents (content, embedding) VALUES (?, ?::vector)&quot;</span>;<br>        jdbcTemplate.batchUpdate(sql, documents, documents.size(), <br>            (ps, doc) -&gt; &#123;<br>                ps.setString(<span class="hljs-number">1</span>, doc.getContent());<br>                ps.setArray(<span class="hljs-number">2</span>, toSqlArray(doc.getEmbedding()));<br>            &#125;);<br>    &#125;<br>    <br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">protected</span> List&lt;Document&gt; <span class="hljs-title function_">doSearch</span><span class="hljs-params">(String query, <span class="hljs-type">int</span> topK)</span> &#123;<br>        <span class="hljs-comment">// 只需实现 PgVector 特定的搜索逻辑</span><br>        <span class="hljs-type">String</span> <span class="hljs-variable">sql</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">            SELECT content, 1 - (embedding &lt;=&gt; ?::vector) as score</span><br><span class="hljs-string">            FROM documents</span><br><span class="hljs-string">            ORDER BY embedding &lt;=&gt; ?::vector</span><br><span class="hljs-string">            LIMIT ?</span><br><span class="hljs-string">            &quot;&quot;&quot;</span>;<br>        <span class="hljs-keyword">return</span> jdbcTemplate.query(sql, documentRowMapper, queryVector, queryVector, topK);<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// 继承公共配置，添加特定配置</span><br><span class="hljs-meta">@Data</span><br><span class="hljs-meta">@EqualsAndHashCode(callSuper = true)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">PgVectorConfig</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">VectorStoreConfig</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">String</span> <span class="hljs-variable">tableName</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;documents&quot;</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-variable">dimension</span> <span class="hljs-operator">=</span> <span class="hljs-number">1536</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">String</span> <span class="hljs-variable">indexType</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;ivfflat&quot;</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="聚合模块-POM-示例"><a href="#聚合模块-POM-示例" class="headerlink" title="聚合模块 POM 示例"></a>聚合模块 POM 示例</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- rag-stores/pom.xml --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">project</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">parent</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-framework<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">parent</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-stores<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">packaging</span>&gt;</span>pom<span class="hljs-tag">&lt;/<span class="hljs-name">packaging</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>RAG Vector Stores<span class="hljs-tag">&lt;/<span class="hljs-name">name</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">modules</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>rag-store-core<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span>        <span class="hljs-comment">&lt;!-- 抽象层优先构建 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>rag-store-elasticsearch<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>rag-store-pgvector<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>rag-store-neo4j<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">modules</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">project</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- rag-stores/rag-store-core/pom.xml --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">project</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">parent</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-stores<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">parent</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-store-core<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependencies</span>&gt;</span><br>        <span class="hljs-comment">&lt;!-- 只依赖核心接口 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-core<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependencies</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">project</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- rag-stores/rag-store-pgvector/pom.xml --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">project</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">parent</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-stores<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">parent</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-store-pgvector<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependencies</span>&gt;</span><br>        <span class="hljs-comment">&lt;!-- 依赖抽象层（会传递 rag-core） --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-store-core<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <br>        <span class="hljs-comment">&lt;!-- PgVector 特定依赖 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.postgresql<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>postgresql<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.pgvector<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>pgvector<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependencies</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">project</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="父-POM-聚合配置"><a href="#父-POM-聚合配置" class="headerlink" title="父 POM 聚合配置"></a>父 POM 聚合配置</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- 根 pom.xml --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">modules</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>rag-core<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>rag-stores<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span>       <span class="hljs-comment">&lt;!-- 聚合目录 --&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>rag-splitters<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span>    <span class="hljs-comment">&lt;!-- 聚合目录 --&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>rag-embeddings<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span>   <span class="hljs-comment">&lt;!-- 聚合目录 --&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>rag-spring-boot-starter<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>rag-service<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>rag-api<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>rag-server<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">modules</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="模块依赖全景图"><a href="#模块依赖全景图" class="headerlink" title="模块依赖全景图"></a>模块依赖全景图</h3><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs scss">         ┌─────────────────────────────────┐<br>         │         rag-server              │<br>         │   (启动类 + 配置 + 打包)         │<br>         └─────────────────────────────────┘<br>                         │<br>         ┌───────────────┼───────────────┐<br>         ▼               ▼               ▼<br>┌──────────────┐  ┌──────────────┐  ┌──────────────┐<br>│   rag-api    │  │rag-store-pg  │  │rag-splitter- │<br>│ (Controller) │  │  (选择的实现) │  │  semantic    │<br>└──────────────┘  └──────────────┘  └──────────────┘<br>         │               │               │<br>         ▼               ▼               ▼<br>┌──────────────┐        │               │<br>│ rag-service  │        │               │<br>│  (业务逻辑)   │◄───────┴───────────────┘<br>└──────────────┘<br>         │<br>         ▼<br>┌──────────────┐<br>│   rag-core   │<br>│  (核心接口)   │<br>└──────────────┘<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Service-层设计（rag-service）"><a href="#Service-层设计（rag-service）" class="headerlink" title="Service 层设计（rag-service）"></a>Service 层设计（rag-service）</h3><p>Service 层负责<strong>组合</strong>底层组件，实现具体业务逻辑。</p>
+<h4 id="模块-POM"><a href="#模块-POM" class="headerlink" title="模块 POM"></a>模块 POM</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- rag-service/pom.xml --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">project</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">parent</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-framework<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">parent</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-service<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependencies</span>&gt;</span><br>        <span class="hljs-comment">&lt;!-- 依赖核心模块 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-core<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <br>        <span class="hljs-comment">&lt;!-- Spring 依赖 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-context<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependencies</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">project</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="Service-实现"><a href="#Service-实现" class="headerlink" title="Service 实现"></a>Service 实现</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// RagService.java - 组合底层组件</span><br><span class="hljs-meta">@Service</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RagService</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> VectorStore vectorStore;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> DocumentSplitter splitter;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> EmbeddingModel embeddingModel;<br>    <br>    <span class="hljs-comment">// 通过构造器注入（具体实现由 Starter 自动配置）</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">RagService</span><span class="hljs-params">(VectorStore vectorStore, </span><br><span class="hljs-params">                      DocumentSplitter splitter,</span><br><span class="hljs-params">                      EmbeddingModel embeddingModel)</span> &#123;<br>        <span class="hljs-built_in">this</span>.vectorStore = vectorStore;<br>        <span class="hljs-built_in">this</span>.splitter = splitter;<br>        <span class="hljs-built_in">this</span>.embeddingModel = embeddingModel;<br>    &#125;<br>    <br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 文档入库流程</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">ingest</span><span class="hljs-params">(Document document)</span> &#123;<br>        <span class="hljs-comment">// 1. 切片</span><br>        List&lt;Document&gt; chunks = splitter.split(document);<br>        <br>        <span class="hljs-comment">// 2. 生成向量</span><br>        <span class="hljs-keyword">for</span> (Document chunk : chunks) &#123;<br>            <span class="hljs-type">float</span>[] embedding = embeddingModel.embed(chunk.getContent());<br>            chunk.setEmbedding(embedding);<br>        &#125;<br>        <br>        <span class="hljs-comment">// 3. 存储</span><br>        vectorStore.store(chunks);<br>    &#125;<br>    <br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 检索流程</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> List&lt;Document&gt; <span class="hljs-title function_">retrieve</span><span class="hljs-params">(String query, <span class="hljs-type">int</span> topK)</span> &#123;<br>        <span class="hljs-keyword">return</span> vectorStore.search(query, topK);<br>    &#125;<br>    <br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * RAG 完整流程</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">chat</span><span class="hljs-params">(String question)</span> &#123;<br>        <span class="hljs-comment">// 1. 检索相关文档</span><br>        List&lt;Document&gt; contexts = retrieve(question, <span class="hljs-number">5</span>);<br>        <br>        <span class="hljs-comment">// 2. 构建 Prompt</span><br>        <span class="hljs-type">String</span> <span class="hljs-variable">prompt</span> <span class="hljs-operator">=</span> buildPrompt(question, contexts);<br>        <br>        <span class="hljs-comment">// 3. 调用 LLM（这里可以再抽象一个 LLM 接口）</span><br>        <span class="hljs-keyword">return</span> llmClient.generate(prompt);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="Controller-层设计（rag-api）"><a href="#Controller-层设计（rag-api）" class="headerlink" title="Controller 层设计（rag-api）"></a>Controller 层设计（rag-api）</h3><p>Controller 层负责<strong>对外暴露 HTTP 接口</strong>。</p>
+<h4 id="模块-POM-1"><a href="#模块-POM-1" class="headerlink" title="模块 POM"></a>模块 POM</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- rag-api/pom.xml --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">project</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">parent</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-framework<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">parent</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-api<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependencies</span>&gt;</span><br>        <span class="hljs-comment">&lt;!-- 依赖 service 层 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-service<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <br>        <span class="hljs-comment">&lt;!-- Web 依赖 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependencies</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">project</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="Controller-实现"><a href="#Controller-实现" class="headerlink" title="Controller 实现"></a>Controller 实现</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// RagController.java</span><br><span class="hljs-meta">@RestController</span><br><span class="hljs-meta">@RequestMapping(&quot;/api/rag&quot;)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RagController</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> RagService ragService;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">RagController</span><span class="hljs-params">(RagService ragService)</span> &#123;<br>        <span class="hljs-built_in">this</span>.ragService = ragService;<br>    &#125;<br>    <br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 文档入库</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@PostMapping(&quot;/ingest&quot;)</span><br>    <span class="hljs-keyword">public</span> ResponseEntity&lt;Void&gt; <span class="hljs-title function_">ingest</span><span class="hljs-params">(<span class="hljs-meta">@RequestBody</span> IngestRequest request)</span> &#123;<br>        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Document</span>(request.getContent(), request.getMetadata());<br>        ragService.ingest(doc);<br>        <span class="hljs-keyword">return</span> ResponseEntity.ok().build();<br>    &#125;<br>    <br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 检索</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@GetMapping(&quot;/retrieve&quot;)</span><br>    <span class="hljs-keyword">public</span> ResponseEntity&lt;List&lt;DocumentVO&gt;&gt; <span class="hljs-title function_">retrieve</span><span class="hljs-params">(</span><br><span class="hljs-params">            <span class="hljs-meta">@RequestParam</span> String query,</span><br><span class="hljs-params">            <span class="hljs-meta">@RequestParam(defaultValue = &quot;5&quot;)</span> <span class="hljs-type">int</span> topK)</span> &#123;<br>        List&lt;Document&gt; docs = ragService.retrieve(query, topK);<br>        <span class="hljs-keyword">return</span> ResponseEntity.ok(DocumentVO.from(docs));<br>    &#125;<br>    <br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 问答</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-meta">@PostMapping(&quot;/chat&quot;)</span><br>    <span class="hljs-keyword">public</span> ResponseEntity&lt;ChatResponse&gt; <span class="hljs-title function_">chat</span><span class="hljs-params">(<span class="hljs-meta">@RequestBody</span> ChatRequest request)</span> &#123;<br>        <span class="hljs-type">String</span> <span class="hljs-variable">answer</span> <span class="hljs-operator">=</span> ragService.chat(request.getQuestion());<br>        <span class="hljs-keyword">return</span> ResponseEntity.ok(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ChatResponse</span>(answer));<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="DTO-定义"><a href="#DTO-定义" class="headerlink" title="DTO 定义"></a>DTO 定义</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 请求/响应对象放在 api 模块</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">record</span> <span class="hljs-title class_">IngestRequest</span><span class="hljs-params">(String content, Map&lt;String, Object&gt; metadata)</span> &#123;&#125;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">record</span> <span class="hljs-title class_">ChatRequest</span><span class="hljs-params">(String question)</span> &#123;&#125;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">record</span> <span class="hljs-title class_">ChatResponse</span><span class="hljs-params">(String answer)</span> &#123;&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="启动模块设计（rag-server）"><a href="#启动模块设计（rag-server）" class="headerlink" title="启动模块设计（rag-server）"></a>启动模块设计（rag-server）</h3><p>启动模块负责<strong>选择具体实现 + 打包部署</strong>。</p>
+<h4 id="模块-POM-2"><a href="#模块-POM-2" class="headerlink" title="模块 POM"></a>模块 POM</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- rag-server/pom.xml --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">project</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">parent</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-framework<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">parent</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-server<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">packaging</span>&gt;</span>jar<span class="hljs-tag">&lt;/<span class="hljs-name">packaging</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependencies</span>&gt;</span><br>        <span class="hljs-comment">&lt;!-- API 层（包含 Controller） --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-api<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <br>        <span class="hljs-comment">&lt;!-- 自动配置 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-spring-boot-starter<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <br>        <span class="hljs-comment">&lt;!-- ===== 选择具体实现 ===== --&gt;</span><br>        <br>        <span class="hljs-comment">&lt;!-- 向量存储：选择 PgVector --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-store-pgvector<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <br>        <span class="hljs-comment">&lt;!-- 切片方式：选择语义切片 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag-splitter-semantic<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <br>        <span class="hljs-comment">&lt;!-- Spring Boot --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-starter<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependencies</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">build</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">plugins</span>&gt;</span><br>            <span class="hljs-comment">&lt;!-- 打包成可执行 JAR --&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">plugin</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;/<span class="hljs-name">plugin</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">plugins</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">build</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">project</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="启动类"><a href="#启动类" class="headerlink" title="启动类"></a>启动类</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// RagServerApplication.java</span><br><span class="hljs-meta">@SpringBootApplication</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RagServerApplication</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        SpringApplication.run(RagServerApplication.class, args);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># application.yml</span><br><span class="hljs-attr">server:</span><br>  <span class="hljs-attr">port:</span> <span class="hljs-number">8080</span><br><br><span class="hljs-attr">rag:</span><br>  <span class="hljs-attr">store:</span><br>    <span class="hljs-attr">type:</span> <span class="hljs-string">pgvector</span><br>    <span class="hljs-attr">datasource:</span><br>      <span class="hljs-attr">url:</span> <span class="hljs-string">jdbc:postgresql://localhost:5432/rag</span><br>      <span class="hljs-attr">username:</span> <span class="hljs-string">postgres</span><br>      <span class="hljs-attr">password:</span> <span class="hljs-string">secret</span><br>  <span class="hljs-attr">splitter:</span><br>    <span class="hljs-attr">type:</span> <span class="hljs-string">semantic</span><br>    <span class="hljs-attr">chunk-size:</span> <span class="hljs-number">500</span><br>    <span class="hljs-attr">overlap:</span> <span class="hljs-number">50</span><br>  <span class="hljs-attr">embedding:</span><br>    <span class="hljs-attr">type:</span> <span class="hljs-string">openai</span><br>    <span class="hljs-attr">api-key:</span> <span class="hljs-string">$&#123;OPENAI_API_KEY&#125;</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="多种部署方式"><a href="#多种部署方式" class="headerlink" title="多种部署方式"></a>多种部署方式</h3><p>通过不同的 server 模块，可以灵活组合：</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">rag-server-pg/          <span class="hljs-comment"># PgVector + 语义切片</span><br>├── pom.<span class="hljs-keyword">xml</span>             <span class="hljs-title"># 引入 pgvector</span> + semantic<br>└── application.yml<br><br>rag-server-es/          <span class="hljs-comment"># ES + 固定切片</span><br>├── pom.<span class="hljs-keyword">xml</span>             <span class="hljs-title"># 引入 elasticsearch</span> + fixed<br>└── application.yml<br><br>rag-server-all/         <span class="hljs-comment"># 全部实现（通过配置切换）</span><br>├── pom.<span class="hljs-keyword">xml</span>             <span class="hljs-title"># 引入所有实现</span><br><span class="hljs-title">└── application</span>.yml     <span class="hljs-comment"># 配置指定使用哪个</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="模块职责总结"><a href="#模块职责总结" class="headerlink" title="模块职责总结"></a>模块职责总结</h3><table>
+<thead>
+<tr>
+<th>模块</th>
+<th>职责</th>
+<th>依赖</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>rag-core</strong></td>
+<td>核心接口定义</td>
+<td>无</td>
+</tr>
+<tr>
+<td><strong>rag-store-xxx</strong></td>
+<td>向量存储实现</td>
+<td>core</td>
+</tr>
+<tr>
+<td><strong>rag-splitter-xxx</strong></td>
+<td>切片策略实现</td>
+<td>core</td>
+</tr>
+<tr>
+<td><strong>rag-spring-boot-starter</strong></td>
+<td>自动配置</td>
+<td>core</td>
+</tr>
+<tr>
+<td><strong>rag-service</strong></td>
+<td>业务逻辑，组合组件</td>
+<td>core</td>
+</tr>
+<tr>
+<td><strong>rag-api</strong></td>
+<td>REST Controller</td>
+<td>service</td>
+</tr>
+<tr>
+<td><strong>rag-server</strong></td>
+<td>启动模块，选择实现</td>
+<td>api + starter + 具体实现</td>
+</tr>
+</tbody></table>
+<h3 id="框架使用者-vs-框架开发者"><a href="#框架使用者-vs-框架开发者" class="headerlink" title="框架使用者 vs 框架开发者"></a>框架使用者 vs 框架开发者</h3><table>
+<thead>
+<tr>
+<th>角色</th>
+<th>使用模块</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>框架使用者</strong></td>
+<td>core + starter + 实现模块</td>
+<td>集成到自己项目</td>
+</tr>
+<tr>
+<td><strong>框架开发者</strong></td>
+<td>全部模块</td>
+<td>开发和维护框架</td>
+</tr>
+<tr>
+<td><strong>独立部署</strong></td>
+<td>server</td>
+<td>直接运行服务</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="简化三层结构（推荐）"><a href="#简化三层结构（推荐）" class="headerlink" title="简化三层结构（推荐）"></a>简化三层结构（推荐）</h2><p>对于中小型项目，可以采用更简洁的三层结构：</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs nix">rag4j<span class="hljs-symbol">/</span><br>├── pom.xml                       <span class="hljs-comment"># 父 POM</span><br>├── rag4j-framework<span class="hljs-symbol">/</span>              <span class="hljs-comment"># 框架层 - 核心抽象与通用能力</span><br>├── rag4j-project<span class="hljs-symbol">/</span>                <span class="hljs-comment"># 实现层 - 具体技术实现</span><br>├── rag4j-app<span class="hljs-symbol">/</span>                    <span class="hljs-comment"># 应用层 - Web服务入口</span><br>└── test<span class="hljs-symbol">/</span>                         <span class="hljs-comment"># 测试模块</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="各层详细结构"><a href="#各层详细结构" class="headerlink" title="各层详细结构"></a>各层详细结构</h3><h4 id="1-框架层（rag4j-framework）"><a href="#1-框架层（rag4j-framework）" class="headerlink" title="1. 框架层（rag4j-framework）"></a>1. 框架层（rag4j-framework）</h4><figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs nix">rag4j-framework<span class="hljs-symbol">/</span><br>├── pom.xml<br>└── src<span class="hljs-operator">/</span>main<span class="hljs-operator">/</span>java<span class="hljs-operator">/</span>com<span class="hljs-operator">/</span>example<span class="hljs-operator">/</span>rag4j<span class="hljs-operator">/</span>framework<span class="hljs-symbol">/</span><br>    │<br>    ├── core<span class="hljs-symbol">/</span>                     <span class="hljs-comment"># 核心接口定义</span><br>    │   ├── VectorStore.java<br>    │   ├── DocumentSplitter.java<br>    │   ├── EmbeddingModel.java<br>    │   └── Document.java<br>    │<br>    ├── store<span class="hljs-symbol">/</span>                    <span class="hljs-comment"># 向量存储抽象</span><br>    │   ├── AbstractVectorStore.java<br>    │   └── VectorStoreConfig.java<br>    │<br>    ├── splitter<span class="hljs-symbol">/</span>                 <span class="hljs-comment"># 切片器抽象</span><br>    │   ├── AbstractSplitter.java<br>    │   └── SplitterConfig.java<br>    │<br>    ├── embedding<span class="hljs-symbol">/</span>                <span class="hljs-comment"># 嵌入模型抽象</span><br>    │   └── AbstractEmbeddingModel.java<br>    │<br>    ├── spi<span class="hljs-symbol">/</span>                      <span class="hljs-comment"># SPI 加载机制</span><br>    │   └── SpiLoader.java<br>    │<br>    └── util<span class="hljs-symbol">/</span>                     <span class="hljs-comment"># 通用工具</span><br>        ├── RetryUtil.java<br>        └── BatchUtil.java<br></code></pre></td></tr></table></figure>
+
+<p><strong>特点</strong>：纯抽象，无第三方依赖（或最小依赖）</p>
+<h4 id="2-实现层（rag4j-project）"><a href="#2-实现层（rag4j-project）" class="headerlink" title="2. 实现层（rag4j-project）"></a>2. 实现层（rag4j-project）</h4><figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs nix">rag4j-project<span class="hljs-symbol">/</span><br>├── pom.xml                       <span class="hljs-comment"># 聚合模块</span><br>│<br>├── rag4j-store-pgvector<span class="hljs-symbol">/</span>         <span class="hljs-comment"># PgVector 实现</span><br>│   ├── pom.xml<br>│   └── src<span class="hljs-symbol">/.../PgVectorStore.java</span><br>│<br>├── rag4j-store-elasticsearch<span class="hljs-symbol">/</span>    <span class="hljs-comment"># ES 实现</span><br>│   └── ...<br>│<br>├── rag4j-store-neo4j<span class="hljs-symbol">/</span>            <span class="hljs-comment"># Neo4j 实现</span><br>│   └── ...<br>│<br>├── rag4j-splitter-fixed<span class="hljs-symbol">/</span>         <span class="hljs-comment"># 固定切片</span><br>│   └── ...<br>│<br>├── rag4j-splitter-semantic<span class="hljs-symbol">/</span>      <span class="hljs-comment"># 语义切片</span><br>│   └── ...<br>│<br>├── rag4j-embedding-openai<span class="hljs-symbol">/</span>       <span class="hljs-comment"># OpenAI 嵌入</span><br>│   └── ...<br>│<br>└── rag4j-spring-boot-starter<span class="hljs-symbol">/</span>    <span class="hljs-comment"># Spring Boot 自动配置</span><br>    └── ...<br></code></pre></td></tr></table></figure>
+
+<p><strong>特点</strong>：每个实现独立模块，按需引入</p>
+<h4 id="3-应用层（rag4j-app）"><a href="#3-应用层（rag4j-app）" class="headerlink" title="3. 应用层（rag4j-app）"></a>3. 应用层（rag4j-app）</h4><figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs nix">rag4j-app<span class="hljs-symbol">/</span><br>├── pom.xml<br>└── src<span class="hljs-operator">/</span>main<span class="hljs-symbol">/</span><br>    ├── java<span class="hljs-operator">/</span>com<span class="hljs-operator">/</span>example<span class="hljs-operator">/</span>rag4j<span class="hljs-operator">/</span>app<span class="hljs-symbol">/</span><br>    │   ├── Rag4jApplication.java     <span class="hljs-comment"># 启动类</span><br>    │   ├── config<span class="hljs-symbol">/</span>                   <span class="hljs-comment"># 配置类</span><br>    │   │   └── Rag4jConfig.java<br>    │   ├── service<span class="hljs-symbol">/</span>                  <span class="hljs-comment"># 业务服务</span><br>    │   │   └── RagService.java<br>    │   ├── controller<span class="hljs-symbol">/</span>               <span class="hljs-comment"># REST API</span><br>    │   │   └── RagController.java<br>    │   └── dto<span class="hljs-symbol">/</span>                      <span class="hljs-comment"># 请求/响应对象</span><br>    │       ├── ChatRequest.java<br>    │       └── ChatResponse.java<br>    └── resources<span class="hljs-symbol">/</span><br>        └── application.yml<br></code></pre></td></tr></table></figure>
+
+<p><strong>特点</strong>：组合框架层和实现层，对外提供服务</p>
+<hr>
+<h3 id="依赖关系-2"><a href="#依赖关系-2" class="headerlink" title="依赖关系"></a>依赖关系</h3><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs arduino">┌─────────────────────────────────────────────────────────────┐<br>│                      rag4j-app                               │<br>│            (Controller + Service + 启动配置)                  │<br>│                                                              │<br>│   依赖: framework + 选择的实现模块 + starter                   │<br>└─────────────────────────────────────────────────────────────┘<br>                              │<br>          ┌───────────────────┼───────────────────┐<br>          ▼                   ▼                   ▼<br>┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐<br>│ rag4j-store-pg  │ │rag4j-splitter-  │ │ rag4j-embedding │<br>│                 │ │   semantic      │ │    -openai      │<br>└─────────────────┘ └─────────────────┘ └─────────────────┘<br>          │                   │                   │<br>          └───────────────────┼───────────────────┘<br>                              ▼<br>              ┌───────────────────────────┐<br>              │      rag4j-framework      │<br>              │   (接口 + 抽象类 + <span class="hljs-built_in">SPI</span>)    │<br>              └───────────────────────────┘<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="POM-配置示例"><a href="#POM-配置示例" class="headerlink" title="POM 配置示例"></a>POM 配置示例</h3><h4 id="父-POM"><a href="#父-POM" class="headerlink" title="父 POM"></a>父 POM</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- rag4j/pom.xml --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">project</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag4j<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">packaging</span>&gt;</span>pom<span class="hljs-tag">&lt;/<span class="hljs-name">packaging</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">modules</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>rag4j-framework<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>rag4j-project<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>rag4j-app<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">module</span>&gt;</span>test<span class="hljs-tag">&lt;/<span class="hljs-name">module</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">modules</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">properties</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">java.version</span>&gt;</span>17<span class="hljs-tag">&lt;/<span class="hljs-name">java.version</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">spring-boot.version</span>&gt;</span>3.2.0<span class="hljs-tag">&lt;/<span class="hljs-name">spring-boot.version</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">properties</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependencyManagement</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependencies</span>&gt;</span><br>            <span class="hljs-comment">&lt;!-- 内部模块版本管理 --&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag4j-framework<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>                <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>$&#123;project.version&#125;<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>            <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-comment">&lt;!-- 其他模块... --&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependencies</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependencyManagement</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">project</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="应用层-POM"><a href="#应用层-POM" class="headerlink" title="应用层 POM"></a>应用层 POM</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- rag4j-app/pom.xml --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">project</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">parent</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag4j<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">parent</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag4j-app<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependencies</span>&gt;</span><br>        <span class="hljs-comment">&lt;!-- 框架层 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag4j-framework<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <br>        <span class="hljs-comment">&lt;!-- 选择具体实现 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag4j-store-pgvector<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag4j-splitter-semantic<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag4j-embedding-openai<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <br>        <span class="hljs-comment">&lt;!-- 自动配置 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>rag4j-spring-boot-starter<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <br>        <span class="hljs-comment">&lt;!-- Spring Boot --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependencies</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">project</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="两种结构对比"><a href="#两种结构对比" class="headerlink" title="两种结构对比"></a>两种结构对比</h3><table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>细粒度结构</th>
+<th>三层简化结构</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>模块数量</strong></td>
+<td>多（10+）</td>
+<td>少（3-4 + 实现）</td>
+</tr>
+<tr>
+<td><strong>适用规模</strong></td>
+<td>大型框架</td>
+<td>中小型项目</td>
+</tr>
+<tr>
+<td><strong>灵活性</strong></td>
+<td>高</td>
+<td>适中</td>
+</tr>
+<tr>
+<td><strong>维护成本</strong></td>
+<td>高</td>
+<td>低</td>
+</tr>
+<tr>
+<td><strong>学习曲线</strong></td>
+<td>陡</td>
+<td>平缓</td>
+</tr>
+<tr>
+<td><strong>典型案例</strong></td>
+<td>Spring Framework</td>
+<td>业务系统</td>
+</tr>
+</tbody></table>
+<p><strong>建议</strong>：</p>
+<ul>
+<li><strong>对外发布的框架</strong> → 细粒度结构，方便用户按需引入</li>
+<li><strong>内部项目&#x2F;业务系统</strong> → 三层简化结构，开发效率高</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Maven/" class="print-no-link">#Maven</a>
+      
+        <a href="/tags/%E5%A4%9A%E6%A8%A1%E5%9D%97/" class="print-no-link">#多模块</a>
+      
+        <a href="/tags/%E9%A1%B9%E7%9B%AE%E6%9E%B6%E6%9E%84/" class="print-no-link">#项目架构</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div></div>
+      <div>https://zmmmmy.github.io/2026/01/22/多模块项目设计/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZhiMy</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026-01-22</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                    <i class="iconfont icon-cc-nc"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/01/22/%E5%88%86%E6%A8%A1%E5%9D%97%E6%89%93%E5%8C%85%E5%AE%9E%E6%88%98/" title="">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/01/22/Claude-Code-Skills%E8%AF%A6%E8%A7%A3/" title="">
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener">Hexo</a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">Fluid</a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

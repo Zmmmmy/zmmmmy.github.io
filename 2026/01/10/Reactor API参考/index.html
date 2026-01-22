@@ -1,0 +1,1788 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZhiMy">
+  <meta name="keywords" content="技术博客,编程">
+  
+    <meta name="description" content="Reactor API 参考Project Reactor 提供了丰富的操作符，本文按功能分类整理。  一、创建操作符Mono 创建   API 说明 示例    Mono.just(T) 创建包含单个值的 Mono Mono.just(&quot;hello&quot;)   Mono.empty() 创建空的 Mono Mono.empty()   Mono.error(Throwable)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reactor API参考">
+<meta property="og:url" content="https://zmmmmy.github.io/2026/01/10/Reactor%20API%E5%8F%82%E8%80%83/index.html">
+<meta property="og:site_name" content="Zmmmmy&#39;s Blog">
+<meta property="og:description" content="Reactor API 参考Project Reactor 提供了丰富的操作符，本文按功能分类整理。  一、创建操作符Mono 创建   API 说明 示例    Mono.just(T) 创建包含单个值的 Mono Mono.just(&quot;hello&quot;)   Mono.empty() 创建空的 Mono Mono.empty()   Mono.error(Throwable)">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-01-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-01-22T07:15:46.072Z">
+<meta property="article:author" content="ZhiMy">
+<meta property="article:tag" content="API">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="ReactiveStreams">
+<meta property="article:tag" content="Reactor">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="操作符">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Reactor API参考 - Zmmmmy&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zmmmmy.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2,"offset_top":300},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Zmmmmy&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Reactor API参考"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        ZhiMy
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-10 00:00" pubdate>
+          2026-01-10
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          27 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Reactor API参考</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于2026年1月22日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Reactor-API-参考"><a href="#Reactor-API-参考" class="headerlink" title="Reactor API 参考"></a>Reactor API 参考</h1><p>Project Reactor 提供了丰富的操作符，本文按功能分类整理。</p>
+<hr>
+<h2 id="一、创建操作符"><a href="#一、创建操作符" class="headerlink" title="一、创建操作符"></a>一、创建操作符</h2><h3 id="Mono-创建"><a href="#Mono-创建" class="headerlink" title="Mono 创建"></a>Mono 创建</h3><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Mono.just(T)</code></td>
+<td>创建包含单个值的 Mono</td>
+<td><code>Mono.just(&quot;hello&quot;)</code></td>
+</tr>
+<tr>
+<td><code>Mono.empty()</code></td>
+<td>创建空的 Mono</td>
+<td><code>Mono.empty()</code></td>
+</tr>
+<tr>
+<td><code>Mono.error(Throwable)</code></td>
+<td>创建错误 Mono</td>
+<td><code>Mono.error(new RuntimeException())</code></td>
+</tr>
+<tr>
+<td><code>Mono.never()</code></td>
+<td>永不发出信号的 Mono</td>
+<td><code>Mono.never()</code></td>
+</tr>
+<tr>
+<td><code>Mono.defer(Supplier)</code></td>
+<td>延迟创建，每次订阅都执行</td>
+<td><code>Mono.defer(() -&gt; Mono.just(getValue()))</code></td>
+</tr>
+<tr>
+<td><code>Mono.fromCallable(Callable)</code></td>
+<td>从 Callable 创建</td>
+<td><code>Mono.fromCallable(() -&gt; compute())</code></td>
+</tr>
+<tr>
+<td><code>Mono.fromSupplier(Supplier)</code></td>
+<td>从 Supplier 创建</td>
+<td><code>Mono.fromSupplier(() -&gt; getValue())</code></td>
+</tr>
+<tr>
+<td><code>Mono.fromFuture(CompletableFuture)</code></td>
+<td>从 Future 创建</td>
+<td><code>Mono.fromFuture(future)</code></td>
+</tr>
+<tr>
+<td><code>Mono.fromRunnable(Runnable)</code></td>
+<td>从 Runnable 创建（无返回值）</td>
+<td><code>Mono.fromRunnable(() -&gt; doSomething())</code></td>
+</tr>
+<tr>
+<td><code>Mono.delay(Duration)</code></td>
+<td>延迟后发出 0L</td>
+<td><code>Mono.delay(Duration.ofSeconds(1))</code></td>
+</tr>
+<tr>
+<td><code>Mono.create(Consumer&lt;MonoSink&gt;)</code></td>
+<td>编程式创建</td>
+<td>见下方示例</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// Mono.create 示例</span><br>Mono.create(sink -&gt; &#123;<br>    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> doAsyncWork();<br>    <span class="hljs-keyword">if</span> (result != <span class="hljs-literal">null</span>) &#123;<br>        sink.success(result);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        sink.error(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Exception</span>(<span class="hljs-string">&quot;失败&quot;</span>));<br>    &#125;<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<h3 id="Flux-创建"><a href="#Flux-创建" class="headerlink" title="Flux 创建"></a>Flux 创建</h3><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Flux.just(T...)</code></td>
+<td>从多个值创建</td>
+<td><code>Flux.just(1, 2, 3)</code></td>
+</tr>
+<tr>
+<td><code>Flux.fromIterable(Iterable)</code></td>
+<td>从集合创建</td>
+<td><code>Flux.fromIterable(list)</code></td>
+</tr>
+<tr>
+<td><code>Flux.fromArray(T[])</code></td>
+<td>从数组创建</td>
+<td><code>Flux.fromArray(array)</code></td>
+</tr>
+<tr>
+<td><code>Flux.fromStream(Stream)</code></td>
+<td>从 Stream 创建</td>
+<td><code>Flux.fromStream(stream)</code></td>
+</tr>
+<tr>
+<td><code>Flux.range(int, int)</code></td>
+<td>创建整数序列</td>
+<td><code>Flux.range(1, 10)</code></td>
+</tr>
+<tr>
+<td><code>Flux.interval(Duration)</code></td>
+<td>定时发出递增数字</td>
+<td><code>Flux.interval(Duration.ofSeconds(1))</code></td>
+</tr>
+<tr>
+<td><code>Flux.empty()</code></td>
+<td>创建空 Flux</td>
+<td><code>Flux.empty()</code></td>
+</tr>
+<tr>
+<td><code>Flux.error(Throwable)</code></td>
+<td>创建错误 Flux</td>
+<td><code>Flux.error(new Exception())</code></td>
+</tr>
+<tr>
+<td><code>Flux.never()</code></td>
+<td>永不发出信号</td>
+<td><code>Flux.never()</code></td>
+</tr>
+<tr>
+<td><code>Flux.defer(Supplier)</code></td>
+<td>延迟创建</td>
+<td><code>Flux.defer(() -&gt; Flux.just(getData()))</code></td>
+</tr>
+<tr>
+<td><code>Flux.generate(Consumer)</code></td>
+<td>同步生成（一次一个）</td>
+<td>见下方示例</td>
+</tr>
+<tr>
+<td><code>Flux.create(Consumer)</code></td>
+<td>异步生成（可多个）</td>
+<td>见下方示例</td>
+</tr>
+<tr>
+<td><code>Flux.push(Consumer)</code></td>
+<td>单线程异步生成</td>
+<td>类似 create</td>
+</tr>
+<tr>
+<td><code>Flux.using(Callable, Function, Consumer)</code></td>
+<td>资源管理</td>
+<td>见下方示例</td>
+</tr>
+<tr>
+<td><code>Flux.concat(Publisher...)</code></td>
+<td>顺序连接多个流</td>
+<td><code>Flux.concat(flux1, flux2)</code></td>
+</tr>
+<tr>
+<td><code>Flux.merge(Publisher...)</code></td>
+<td>并行合并多个流</td>
+<td><code>Flux.merge(flux1, flux2)</code></td>
+</tr>
+<tr>
+<td><code>Flux.zip(Publisher...)</code></td>
+<td>组合多个流</td>
+<td><code>Flux.zip(flux1, flux2)</code></td>
+</tr>
+<tr>
+<td><code>Flux.combineLatest(Publisher...)</code></td>
+<td>组合最新值</td>
+<td>见下方示例</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// Flux.generate 示例 - 同步生成</span><br>Flux.generate(<br>    () -&gt; <span class="hljs-number">0</span>,  <span class="hljs-comment">// 初始状态</span><br>    (state, sink) -&gt; &#123;<br>        sink.next(<span class="hljs-string">&quot;值: &quot;</span> + state);<br>        <span class="hljs-keyword">if</span> (state == <span class="hljs-number">10</span>) sink.complete();<br>        <span class="hljs-keyword">return</span> state + <span class="hljs-number">1</span>;<br>    &#125;<br>);<br><br><span class="hljs-comment">// Flux.create 示例 - 异步生成</span><br>Flux.create(sink -&gt; &#123;<br>    eventSource.onData(data -&gt; sink.next(data));<br>    eventSource.onError(e -&gt; sink.error(e));<br>    eventSource.onComplete(() -&gt; sink.complete());<br>&#125;);<br><br><span class="hljs-comment">// Flux.using 示例 - 资源管理</span><br>Flux.using(<br>    () -&gt; <span class="hljs-keyword">new</span> <span class="hljs-title class_">FileInputStream</span>(<span class="hljs-string">&quot;file.txt&quot;</span>),  <span class="hljs-comment">// 创建资源</span><br>    inputStream -&gt; Flux.just(readData(inputStream)),  <span class="hljs-comment">// 使用资源</span><br>    inputStream -&gt; inputStream.close()  <span class="hljs-comment">// 关闭资源</span><br>);<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="二、转换操作符"><a href="#二、转换操作符" class="headerlink" title="二、转换操作符"></a>二、转换操作符</h2><h3 id="基本转换"><a href="#基本转换" class="headerlink" title="基本转换"></a>基本转换</h3><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>map(Function)</code></td>
+<td>同步转换每个元素</td>
+<td><code>flux.map(i -&gt; i * 2)</code></td>
+</tr>
+<tr>
+<td><code>flatMap(Function)</code></td>
+<td>异步转换，结果合并（无序）</td>
+<td><code>flux.flatMap(id -&gt; fetchUser(id))</code></td>
+</tr>
+<tr>
+<td><code>flatMapSequential(Function)</code></td>
+<td>异步转换，保持顺序</td>
+<td><code>flux.flatMapSequential(id -&gt; fetchUser(id))</code></td>
+</tr>
+<tr>
+<td><code>concatMap(Function)</code></td>
+<td>异步转换，顺序执行</td>
+<td><code>flux.concatMap(id -&gt; fetchUser(id))</code></td>
+</tr>
+<tr>
+<td><code>switchMap(Function)</code></td>
+<td>切换到新流，取消旧流</td>
+<td><code>flux.switchMap(id -&gt; fetchUser(id))</code></td>
+</tr>
+<tr>
+<td><code>cast(Class)</code></td>
+<td>类型转换</td>
+<td><code>flux.cast(String.class)</code></td>
+</tr>
+<tr>
+<td><code>ofType(Class)</code></td>
+<td>过滤并转换类型</td>
+<td><code>flux.ofType(String.class)</code></td>
+</tr>
+<tr>
+<td><code>index()</code></td>
+<td>添加索引</td>
+<td><code>flux.index()</code> → <code>Tuple2&lt;Long, T&gt;</code></td>
+</tr>
+<tr>
+<td><code>timestamp()</code></td>
+<td>添加时间戳</td>
+<td><code>flux.timestamp()</code> → <code>Tuple2&lt;Long, T&gt;</code></td>
+</tr>
+<tr>
+<td><code>elapsed()</code></td>
+<td>添加时间间隔</td>
+<td><code>flux.elapsed()</code></td>
+</tr>
+</tbody></table>
+<h3 id="flatMap-变体对比"><a href="#flatMap-变体对比" class="headerlink" title="flatMap 变体对比"></a>flatMap 变体对比</h3><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs avrasm"><span class="hljs-symbol">flatMap:</span>           并行执行，结果无序<br><span class="hljs-symbol">flatMapSequential:</span> 并行执行，结果有序<br><span class="hljs-symbol">concatMap:</span>         顺序执行，结果有序<br><span class="hljs-symbol">switchMap:</span>         切换新流，取消旧流<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// flatMap vs concatMap</span><br>Flux.range(<span class="hljs-number">1</span>, <span class="hljs-number">3</span>)<br>    .flatMap(i -&gt; Mono.just(i).delayElement(Duration.ofMillis(<span class="hljs-number">100</span> - i * <span class="hljs-number">30</span>)))<br>    .subscribe(System.out::println);  <span class="hljs-comment">// 可能输出: 3, 2, 1</span><br><br>Flux.range(<span class="hljs-number">1</span>, <span class="hljs-number">3</span>)<br>    .concatMap(i -&gt; Mono.just(i).delayElement(Duration.ofMillis(<span class="hljs-number">100</span>)))<br>    .subscribe(System.out::println);  <span class="hljs-comment">// 输出: 1, 2, 3</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="三、过滤操作符"><a href="#三、过滤操作符" class="headerlink" title="三、过滤操作符"></a>三、过滤操作符</h2><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>filter(Predicate)</code></td>
+<td>过滤元素</td>
+<td><code>flux.filter(i -&gt; i &gt; 5)</code></td>
+</tr>
+<tr>
+<td><code>filterWhen(Function)</code></td>
+<td>异步过滤</td>
+<td><code>flux.filterWhen(i -&gt; checkAsync(i))</code></td>
+</tr>
+<tr>
+<td><code>distinct()</code></td>
+<td>去重</td>
+<td><code>flux.distinct()</code></td>
+</tr>
+<tr>
+<td><code>distinctUntilChanged()</code></td>
+<td>连续去重</td>
+<td><code>flux.distinctUntilChanged()</code></td>
+</tr>
+<tr>
+<td><code>take(long)</code></td>
+<td>取前 n 个</td>
+<td><code>flux.take(5)</code></td>
+</tr>
+<tr>
+<td><code>takeLast(int)</code></td>
+<td>取最后 n 个</td>
+<td><code>flux.takeLast(3)</code></td>
+</tr>
+<tr>
+<td><code>takeUntil(Predicate)</code></td>
+<td>取直到条件满足</td>
+<td><code>flux.takeUntil(i -&gt; i &gt; 10)</code></td>
+</tr>
+<tr>
+<td><code>takeWhile(Predicate)</code></td>
+<td>取当条件满足时</td>
+<td><code>flux.takeWhile(i -&gt; i &lt; 10)</code></td>
+</tr>
+<tr>
+<td><code>skip(long)</code></td>
+<td>跳过前 n 个</td>
+<td><code>flux.skip(5)</code></td>
+</tr>
+<tr>
+<td><code>skipLast(int)</code></td>
+<td>跳过最后 n 个</td>
+<td><code>flux.skipLast(3)</code></td>
+</tr>
+<tr>
+<td><code>skipUntil(Predicate)</code></td>
+<td>跳过直到条件满足</td>
+<td><code>flux.skipUntil(i -&gt; i &gt; 5)</code></td>
+</tr>
+<tr>
+<td><code>skipWhile(Predicate)</code></td>
+<td>跳过当条件满足时</td>
+<td><code>flux.skipWhile(i -&gt; i &lt; 5)</code></td>
+</tr>
+<tr>
+<td><code>first()</code></td>
+<td>取第一个（已废弃）</td>
+<td>使用 <code>next()</code></td>
+</tr>
+<tr>
+<td><code>next()</code></td>
+<td>取第一个，返回 Mono</td>
+<td><code>flux.next()</code></td>
+</tr>
+<tr>
+<td><code>last()</code></td>
+<td>取最后一个</td>
+<td><code>flux.last()</code></td>
+</tr>
+<tr>
+<td><code>last(T)</code></td>
+<td>取最后一个，有默认值</td>
+<td><code>flux.last(defaultValue)</code></td>
+</tr>
+<tr>
+<td><code>single()</code></td>
+<td>期望只有一个元素</td>
+<td><code>flux.single()</code></td>
+</tr>
+<tr>
+<td><code>singleOrEmpty()</code></td>
+<td>期望 0 或 1 个元素</td>
+<td><code>flux.singleOrEmpty()</code></td>
+</tr>
+<tr>
+<td><code>elementAt(int)</code></td>
+<td>取指定位置元素</td>
+<td><code>flux.elementAt(5)</code></td>
+</tr>
+<tr>
+<td><code>ignoreElements()</code></td>
+<td>忽略所有元素</td>
+<td><code>flux.ignoreElements()</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="四、组合操作符"><a href="#四、组合操作符" class="headerlink" title="四、组合操作符"></a>四、组合操作符</h2><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>concat(Publisher...)</code></td>
+<td>顺序连接</td>
+<td><code>Flux.concat(flux1, flux2)</code></td>
+</tr>
+<tr>
+<td><code>concatWith(Publisher)</code></td>
+<td>与另一个流连接</td>
+<td><code>flux1.concatWith(flux2)</code></td>
+</tr>
+<tr>
+<td><code>merge(Publisher...)</code></td>
+<td>并行合并</td>
+<td><code>Flux.merge(flux1, flux2)</code></td>
+</tr>
+<tr>
+<td><code>mergeWith(Publisher)</code></td>
+<td>与另一个流合并</td>
+<td><code>flux1.mergeWith(flux2)</code></td>
+</tr>
+<tr>
+<td><code>mergeSequential(Publisher...)</code></td>
+<td>并行执行，顺序输出</td>
+<td><code>Flux.mergeSequential(flux1, flux2)</code></td>
+</tr>
+<tr>
+<td><code>zip(Publisher...)</code></td>
+<td>一对一组合</td>
+<td><code>Flux.zip(flux1, flux2)</code></td>
+</tr>
+<tr>
+<td><code>zipWith(Publisher)</code></td>
+<td>与另一个流组合</td>
+<td><code>flux1.zipWith(flux2)</code></td>
+</tr>
+<tr>
+<td><code>zipWith(Publisher, BiFunction)</code></td>
+<td>组合并转换</td>
+<td><code>flux1.zipWith(flux2, (a, b) -&gt; a + b)</code></td>
+</tr>
+<tr>
+<td><code>combineLatest(Publisher...)</code></td>
+<td>组合最新值</td>
+<td><code>Flux.combineLatest(flux1, flux2, combiner)</code></td>
+</tr>
+<tr>
+<td><code>startWith(T...)</code></td>
+<td>在开头添加元素</td>
+<td><code>flux.startWith(0)</code></td>
+</tr>
+<tr>
+<td><code>and(Publisher)</code></td>
+<td>等待两个都完成</td>
+<td><code>mono1.and(mono2)</code></td>
+</tr>
+<tr>
+<td><code>when(Publisher...)</code></td>
+<td>等待所有完成</td>
+<td><code>Mono.when(mono1, mono2)</code></td>
+</tr>
+<tr>
+<td><code>then()</code></td>
+<td>忽略元素，只关心完成</td>
+<td><code>flux.then()</code></td>
+</tr>
+<tr>
+<td><code>thenMany(Publisher)</code></td>
+<td>完成后切换到另一个流</td>
+<td><code>mono.thenMany(flux)</code></td>
+</tr>
+<tr>
+<td><code>thenReturn(T)</code></td>
+<td>完成后返回固定值</td>
+<td><code>mono.thenReturn(&quot;done&quot;)</code></td>
+</tr>
+</tbody></table>
+<h3 id="组合操作符对比"><a href="#组合操作符对比" class="headerlink" title="组合操作符对比"></a>组合操作符对比</h3><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-symbol">concat:</span>  A完成 → <span class="hljs-keyword">B开始，顺序执行</span><br><span class="hljs-keyword"></span><span class="hljs-symbol">merge:</span>   A和<span class="hljs-keyword">B同时执行，谁快谁先输出</span><br><span class="hljs-keyword"></span><span class="hljs-symbol">zip:</span>     A和<span class="hljs-keyword">B一对一配对，(a1,b1), </span>(<span class="hljs-built_in">a2</span>,<span class="hljs-keyword">b2)...</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// zip 示例</span><br>Flux&lt;String&gt; names = Flux.just(<span class="hljs-string">&quot;张三&quot;</span>, <span class="hljs-string">&quot;李四&quot;</span>);<br>Flux&lt;Integer&gt; ages = Flux.just(<span class="hljs-number">25</span>, <span class="hljs-number">30</span>);<br><br>Flux.zip(names, ages, (name, age) -&gt; name + <span class="hljs-string">&quot;: &quot;</span> + age)<br>    .subscribe(System.out::println);<br><span class="hljs-comment">// 输出: 张三: 25, 李四: 30</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="五、错误处理操作符"><a href="#五、错误处理操作符" class="headerlink" title="五、错误处理操作符"></a>五、错误处理操作符</h2><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>onErrorReturn(T)</code></td>
+<td>错误时返回默认值</td>
+<td><code>flux.onErrorReturn(defaultValue)</code></td>
+</tr>
+<tr>
+<td><code>onErrorReturn(Predicate, T)</code></td>
+<td>特定错误返回默认值</td>
+<td><code>flux.onErrorReturn(e -&gt; e instanceof IOException, default)</code></td>
+</tr>
+<tr>
+<td><code>onErrorResume(Function)</code></td>
+<td>错误时切换到备用流</td>
+<td><code>flux.onErrorResume(e -&gt; backupFlux)</code></td>
+</tr>
+<tr>
+<td><code>onErrorMap(Function)</code></td>
+<td>转换错误类型</td>
+<td><code>flux.onErrorMap(e -&gt; new CustomException(e))</code></td>
+</tr>
+<tr>
+<td><code>onErrorContinue(BiConsumer)</code></td>
+<td>错误时跳过继续</td>
+<td><code>flux.onErrorContinue((e, v) -&gt; log.error(e))</code></td>
+</tr>
+<tr>
+<td><code>onErrorStop()</code></td>
+<td>错误时停止</td>
+<td><code>flux.onErrorStop()</code></td>
+</tr>
+<tr>
+<td><code>doOnError(Consumer)</code></td>
+<td>错误时执行副作用</td>
+<td><code>flux.doOnError(e -&gt; log.error(e))</code></td>
+</tr>
+<tr>
+<td><code>retry()</code></td>
+<td>无限重试</td>
+<td><code>flux.retry()</code></td>
+</tr>
+<tr>
+<td><code>retry(long)</code></td>
+<td>重试 n 次</td>
+<td><code>flux.retry(3)</code></td>
+</tr>
+<tr>
+<td><code>retryWhen(Retry)</code></td>
+<td>自定义重试策略</td>
+<td>见下方示例</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// retryWhen 示例</span><br>flux.retryWhen(Retry.backoff(<span class="hljs-number">3</span>, Duration.ofSeconds(<span class="hljs-number">1</span>))<br>    .maxBackoff(Duration.ofSeconds(<span class="hljs-number">10</span>))<br>    .filter(e -&gt; e <span class="hljs-keyword">instanceof</span> IOException)<br>    .onRetryExhaustedThrow((spec, signal) -&gt; signal.failure())<br>);<br><br><span class="hljs-comment">// 指数退避重试</span><br>flux.retryWhen(Retry.backoff(<span class="hljs-number">5</span>, Duration.ofMillis(<span class="hljs-number">100</span>)));<br><br><span class="hljs-comment">// 固定间隔重试</span><br>flux.retryWhen(Retry.fixedDelay(<span class="hljs-number">3</span>, Duration.ofSeconds(<span class="hljs-number">1</span>)));<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="六、副作用操作符（doOn-系列）"><a href="#六、副作用操作符（doOn-系列）" class="headerlink" title="六、副作用操作符（doOn 系列）"></a>六、副作用操作符（doOn 系列）</h2><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>触发时机</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>doOnNext(Consumer)</code></td>
+<td>每个元素</td>
+<td>onNext 信号</td>
+</tr>
+<tr>
+<td><code>doOnError(Consumer)</code></td>
+<td>发生错误</td>
+<td>onError 信号</td>
+</tr>
+<tr>
+<td><code>doOnComplete(Runnable)</code></td>
+<td>完成时</td>
+<td>onComplete 信号</td>
+</tr>
+<tr>
+<td><code>doOnSubscribe(Consumer)</code></td>
+<td>订阅时</td>
+<td>onSubscribe 信号</td>
+</tr>
+<tr>
+<td><code>doOnRequest(LongConsumer)</code></td>
+<td>请求数据时</td>
+<td>request 信号</td>
+</tr>
+<tr>
+<td><code>doOnCancel(Runnable)</code></td>
+<td>取消时</td>
+<td>cancel 信号</td>
+</tr>
+<tr>
+<td><code>doOnTerminate(Runnable)</code></td>
+<td>终止时（完成或错误）</td>
+<td>onComplete 或 onError</td>
+</tr>
+<tr>
+<td><code>doAfterTerminate(Runnable)</code></td>
+<td>终止后</td>
+<td>终止信号发送后</td>
+</tr>
+<tr>
+<td><code>doOnEach(Consumer&lt;Signal&gt;)</code></td>
+<td>每个信号</td>
+<td>所有信号</td>
+</tr>
+<tr>
+<td><code>doFirst(Runnable)</code></td>
+<td>订阅前</td>
+<td>订阅链建立前</td>
+</tr>
+<tr>
+<td><code>doFinally(Consumer&lt;SignalType&gt;)</code></td>
+<td>最终执行</td>
+<td>任何终止情况</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 完整的生命周期监控</span><br>flux<br>    .doFirst(() -&gt; log.info(<span class="hljs-string">&quot;开始&quot;</span>))<br>    .doOnSubscribe(s -&gt; log.info(<span class="hljs-string">&quot;订阅&quot;</span>))<br>    .doOnRequest(n -&gt; log.info(<span class="hljs-string">&quot;请求: &quot;</span> + n))<br>    .doOnNext(v -&gt; log.info(<span class="hljs-string">&quot;收到: &quot;</span> + v))<br>    .doOnError(e -&gt; log.error(<span class="hljs-string">&quot;错误&quot;</span>, e))<br>    .doOnComplete(() -&gt; log.info(<span class="hljs-string">&quot;完成&quot;</span>))<br>    .doOnCancel(() -&gt; log.info(<span class="hljs-string">&quot;取消&quot;</span>))<br>    .doOnTerminate(() -&gt; log.info(<span class="hljs-string">&quot;终止&quot;</span>))<br>    .doAfterTerminate(() -&gt; log.info(<span class="hljs-string">&quot;终止后&quot;</span>))<br>    .doFinally(type -&gt; log.info(<span class="hljs-string">&quot;最终: &quot;</span> + type))<br>    .subscribe();<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="七、调度器操作符"><a href="#七、调度器操作符" class="headerlink" title="七、调度器操作符"></a>七、调度器操作符</h2><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>subscribeOn(Scheduler)</code></td>
+<td>指定订阅线程</td>
+<td><code>flux.subscribeOn(Schedulers.boundedElastic())</code></td>
+</tr>
+<tr>
+<td><code>publishOn(Scheduler)</code></td>
+<td>指定发布线程</td>
+<td><code>flux.publishOn(Schedulers.parallel())</code></td>
+</tr>
+</tbody></table>
+<h3 id="调度器类型"><a href="#调度器类型" class="headerlink" title="调度器类型"></a>调度器类型</h3><table>
+<thead>
+<tr>
+<th>Scheduler</th>
+<th>说明</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Schedulers.immediate()</code></td>
+<td>当前线程</td>
+<td>测试、简单场景</td>
+</tr>
+<tr>
+<td><code>Schedulers.single()</code></td>
+<td>单线程</td>
+<td>顺序执行</td>
+</tr>
+<tr>
+<td><code>Schedulers.parallel()</code></td>
+<td>并行线程池（CPU核心数）</td>
+<td>CPU 密集型</td>
+</tr>
+<tr>
+<td><code>Schedulers.boundedElastic()</code></td>
+<td>弹性线程池（有上限）</td>
+<td>I&#x2F;O 密集型、阻塞操作</td>
+</tr>
+<tr>
+<td><code>Schedulers.fromExecutor(Executor)</code></td>
+<td>自定义线程池</td>
+<td>特殊需求</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// subscribeOn vs publishOn</span><br>Flux.range(<span class="hljs-number">1</span>, <span class="hljs-number">3</span>)<br>    .doOnNext(i -&gt; log.info(<span class="hljs-string">&quot;生成: &quot;</span> + i))  <span class="hljs-comment">// boundedElastic 线程</span><br>    .subscribeOn(Schedulers.boundedElastic())<br>    .publishOn(Schedulers.parallel())<br>    .doOnNext(i -&gt; log.info(<span class="hljs-string">&quot;处理: &quot;</span> + i))  <span class="hljs-comment">// parallel 线程</span><br>    .subscribe();<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="八、缓冲与窗口操作符"><a href="#八、缓冲与窗口操作符" class="headerlink" title="八、缓冲与窗口操作符"></a>八、缓冲与窗口操作符</h2><h3 id="缓冲（收集为-List）"><a href="#缓冲（收集为-List）" class="headerlink" title="缓冲（收集为 List）"></a>缓冲（收集为 List）</h3><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>buffer()</code></td>
+<td>收集所有元素</td>
+<td><code>flux.buffer()</code> → <code>Flux&lt;List&lt;T&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>buffer(int)</code></td>
+<td>按数量缓冲</td>
+<td><code>flux.buffer(10)</code></td>
+</tr>
+<tr>
+<td><code>buffer(Duration)</code></td>
+<td>按时间缓冲</td>
+<td><code>flux.buffer(Duration.ofSeconds(1))</code></td>
+</tr>
+<tr>
+<td><code>buffer(int, int)</code></td>
+<td>滑动窗口缓冲</td>
+<td><code>flux.buffer(3, 1)</code></td>
+</tr>
+<tr>
+<td><code>bufferUntil(Predicate)</code></td>
+<td>缓冲直到条件满足</td>
+<td><code>flux.bufferUntil(i -&gt; i % 10 == 0)</code></td>
+</tr>
+<tr>
+<td><code>bufferWhile(Predicate)</code></td>
+<td>缓冲当条件满足时</td>
+<td><code>flux.bufferWhile(i -&gt; i &lt; 10)</code></td>
+</tr>
+<tr>
+<td><code>bufferTimeout(int, Duration)</code></td>
+<td>数量或时间触发</td>
+<td><code>flux.bufferTimeout(100, Duration.ofSeconds(1))</code></td>
+</tr>
+</tbody></table>
+<h3 id="窗口（收集为-Flux）"><a href="#窗口（收集为-Flux）" class="headerlink" title="窗口（收集为 Flux）"></a>窗口（收集为 Flux）</h3><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>window(int)</code></td>
+<td>按数量分窗口</td>
+<td><code>flux.window(10)</code> → <code>Flux&lt;Flux&lt;T&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>window(Duration)</code></td>
+<td>按时间分窗口</td>
+<td><code>flux.window(Duration.ofSeconds(1))</code></td>
+</tr>
+<tr>
+<td><code>windowUntil(Predicate)</code></td>
+<td>分窗口直到条件满足</td>
+<td><code>flux.windowUntil(i -&gt; i % 10 == 0)</code></td>
+</tr>
+</tbody></table>
+<h3 id="分组"><a href="#分组" class="headerlink" title="分组"></a>分组</h3><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>groupBy(Function)</code></td>
+<td>按 key 分组</td>
+<td><code>flux.groupBy(User::getType)</code></td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// groupBy 示例</span><br>flux.groupBy(user -&gt; user.getType())<br>    .flatMap(group -&gt; group<br>        .collectList()<br>        .map(list -&gt; group.key() + <span class="hljs-string">&quot;: &quot;</span> + list.size())<br>    )<br>    .subscribe(System.out::println);<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="九、聚合操作符"><a href="#九、聚合操作符" class="headerlink" title="九、聚合操作符"></a>九、聚合操作符</h2><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>返回类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>count()</code></td>
+<td>计数</td>
+<td><code>Mono&lt;Long&gt;</code></td>
+</tr>
+<tr>
+<td><code>reduce(BiFunction)</code></td>
+<td>归约</td>
+<td><code>Mono&lt;T&gt;</code></td>
+</tr>
+<tr>
+<td><code>reduce(T, BiFunction)</code></td>
+<td>带初始值归约</td>
+<td><code>Mono&lt;T&gt;</code></td>
+</tr>
+<tr>
+<td><code>reduceWith(Supplier, BiFunction)</code></td>
+<td>延迟初始值归约</td>
+<td><code>Mono&lt;T&gt;</code></td>
+</tr>
+<tr>
+<td><code>scan(BiFunction)</code></td>
+<td>累积（发出中间结果）</td>
+<td><code>Flux&lt;T&gt;</code></td>
+</tr>
+<tr>
+<td><code>scan(T, BiFunction)</code></td>
+<td>带初始值累积</td>
+<td><code>Flux&lt;T&gt;</code></td>
+</tr>
+<tr>
+<td><code>collect(Collector)</code></td>
+<td>收集到集合</td>
+<td><code>Mono&lt;R&gt;</code></td>
+</tr>
+<tr>
+<td><code>collectList()</code></td>
+<td>收集为 List</td>
+<td><code>Mono&lt;List&lt;T&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>collectMap(Function)</code></td>
+<td>收集为 Map</td>
+<td><code>Mono&lt;Map&lt;K, T&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>collectMap(Function, Function)</code></td>
+<td>收集为 Map（指定 value）</td>
+<td><code>Mono&lt;Map&lt;K, V&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>collectMultimap(Function)</code></td>
+<td>收集为 Multimap</td>
+<td><code>Mono&lt;Map&lt;K, Collection&lt;T&gt;&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>collectSortedList()</code></td>
+<td>收集为排序 List</td>
+<td><code>Mono&lt;List&lt;T&gt;&gt;</code></td>
+</tr>
+<tr>
+<td><code>all(Predicate)</code></td>
+<td>是否全部满足</td>
+<td><code>Mono&lt;Boolean&gt;</code></td>
+</tr>
+<tr>
+<td><code>any(Predicate)</code></td>
+<td>是否有满足的</td>
+<td><code>Mono&lt;Boolean&gt;</code></td>
+</tr>
+<tr>
+<td><code>hasElements()</code></td>
+<td>是否有元素</td>
+<td><code>Mono&lt;Boolean&gt;</code></td>
+</tr>
+<tr>
+<td><code>hasElement(T)</code></td>
+<td>是否包含元素</td>
+<td><code>Mono&lt;Boolean&gt;</code></td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// reduce 示例</span><br>Flux.range(<span class="hljs-number">1</span>, <span class="hljs-number">5</span>)<br>    .reduce((a, b) -&gt; a + b)<br>    .subscribe(System.out::println);  <span class="hljs-comment">// 15</span><br><br><span class="hljs-comment">// scan 示例（发出中间结果）</span><br>Flux.range(<span class="hljs-number">1</span>, <span class="hljs-number">5</span>)<br>    .scan((a, b) -&gt; a + b)<br>    .subscribe(System.out::println);  <span class="hljs-comment">// 1, 3, 6, 10, 15</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="十、时间操作符"><a href="#十、时间操作符" class="headerlink" title="十、时间操作符"></a>十、时间操作符</h2><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>delayElements(Duration)</code></td>
+<td>延迟每个元素</td>
+<td><code>flux.delayElements(Duration.ofMillis(100))</code></td>
+</tr>
+<tr>
+<td><code>delaySequence(Duration)</code></td>
+<td>延迟整个序列</td>
+<td><code>flux.delaySequence(Duration.ofSeconds(1))</code></td>
+</tr>
+<tr>
+<td><code>delaySubscription(Duration)</code></td>
+<td>延迟订阅</td>
+<td><code>flux.delaySubscription(Duration.ofSeconds(1))</code></td>
+</tr>
+<tr>
+<td><code>timeout(Duration)</code></td>
+<td>超时</td>
+<td><code>flux.timeout(Duration.ofSeconds(5))</code></td>
+</tr>
+<tr>
+<td><code>timeout(Duration, Publisher)</code></td>
+<td>超时后切换</td>
+<td><code>flux.timeout(Duration.ofSeconds(5), backupFlux)</code></td>
+</tr>
+<tr>
+<td><code>sample(Duration)</code></td>
+<td>采样</td>
+<td><code>flux.sample(Duration.ofSeconds(1))</code></td>
+</tr>
+<tr>
+<td><code>sampleFirst(Duration)</code></td>
+<td>采样第一个</td>
+<td><code>flux.sampleFirst(Duration.ofSeconds(1))</code></td>
+</tr>
+<tr>
+<td><code>throttleFirst(Duration)</code></td>
+<td>节流（取第一个）</td>
+<td><code>flux.throttleFirst(Duration.ofSeconds(1))</code></td>
+</tr>
+<tr>
+<td><code>throttleLast(Duration)</code></td>
+<td>节流（取最后一个）</td>
+<td><code>flux.throttleLast(Duration.ofSeconds(1))</code></td>
+</tr>
+<tr>
+<td><code>elapsed()</code></td>
+<td>添加时间间隔</td>
+<td><code>flux.elapsed()</code></td>
+</tr>
+<tr>
+<td><code>timed()</code></td>
+<td>添加时间信息</td>
+<td><code>flux.timed()</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="十一、背压操作符"><a href="#十一、背压操作符" class="headerlink" title="十一、背压操作符"></a>十一、背压操作符</h2><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>onBackpressureBuffer()</code></td>
+<td>无限缓冲</td>
+<td><code>flux.onBackpressureBuffer()</code></td>
+</tr>
+<tr>
+<td><code>onBackpressureBuffer(int)</code></td>
+<td>有限缓冲</td>
+<td><code>flux.onBackpressureBuffer(100)</code></td>
+</tr>
+<tr>
+<td><code>onBackpressureBuffer(int, Consumer)</code></td>
+<td>缓冲满时回调</td>
+<td><code>flux.onBackpressureBuffer(100, v -&gt; log.warn(&quot;溢出&quot;))</code></td>
+</tr>
+<tr>
+<td><code>onBackpressureDrop()</code></td>
+<td>丢弃</td>
+<td><code>flux.onBackpressureDrop()</code></td>
+</tr>
+<tr>
+<td><code>onBackpressureDrop(Consumer)</code></td>
+<td>丢弃并回调</td>
+<td><code>flux.onBackpressureDrop(v -&gt; log.warn(&quot;丢弃: &quot; + v))</code></td>
+</tr>
+<tr>
+<td><code>onBackpressureLatest()</code></td>
+<td>只保留最新</td>
+<td><code>flux.onBackpressureLatest()</code></td>
+</tr>
+<tr>
+<td><code>onBackpressureError()</code></td>
+<td>抛出异常</td>
+<td><code>flux.onBackpressureError()</code></td>
+</tr>
+<tr>
+<td><code>limitRate(int)</code></td>
+<td>限制请求速率</td>
+<td><code>flux.limitRate(100)</code></td>
+</tr>
+<tr>
+<td><code>limitRequest(long)</code></td>
+<td>限制总请求数</td>
+<td><code>flux.limitRequest(1000)</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="十二、条件操作符"><a href="#十二、条件操作符" class="headerlink" title="十二、条件操作符"></a>十二、条件操作符</h2><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>defaultIfEmpty(T)</code></td>
+<td>空时返回默认值</td>
+<td><code>flux.defaultIfEmpty(defaultValue)</code></td>
+</tr>
+<tr>
+<td><code>switchIfEmpty(Publisher)</code></td>
+<td>空时切换到另一个流</td>
+<td><code>flux.switchIfEmpty(backupFlux)</code></td>
+</tr>
+<tr>
+<td><code>repeatWhen(Function)</code></td>
+<td>条件重复</td>
+<td><code>flux.repeatWhen(companion -&gt; companion.take(3))</code></td>
+</tr>
+<tr>
+<td><code>repeat()</code></td>
+<td>无限重复</td>
+<td><code>flux.repeat()</code></td>
+</tr>
+<tr>
+<td><code>repeat(long)</code></td>
+<td>重复 n 次</td>
+<td><code>flux.repeat(3)</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="十三、调试操作符"><a href="#十三、调试操作符" class="headerlink" title="十三、调试操作符"></a>十三、调试操作符</h2><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>log()</code></td>
+<td>打印所有信号</td>
+<td><code>flux.log()</code></td>
+</tr>
+<tr>
+<td><code>log(String)</code></td>
+<td>带前缀打印</td>
+<td><code>flux.log(&quot;MyFlux&quot;)</code></td>
+</tr>
+<tr>
+<td><code>log(String, Level)</code></td>
+<td>指定日志级别</td>
+<td><code>flux.log(&quot;MyFlux&quot;, Level.FINE)</code></td>
+</tr>
+<tr>
+<td><code>checkpoint()</code></td>
+<td>添加检查点（调试用）</td>
+<td><code>flux.checkpoint(&quot;after filter&quot;)</code></td>
+</tr>
+<tr>
+<td><code>checkpoint(String)</code></td>
+<td>带描述的检查点</td>
+<td><code>flux.checkpoint(&quot;处理后&quot;)</code></td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 调试示例</span><br>Flux.range(<span class="hljs-number">1</span>, <span class="hljs-number">5</span>)<br>    .log(<span class="hljs-string">&quot;源数据&quot;</span>)<br>    .filter(i -&gt; i &gt; <span class="hljs-number">2</span>)<br>    .log(<span class="hljs-string">&quot;过滤后&quot;</span>)<br>    .map(i -&gt; i * <span class="hljs-number">2</span>)<br>    .log(<span class="hljs-string">&quot;转换后&quot;</span>)<br>    .subscribe();<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="十四、上下文操作符"><a href="#十四、上下文操作符" class="headerlink" title="十四、上下文操作符"></a>十四、上下文操作符</h2><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>contextWrite(Context)</code></td>
+<td>写入上下文</td>
+<td><code>flux.contextWrite(Context.of(&quot;key&quot;, &quot;value&quot;))</code></td>
+</tr>
+<tr>
+<td><code>contextWrite(Function)</code></td>
+<td>修改上下文</td>
+<td><code>flux.contextWrite(ctx -&gt; ctx.put(&quot;key&quot;, &quot;value&quot;))</code></td>
+</tr>
+<tr>
+<td><code>deferContextual(Function)</code></td>
+<td>读取上下文创建流</td>
+<td>见下方示例</td>
+</tr>
+<tr>
+<td><code>transformDeferredContextual(BiFunction)</code></td>
+<td>转换时读取上下文</td>
+<td>见下方示例</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// Context 示例 - 传递请求 ID</span><br>Mono.deferContextual(ctx -&gt; &#123;<br>    <span class="hljs-type">String</span> <span class="hljs-variable">requestId</span> <span class="hljs-operator">=</span> ctx.get(<span class="hljs-string">&quot;requestId&quot;</span>);<br>    <span class="hljs-keyword">return</span> callService(requestId);<br>&#125;)<br>.contextWrite(Context.of(<span class="hljs-string">&quot;requestId&quot;</span>, UUID.randomUUID().toString()))<br>.subscribe();<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="十五、Mono-特有操作符"><a href="#十五、Mono-特有操作符" class="headerlink" title="十五、Mono 特有操作符"></a>十五、Mono 特有操作符</h2><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>block()</code></td>
+<td>阻塞获取结果</td>
+<td><code>mono.block()</code></td>
+</tr>
+<tr>
+<td><code>block(Duration)</code></td>
+<td>带超时阻塞</td>
+<td><code>mono.block(Duration.ofSeconds(5))</code></td>
+</tr>
+<tr>
+<td><code>toFuture()</code></td>
+<td>转为 CompletableFuture</td>
+<td><code>mono.toFuture()</code></td>
+</tr>
+<tr>
+<td><code>cache()</code></td>
+<td>缓存结果</td>
+<td><code>mono.cache()</code></td>
+</tr>
+<tr>
+<td><code>cache(Duration)</code></td>
+<td>带过期时间缓存</td>
+<td><code>mono.cache(Duration.ofMinutes(5))</code></td>
+</tr>
+<tr>
+<td><code>flux()</code></td>
+<td>转为 Flux</td>
+<td><code>mono.flux()</code></td>
+</tr>
+<tr>
+<td><code>zipWhen(Function)</code></td>
+<td>与依赖结果组合</td>
+<td><code>mono.zipWhen(v -&gt; fetchRelated(v))</code></td>
+</tr>
+<tr>
+<td><code>delayUntil(Function)</code></td>
+<td>延迟直到另一个完成</td>
+<td><code>mono.delayUntil(v -&gt; saveAsync(v))</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="十六、Sinks（手动发送数据）"><a href="#十六、Sinks（手动发送数据）" class="headerlink" title="十六、Sinks（手动发送数据）"></a>十六、Sinks（手动发送数据）</h2><h3 id="Sinks-Many（多值）"><a href="#Sinks-Many（多值）" class="headerlink" title="Sinks.Many（多值）"></a>Sinks.Many（多值）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 单播 - 只能有一个订阅者</span><br>Sinks.Many&lt;String&gt; unicast = Sinks.many().unicast().onBackpressureBuffer();<br><br><span class="hljs-comment">// 多播 - 多个订阅者</span><br>Sinks.Many&lt;String&gt; multicast = Sinks.many().multicast().onBackpressureBuffer();<br><br><span class="hljs-comment">// 重放 - 新订阅者可收到历史数据</span><br>Sinks.Many&lt;String&gt; replay = Sinks.many().replay().all();<br>Sinks.Many&lt;String&gt; replayLimit = Sinks.many().replay().limit(<span class="hljs-number">10</span>);<br>Sinks.Many&lt;String&gt; replayLatest = Sinks.many().replay().latest();<br><br><span class="hljs-comment">// 发送数据</span><br>sink.tryEmitNext(<span class="hljs-string">&quot;data&quot;</span>);<br>sink.emitNext(<span class="hljs-string">&quot;data&quot;</span>, Sinks.EmitFailureHandler.FAIL_FAST);<br>sink.tryEmitComplete();<br>sink.tryEmitError(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Exception</span>());<br><br><span class="hljs-comment">// 作为 Flux 使用</span><br>Flux&lt;String&gt; flux = sink.asFlux();<br></code></pre></td></tr></table></figure>
+
+<h3 id="Sinks-One（单值）"><a href="#Sinks-One（单值）" class="headerlink" title="Sinks.One（单值）"></a>Sinks.One（单值）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java">Sinks.One&lt;String&gt; one = Sinks.one();<br>one.tryEmitValue(<span class="hljs-string">&quot;result&quot;</span>);<br>Mono&lt;String&gt; mono = one.asMono();<br></code></pre></td></tr></table></figure>
+
+<h3 id="Sinks-Empty（无值）"><a href="#Sinks-Empty（无值）" class="headerlink" title="Sinks.Empty（无值）"></a>Sinks.Empty（无值）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java">Sinks.Empty&lt;Void&gt; empty = Sinks.empty();<br>empty.tryEmitEmpty();<br>Mono&lt;Void&gt; mono = empty.asMono();<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
+<li>Project Reactor 实现</li>
+<li>源码解析</li>
+<li>WebFlux - Reactor核心API</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Java/Spring/" class="category-chain-item">Spring</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Java/Spring/Reactive-Streams/" class="category-chain-item">Reactive Streams</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Java/" class="print-no-link">#Java</a>
+      
+        <a href="/tags/Spring/" class="print-no-link">#Spring</a>
+      
+        <a href="/tags/ReactiveStreams/" class="print-no-link">#ReactiveStreams</a>
+      
+        <a href="/tags/Reactor/" class="print-no-link">#Reactor</a>
+      
+        <a href="/tags/API/" class="print-no-link">#API</a>
+      
+        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%AC%A6/" class="print-no-link">#操作符</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Reactor API参考</div>
+      <div>https://zmmmmy.github.io/2026/01/10/Reactor API参考/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZhiMy</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026-01-10</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>更新于</div>
+          <div>2026-01-22</div>
+        </div>
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                    <i class="iconfont icon-cc-nc"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/01/10/Reactive%20Streams%E8%A7%84%E8%8C%83/" title="Reactive Streams规范">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Reactive Streams规范</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/01/10/Reactor%E6%A0%B8%E5%BF%83API/" title="Reactor核心API">
+                        <span class="hidden-mobile">Reactor核心API</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener">Hexo</a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">Fluid</a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

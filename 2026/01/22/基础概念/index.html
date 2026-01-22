@@ -1,0 +1,909 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZhiMy">
+  <meta name="keywords" content="技术博客,编程">
+  
+    <meta name="description" content="WebRTC 基础概念什么是 WebRTC？WebRTC（Web Real-Time Communication） 是一项开源技术，允许 Web 浏览器和移动应用进行实时通信，无需中介服务器或插件。 核心定义 Web - 在浏览器中运行，基于 JavaScript API Real-Time - 低延迟通信（通常在毫秒级） Communication - 支持音频、视频和任意数据传输  为什么需要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Zmmmmy&#39;s Blog">
+<meta property="og:url" content="https://zmmmmy.github.io/2026/01/22/%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:site_name" content="Zmmmmy&#39;s Blog">
+<meta property="og:description" content="WebRTC 基础概念什么是 WebRTC？WebRTC（Web Real-Time Communication） 是一项开源技术，允许 Web 浏览器和移动应用进行实时通信，无需中介服务器或插件。 核心定义 Web - 在浏览器中运行，基于 JavaScript API Real-Time - 低延迟通信（通常在毫秒级） Communication - 支持音频、视频和任意数据传输  为什么需要">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-01-22T07:15:46.100Z">
+<meta property="article:modified_time" content="2026-01-22T07:15:46.100Z">
+<meta property="article:author" content="ZhiMy">
+<meta property="article:tag" content="WebRTC">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="实时通信">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Zmmmmy&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zmmmmy.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2,"offset_top":300},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Zmmmmy&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text=""></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        ZhiMy
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-22 15:15" pubdate>
+          2026-01-22
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          21 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header"></h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="WebRTC-基础概念"><a href="#WebRTC-基础概念" class="headerlink" title="WebRTC 基础概念"></a>WebRTC 基础概念</h1><h2 id="什么是-WebRTC？"><a href="#什么是-WebRTC？" class="headerlink" title="什么是 WebRTC？"></a>什么是 WebRTC？</h2><p><strong>WebRTC（Web Real-Time Communication）</strong> 是一项开源技术，允许 Web 浏览器和移动应用进行<strong>实时通信</strong>，无需中介服务器或插件。</p>
+<h3 id="核心定义"><a href="#核心定义" class="headerlink" title="核心定义"></a>核心定义</h3><ul>
+<li><strong>Web</strong> - 在浏览器中运行，基于 JavaScript API</li>
+<li><strong>Real-Time</strong> - 低延迟通信（通常在毫秒级）</li>
+<li><strong>Communication</strong> - 支持音频、视频和任意数据传输</li>
+</ul>
+<h2 id="为什么需要-WebRTC？"><a href="#为什么需要-WebRTC？" class="headerlink" title="为什么需要 WebRTC？"></a>为什么需要 WebRTC？</h2><h3 id="传统方案的问题"><a href="#传统方案的问题" class="headerlink" title="传统方案的问题"></a>传统方案的问题</h3><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>影响</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>浏览器无法直接访问摄像头&#x2F;麦克风</td>
+<td>需要第三方插件（Flash、ActiveX等）</td>
+</tr>
+<tr>
+<td>跨域通信困难</td>
+<td>必须通过服务器中转</td>
+</tr>
+<tr>
+<td>服务器中转</td>
+<td>增加延迟、增加成本、难以扩展</td>
+</tr>
+<tr>
+<td>信息安全</td>
+<td>所有数据都经过服务器</td>
+</tr>
+</tbody></table>
+<h3 id="WebRTC-的优势"><a href="#WebRTC-的优势" class="headerlink" title="WebRTC 的优势"></a>WebRTC 的优势</h3><p>✅ <strong>原生浏览器 API</strong> - 无需插件，所有现代浏览器支持<br>✅ <strong>点对点直连</strong> - 降低延迟和服务器成本<br>✅ <strong>内置 NAT 穿透</strong> - 自动处理防火墙和内网问题<br>✅ <strong>端到端加密</strong> - 数据安全性高<br>✅ <strong>跨平台</strong> - Chrome、Firefox、Safari、Edge 等</p>
+<h2 id="WebRTC-架构中的服务器角色"><a href="#WebRTC-架构中的服务器角色" class="headerlink" title="WebRTC 架构中的服务器角色"></a>WebRTC 架构中的服务器角色</h2><blockquote>
+<p><strong>⚠️ 警告: 重要澄清</strong><br>WebRTC <strong>不需要服务器转发媒体数据</strong>，但<strong>仍然需要服务器处理信令和控制</strong></p>
+</blockquote>
+<h3 id="架构对比"><a href="#架构对比" class="headerlink" title="架构对比"></a>架构对比</h3><p><strong>传统项目（如 Java 后端视频服务）</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs css">浏览器<span class="hljs-selector-tag">A</span> → 服务器 ← 浏览器<span class="hljs-selector-tag">B</span><br>          ↓<br>    所有数据都转发<br>  (音频、视频、控制都经过服务器)<br>   成本高，延迟大，扩展性差<br></code></pre></td></tr></table></figure>
+
+<p><strong>WebRTC 项目</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs css">浏览器<span class="hljs-selector-tag">A</span> ←→ 信令服务器 ←→ 浏览器<span class="hljs-selector-tag">B</span><br>  ↓                          ↓<br>  └──────────直连通道──────────┘<br>       (仅媒体数据点对点)<br>    成本低，延迟小，扩展性好<br></code></pre></td></tr></table></figure>
+
+<h3 id="服务器需要处理的内容"><a href="#服务器需要处理的内容" class="headerlink" title="服务器需要处理的内容"></a>服务器需要处理的内容</h3><table>
+<thead>
+<tr>
+<th>内容</th>
+<th>是否需要服务器</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>音视频数据</strong></td>
+<td>❌ 不需要</td>
+<td>直接点对点传输</td>
+</tr>
+<tr>
+<td><strong>Offer&#x2F;Answer</strong></td>
+<td>✅ 需要</td>
+<td>连接协商信息需要中介转发</td>
+</tr>
+<tr>
+<td><strong>ICE 候选</strong></td>
+<td>✅ 需要</td>
+<td>网络地址信息需要交换</td>
+</tr>
+<tr>
+<td><strong>用户认证</strong></td>
+<td>✅ 需要</td>
+<td>验证用户身份</td>
+</tr>
+<tr>
+<td><strong>在线状态</strong></td>
+<td>✅ 需要</td>
+<td>维护用户列表、房间状态</td>
+</tr>
+<tr>
+<td><strong>权限控制</strong></td>
+<td>✅ 需要</td>
+<td>谁可以和谁通话</td>
+</tr>
+<tr>
+<td><strong>日志记录</strong></td>
+<td>✅ 需要</td>
+<td>通话记录、问题诊断</td>
+</tr>
+<tr>
+<td><strong>录制&#x2F;转码</strong></td>
+<td>⚠️ 可选</td>
+<td>需要时才接收并处理媒体</td>
+</tr>
+</tbody></table>
+<h3 id="完整的-WebRTC-项目架构"><a href="#完整的-WebRTC-项目架构" class="headerlink" title="完整的 WebRTC 项目架构"></a>完整的 WebRTC 项目架构</h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs awk">┌──────────────────────────────────┐<br>│ 前端应用（浏览器）               │<br>│ - HTML<span class="hljs-regexp">/CSS/</span>JavaScript            │<br>│ - WebRTC API 调用                │<br>│ - 用户界面                       │<br>└──────────────────────────────────┘<br>         ↕ WebSocket/HTTP<br>┌──────────────────────────────────────────────────────┐<br>│ 后端服务器（Java<span class="hljs-regexp">/Node.js/</span>Go/Python等）               │<br>│                                                     │<br>│ 核心模块：                                          │<br>│ ┌────────────────────────────────────────┐         │<br>│ │ <span class="hljs-number">1</span>. 用户管理                            │         │<br>│ │    - 用户注册、登录、认证              │         │<br>│ │    - 在线状态维护                      │         │<br>│ │    - 好友列表管理                      │         │<br>│ └────────────────────────────────────────┘         │<br>│ ┌────────────────────────────────────────┐         │<br>│ │ <span class="hljs-number">2</span>. 信令控制                            │         │<br>│ │    - Offer/Answer 转发                 │         │<br>│ │    - ICE 候选交换                      │         │<br>│ │    - 连接状态管理                      │         │<br>│ └────────────────────────────────────────┘         │<br>│ ┌────────────────────────────────────────┐         │<br>│ │ <span class="hljs-number">3</span>. 房间/会议管理                       │         │<br>│ │    - 创建<span class="hljs-regexp">/加入/</span>离开房间                │         │<br>│ │    - 参与者管理                        │         │<br>│ │    - 权限控制（谁能说话、共享等）      │         │<br>│ └────────────────────────────────────────┘         │<br>│ ┌────────────────────────────────────────┐         │<br>│ │ <span class="hljs-number">4</span>. 业务逻辑                            │         │<br>│ │    - 计费/统计                         │         │<br>│ │    - 内容审核                          │         │<br>│ │    - 异常处理、心跳检测                │         │<br>│ └────────────────────────────────────────┘         │<br>│                                                     │<br>│ 可选模块：                                          │<br>│ ┌────────────────────────────────────────┐         │<br>│ │ <span class="hljs-number">5</span>. 媒体处理                            │         │<br>│ │    - 录制媒体流                        │         │<br>│ │    - 转码处理                          │         │<br>│ │    - AI 分析（人脸识别等）             │         │<br>│ └────────────────────────────────────────┘         │<br>│ ┌────────────────────────────────────────┐         │<br>│ │ <span class="hljs-number">6</span>. NAT 穿透辅助                        │         │<br>│ │    - STUN 服务器                       │         │<br>│ │    - TURN 中继服务器                   │         │<br>│ └────────────────────────────────────────┘         │<br>└──────────────────────────────────────────────────────┘<br>         ↕ 仅在 NAT 穿透失败时<br>┌──────────────────────────────────┐<br>│ TURN 中继服务器（可选）          │<br>│ - 当直连失败时中继媒体数据       │<br>│ - 带宽成本较高                   │<br>└──────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+
+<h3 id="实际代码示例"><a href="#实际代码示例" class="headerlink" title="实际代码示例"></a>实际代码示例</h3><p><strong>前端：发送 Offer（需要经过服务器）</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// 用户 A 创建 Offer</span><br><span class="hljs-keyword">const</span> offer = <span class="hljs-keyword">await</span> peerConnection.<span class="hljs-title function_">createOffer</span>();<br><span class="hljs-keyword">await</span> peerConnection.<span class="hljs-title function_">setLocalDescription</span>(offer);<br><br><span class="hljs-comment">// ❌ 错误：不能直接发送</span><br><span class="hljs-comment">// webSocket.send(offer);  // 对端接收不到！</span><br><br><span class="hljs-comment">// ✅ 正确：通过服务器转发</span><br><span class="hljs-title function_">fetch</span>(<span class="hljs-string">&#x27;/api/signaling/send-offer&#x27;</span>, &#123;<br>  <span class="hljs-attr">method</span>: <span class="hljs-string">&#x27;POST&#x27;</span>,<br>  <span class="hljs-attr">headers</span>: &#123; <span class="hljs-string">&#x27;Content-Type&#x27;</span>: <span class="hljs-string">&#x27;application/json&#x27;</span> &#125;,<br>  <span class="hljs-attr">body</span>: <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">stringify</span>(&#123;<br>    <span class="hljs-attr">targetUserId</span>: <span class="hljs-string">&#x27;user-b&#x27;</span>,<br>    <span class="hljs-attr">offer</span>: offer<br>  &#125;)<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<p><strong>后端：处理 Offer（Java 示例）</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@PostMapping(&quot;/api/signaling/send-offer&quot;)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">sendOffer</span><span class="hljs-params">(<span class="hljs-meta">@RequestBody</span> SignalingRequest req)</span> &#123;<br>    <span class="hljs-comment">// 1️⃣ 认证用户</span><br>    <span class="hljs-type">User</span> <span class="hljs-variable">sender</span> <span class="hljs-operator">=</span> authService.getCurrentUser();<br>    <span class="hljs-keyword">if</span> (sender == <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnauthorizedException</span>(<span class="hljs-string">&quot;未登录&quot;</span>);<br>    &#125;<br><br>    <span class="hljs-comment">// 2️⃣ 验证目标用户存在且在线</span><br>    <span class="hljs-type">User</span> <span class="hljs-variable">receiver</span> <span class="hljs-operator">=</span> userService.findById(req.getTargetUserId());<br>    <span class="hljs-keyword">if</span> (receiver == <span class="hljs-literal">null</span> || !receiver.isOnline()) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BadRequestException</span>(<span class="hljs-string">&quot;用户不存在或离线&quot;</span>);<br>    &#125;<br><br>    <span class="hljs-comment">// 3️⃣ 检查权限（是否被屏蔽等）</span><br>    <span class="hljs-keyword">if</span> (blockService.isBlocked(sender.getId(), receiver.getId())) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ForbiddenException</span>(<span class="hljs-string">&quot;该用户已将你屏蔽&quot;</span>);<br>    &#125;<br><br>    <span class="hljs-comment">// 4️⃣ 转发 Offer 给对方（通过 WebSocket）</span><br>    <span class="hljs-type">WebSocketMessage</span> <span class="hljs-variable">msg</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">WebSocketMessage</span>()<br>        .setType(<span class="hljs-string">&quot;offer-received&quot;</span>)<br>        .setFrom(sender.getId())<br>        .setData(req.getOffer());<br><br>    webSocketService.sendToUser(receiver.getId(), msg);<br><br>    <span class="hljs-comment">// 5️⃣ 记录日志</span><br>    loggingService.log(<span class="hljs-string">&quot;User &quot;</span> + sender.getId()<br>        + <span class="hljs-string">&quot; sent offer to &quot;</span> + receiver.getId());<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>后端：接收 Answer 并转发</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@PostMapping(&quot;/api/signaling/send-answer&quot;)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">sendAnswer</span><span class="hljs-params">(<span class="hljs-meta">@RequestBody</span> SignalingRequest req)</span> &#123;<br>    <span class="hljs-type">User</span> <span class="hljs-variable">sender</span> <span class="hljs-operator">=</span> authService.getCurrentUser();<br><br>    <span class="hljs-comment">// 转发 Answer</span><br>    <span class="hljs-type">WebSocketMessage</span> <span class="hljs-variable">msg</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">WebSocketMessage</span>()<br>        .setType(<span class="hljs-string">&quot;answer-received&quot;</span>)<br>        .setFrom(sender.getId())<br>        .setData(req.getAnswer());<br><br>    webSocketService.sendToUser(req.getTargetUserId(), msg);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>前端：接收 Answer 并建立连接</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// 监听来自服务器的 Answer</span><br>webSocket.<span class="hljs-property">onmessage</span> = <span class="hljs-function">(<span class="hljs-params">event</span>) =&gt;</span> &#123;<br>    <span class="hljs-keyword">const</span> msg = <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">parse</span>(event.<span class="hljs-property">data</span>);<br><br>    <span class="hljs-keyword">if</span> (msg.<span class="hljs-property">type</span> === <span class="hljs-string">&#x27;answer-received&#x27;</span>) &#123;<br>        <span class="hljs-comment">// 收到对方的 Answer</span><br>        <span class="hljs-keyword">const</span> remoteDescription = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RTCSessionDescription</span>(msg.<span class="hljs-property">data</span>);<br>        <span class="hljs-keyword">await</span> peerConnection.<span class="hljs-title function_">setRemoteDescription</span>(remoteDescription);<br><br>        <span class="hljs-comment">// 此时媒体通道开始建立</span><br>        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Answer received, connection negotiating...&#x27;</span>);<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h3 id="成本对比"><a href="#成本对比" class="headerlink" title="成本对比"></a>成本对比</h3><p><strong>传统流媒体（服务器转发所有数据）</strong></p>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs excel">参与人数    服务器带宽消耗<br><span class="hljs-number">1</span> 对 <span class="hljs-number">1</span>     <span class="hljs-number">1</span>x 基准<br><span class="hljs-number">1</span> 对 <span class="hljs-built_in">N</span>     (<span class="hljs-built_in">N</span>-<span class="hljs-number">1</span>)x 基准 × 通话人数<br>           成本呈指数增长<br></code></pre></td></tr></table></figure>
+
+<p><strong>WebRTC（只转发信令）</strong></p>
+<figure class="highlight gml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs gml">参与人数    服务器带宽消耗<br><span class="hljs-number">1</span> 对 <span class="hljs-number">1</span>     <span class="hljs-number">0.1</span><span class="hljs-variable language_">x</span> 基准（只有信令）<br><span class="hljs-number">1</span> 对 N     <span class="hljs-number">0.1</span><span class="hljs-variable language_">x</span> 基准（几乎不增加）<br>           成本基本保持不变<br></code></pre></td></tr></table></figure>
+
+<h3 id="关键结论"><a href="#关键结论" class="headerlink" title="关键结论"></a>关键结论</h3><p>✅ WebRTC <strong>大幅降低</strong>了服务器的<strong>数据处理负担</strong><br>❌ WebRTC <strong>不能消除</strong>对服务器的<strong>需求</strong><br>⚠️ 服务器角色从”<strong>媒体中转者</strong>“变为”<strong>控制协调者</strong>“</p>
+<h2 id="主要应用场景"><a href="#主要应用场景" class="headerlink" title="主要应用场景"></a>主要应用场景</h2><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>📹 <strong>视频会议</strong></td>
+<td>Zoom、Google Meet、Teams</td>
+</tr>
+<tr>
+<td>💬 <strong>实时通讯</strong></td>
+<td>语音通话、文字聊天</td>
+</tr>
+<tr>
+<td>🎮 <strong>多人游戏</strong></td>
+<td>低延迟的实时交互</td>
+</tr>
+<tr>
+<td>📺 <strong>直播</strong></td>
+<td>低延迟的媒体流传输</td>
+</tr>
+<tr>
+<td>🔄 <strong>文件共享</strong></td>
+<td>点对点文件传输</td>
+</tr>
+<tr>
+<td>📊 <strong>屏幕共享</strong></td>
+<td>协作工具中的屏幕演示</td>
+</tr>
+<tr>
+<td>🤖 <strong>IoT 通信</strong></td>
+<td>设备间的实时数据交互</td>
+</tr>
+</tbody></table>
+<h2 id="WebRTC-的三大技术支柱"><a href="#WebRTC-的三大技术支柱" class="headerlink" title="WebRTC 的三大技术支柱"></a>WebRTC 的三大技术支柱</h2><h3 id="1-MediaStream-获取媒体"><a href="#1-MediaStream-获取媒体" class="headerlink" title="1. MediaStream - 获取媒体"></a>1. MediaStream - 获取媒体</h3><blockquote>
+<p><strong>ℹ️ 信息: 作用</strong><br>获取本地摄像头、麦克风等设备的媒体流</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// 获取摄像头和麦克风</span><br><span class="hljs-keyword">const</span> stream = <span class="hljs-keyword">await</span> navigator.<span class="hljs-property">mediaDevices</span>.<span class="hljs-title function_">getUserMedia</span>(&#123;<br>  <span class="hljs-attr">audio</span>: <span class="hljs-literal">true</span>,<br>  <span class="hljs-attr">video</span>: <span class="hljs-literal">true</span><br>&#125;);<br><br><span class="hljs-comment">// 在视频元素中展示</span><br>videoElement.<span class="hljs-property">srcObject</span> = stream;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-RTCPeerConnection-建立连接"><a href="#2-RTCPeerConnection-建立连接" class="headerlink" title="2. RTCPeerConnection - 建立连接"></a>2. RTCPeerConnection - 建立连接</h3><blockquote>
+<p><strong>ℹ️ 信息: 作用</strong><br>在两个浏览器间建立点对点的媒体连接</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// 创建对等连接</span><br><span class="hljs-keyword">const</span> peerConnection = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RTCPeerConnection</span>(&#123;<br>  <span class="hljs-attr">iceServers</span>: [&#123; <span class="hljs-attr">urls</span>: [<span class="hljs-string">&#x27;stun:stun.l.google.com:19302&#x27;</span>] &#125;]<br>&#125;);<br><br><span class="hljs-comment">// 添加媒体流</span><br>stream.<span class="hljs-title function_">getTracks</span>().<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">track</span> =&gt;</span> &#123;<br>  peerConnection.<span class="hljs-title function_">addTrack</span>(track, stream);<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-RTCDataChannel-传输数据"><a href="#3-RTCDataChannel-传输数据" class="headerlink" title="3. RTCDataChannel - 传输数据"></a>3. RTCDataChannel - 传输数据</h3><blockquote>
+<p><strong>ℹ️ 信息: 作用</strong><br>建立数据通道，传输任意类型数据（不仅仅是媒体）</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// 创建数据通道</span><br><span class="hljs-keyword">const</span> dataChannel = peerConnection.<span class="hljs-title function_">createDataChannel</span>(<span class="hljs-string">&#x27;chat&#x27;</span>);<br><br><span class="hljs-comment">// 发送数据</span><br>dataChannel.<span class="hljs-title function_">send</span>(<span class="hljs-string">&#x27;Hello, WebRTC!&#x27;</span>);<br><br><span class="hljs-comment">// 接收数据</span><br>dataChannel.<span class="hljs-property">onmessage</span> = <span class="hljs-function">(<span class="hljs-params">event</span>) =&gt;</span> &#123;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Received:&#x27;</span>, event.<span class="hljs-property">data</span>);<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="WebRTC-的工作流程"><a href="#WebRTC-的工作流程" class="headerlink" title="WebRTC 的工作流程"></a>WebRTC 的工作流程</h2><h3 id="简化流程图"><a href="#简化流程图" class="headerlink" title="简化流程图"></a>简化流程图</h3><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs scss">┌─────────────────────────────────────────────────────────┐<br>│ <span class="hljs-number">1</span>. 获取媒体流                                            │<br>│    ↓                                                    │<br>│    navigator<span class="hljs-selector-class">.mediaDevices</span><span class="hljs-selector-class">.getUserMedia</span>()               │<br>│    (获取摄像头/麦克风)                                   │<br>└─────────────────────────────────────────────────────────┘<br>                        ↓<br>┌─────────────────────────────────────────────────────────┐<br>│ <span class="hljs-number">2</span>. 创建对等连接                                          │<br>│    ↓                                                    │<br>│    new <span class="hljs-built_in">RTCPeerConnection</span>()                             │<br>│    (建立连接对象，配置 ICE 服务器)                      │<br>└─────────────────────────────────────────────────────────┘<br>                        ↓<br>┌─────────────────────────────────────────────────────────┐<br>│ <span class="hljs-number">3</span>. 交换会话信息（通过信令服务器）                        │<br>│    ↓                                                    │<br>│    Offer (主动方) ↔ Answer (被动方)                     │<br>│    (SDP 协议描述媒体能力)                                │<br>└─────────────────────────────────────────────────────────┘<br>                        ↓<br>┌─────────────────────────────────────────────────────────┐<br>│ <span class="hljs-number">4</span>. 交换 ICE 候选                                        │<br>│    ↓                                                    │<br>│    peerConnection<span class="hljs-selector-class">.onicecandidate</span>                       │<br>│    (发现网络地址，寻找可通路径)                          │<br>└─────────────────────────────────────────────────────────┘<br>                        ↓<br>┌─────────────────────────────────────────────────────────┐<br>│ <span class="hljs-number">5</span>. 建立直连通道                                          │<br>│    ↓                                                    │<br>│    连接状态: new → checking → connected → completed    │<br>│    (使用 RTP/SRTP 传输媒体)                            │<br>└─────────────────────────────────────────────────────────┘<br>                        ↓<br>┌─────────────────────────────────────────────────────────┐<br>│ <span class="hljs-number">6</span>. 实时数据流动                                          │<br>│    ↓                                                    │<br>│    音频/视频/数据 → 对端浏览器                          │<br>└─────────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+
+<h3 id="详细步骤说明"><a href="#详细步骤说明" class="headerlink" title="详细步骤说明"></a>详细步骤说明</h3><ol>
+<li><strong>媒体采集</strong> - 获取本地摄像头和麦克风</li>
+<li><strong>连接创建</strong> - 实例化 RTCPeerConnection</li>
+<li><strong>能力协商</strong> - 主动方生成 Offer，被动方生成 Answer（描述支持的编码格式等）</li>
+<li><strong>地址发现</strong> - ICE 收集所有可用的网络地址组合</li>
+<li><strong>连接建立</strong> - 双方尝试可用地址，建立最优路径</li>
+<li><strong>数据传输</strong> - 通过直连通道实时传输媒体</li>
+</ol>
+<h2 id="核心概念解释"><a href="#核心概念解释" class="headerlink" title="核心概念解释"></a>核心概念解释</h2><h3 id="SDP（会话描述协议）"><a href="#SDP（会话描述协议）" class="headerlink" title="SDP（会话描述协议）"></a>SDP（会话描述协议）</h3><blockquote>
+<p><strong>📝 注意: 定义</strong><br>SDP 是描述多媒体会话的协议，用于双方交换媒体能力信息</p>
+</blockquote>
+<p><strong>包含信息</strong>：</p>
+<ul>
+<li>支持的媒体类型（音频、视频）</li>
+<li>支持的编码格式（H.264、VP8 等）</li>
+<li>支持的码率、分辨率等参数</li>
+<li>网络传输信息（端口、协议等）</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">v</span>=<span class="hljs-number">0</span><br><span class="hljs-attr">o</span>=alice <span class="hljs-number">2890844526</span> <span class="hljs-number">2890844527</span> IN IP4 host.atlanta.com<br><span class="hljs-attr">s</span>=Session SDP<br><span class="hljs-attr">c</span>=IN IP4 host.atlanta.com<br><span class="hljs-attr">t</span>=<span class="hljs-number">0</span> <span class="hljs-number">0</span><br><span class="hljs-attr">m</span>=audio <span class="hljs-number">49172</span> RTP/AVP <span class="hljs-number">0</span><br><span class="hljs-attr">a</span>=rtpmap:<span class="hljs-number">0</span> PCMU/<span class="hljs-number">8000</span><br><span class="hljs-attr">m</span>=video <span class="hljs-number">49170</span> RTP/AVP <span class="hljs-number">31</span><br><span class="hljs-attr">a</span>=rtpmap:<span class="hljs-number">31</span> H261/<span class="hljs-number">90000</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="ICE（交互式连接建立）"><a href="#ICE（交互式连接建立）" class="headerlink" title="ICE（交互式连接建立）"></a>ICE（交互式连接建立）</h3><blockquote>
+<p><strong>📝 注意: 定义</strong><br>ICE 是一种协议技术，用于发现通信双方之间可用的网络路径</p>
+</blockquote>
+<p><strong>解决的问题</strong>：</p>
+<ul>
+<li>浏览器位于 NAT&#x2F;防火墙后</li>
+<li>无法直接被外网访问</li>
+<li>需要找到能互通的地址组合</li>
+</ul>
+<p><strong>工作方式</strong>：</p>
+<ol>
+<li>收集所有可能的候选地址（本地 IP、公网 IP 等）</li>
+<li>通过 STUN&#x2F;TURN 服务器辅助地址发现</li>
+<li>双方交换候选地址</li>
+<li>尝试建立连接</li>
+<li>使用第一条成功的路径</li>
+</ol>
+<h3 id="NAT-穿透"><a href="#NAT-穿透" class="headerlink" title="NAT 穿透"></a>NAT 穿透</h3><blockquote>
+<p><strong>example: 示例场景</strong></p>
+<p><strong>问题</strong>：局域网内的设备想与互联网上的设备通信</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs dns">内网设备 <span class="hljs-number">192.168.1.100</span> → NAT 设备 → 互联网<br>        ↑<br>   无法被外界直接访问<br></code></pre></td></tr></table></figure>
+
+<p><strong>解决方案</strong>：</p>
+<ul>
+<li><strong>STUN</strong> - 帮助设备发现自己的公网 IP</li>
+<li><strong>TURN</strong> - 当直连失败时，作为中继服务器转发数据</li>
+</ul>
+</blockquote>
+<h2 id="传输协议栈"><a href="#传输协议栈" class="headerlink" title="传输协议栈"></a>传输协议栈</h2><figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs isbl">┌────────────────────────────────────────┐<br>│ 应用层 - <span class="hljs-variable">JavaScript</span> <span class="hljs-variable">WebRTC</span> <span class="hljs-variable">API</span>          │<br>├────────────────────────────────────────┤<br>│ 编码层 - <span class="hljs-variable">VP8</span>/<span class="hljs-variable">VP9</span>/<span class="hljs-function"><span class="hljs-title">H264</span>(视频)            │</span><br><span class="hljs-function">│        - <span class="hljs-variable">Opus</span>/<span class="hljs-title">PCM</span>(音频)               │</span><br><span class="hljs-function">├────────────────────────────────────────┤</span><br><span class="hljs-function">│ 传输层 - <span class="hljs-title">RTP</span>(媒体数据)                  │</span><br><span class="hljs-function">│        - <span class="hljs-title">SRTP</span>(加密媒体)                │</span><br><span class="hljs-function">│        - <span class="hljs-title">SCTP</span>(数据通道)                │</span><br><span class="hljs-function">├────────────────────────────────────────┤</span><br><span class="hljs-function">│ 安全层 - <span class="hljs-title">DTLS</span>(加密握手)                 │</span><br><span class="hljs-function">│        - <span class="hljs-title">SRTP</span>(媒体加密)                │</span><br><span class="hljs-function">├────────────────────────────────────────┤</span><br><span class="hljs-function">│ 网络层 - <span class="hljs-title">UDP</span>(不可靠但低延迟)            │</span><br><span class="hljs-function">├────────────────────────────────────────┤</span><br><span class="hljs-function">│ 物理层 - 网络传输                       │</span><br><span class="hljs-function">└────────────────────────────────────────┘</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>关键特点</strong>：</p>
+<ul>
+<li>基于 <strong>UDP</strong>，而非 TCP（优先速度而非可靠性）</li>
+<li>使用 <strong>SRTP</strong> 加密媒体数据</li>
+<li>使用 <strong>DTLS</strong> 加密密钥交换</li>
+<li>支持自适应比特率</li>
+</ul>
+<h2 id="关键优势总结"><a href="#关键优势总结" class="headerlink" title="关键优势总结"></a>关键优势总结</h2><table>
+<thead>
+<tr>
+<th>方面</th>
+<th>优势</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>延迟</strong></td>
+<td>毫秒级，远低于服务器中转</td>
+</tr>
+<tr>
+<td><strong>成本</strong></td>
+<td>减少服务器带宽压力</td>
+</tr>
+<tr>
+<td><strong>安全</strong></td>
+<td>端到端加密，数据不过服务器</td>
+</tr>
+<tr>
+<td><strong>可用性</strong></td>
+<td>自动穿越 NAT 和防火墙</td>
+</tr>
+<tr>
+<td><strong>标准化</strong></td>
+<td>开放标准，所有浏览器统一实现</td>
+</tr>
+<tr>
+<td><strong>易用性</strong></td>
+<td>JavaScript API 简洁易用</td>
+</tr>
+</tbody></table>
+<h2 id="局限性"><a href="#局限性" class="headerlink" title="局限性"></a>局限性</h2><p>⚠️ <strong>信令服务器仍需要</strong> - 虽然媒体点对点，但控制信息仍需服务器中转（通常用 WebSocket）<br>⚠️ <strong>TURN 服务器成本</strong> - NAT 穿透失败时需要 TURN 中继，产生额外成本<br>⚠️ <strong>浏览器兼容性</strong> - 某些旧浏览器不支持<br>⚠️ <strong>学习曲线</strong> - 概念众多（SDP、ICE、STUN&#x2F;TURN），初学者需要理解</p>
+<h2 id="下一步学习"><a href="#下一步学习" class="headerlink" title="下一步学习"></a>下一步学习</h2><ul>
+<li>MediaStream&#x2F;RTCPeerConnection&#x2F;RTCDataChannel API - 深入 API 使用</li>
+<li>信令服务器实现 - 学习如何交换连接信息</li>
+<li>ICE&#x2F;STUN&#x2F;TURN - 理解网络穿透原理</li>
+<li>RTP&#x2F;SRTP&#x2F;媒体编码 - 了解媒体传输细节</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/WebRTC/" class="print-no-link">#WebRTC</a>
+      
+        <a href="/tags/%E5%AE%9E%E6%97%B6%E9%80%9A%E4%BF%A1/" class="print-no-link">#实时通信</a>
+      
+        <a href="/tags/%E5%89%8D%E7%AB%AF/" class="print-no-link">#前端</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div></div>
+      <div>https://zmmmmy.github.io/2026/01/22/基础概念/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZhiMy</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026-01-22</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                    <i class="iconfont icon-cc-nc"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/01/22/%E4%B8%89%E5%85%83%E7%BB%84%E8%AF%A6%E8%A7%A3/" title="">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/01/22/ForkJoinPool/" title="">
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener">Hexo</a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">Fluid</a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

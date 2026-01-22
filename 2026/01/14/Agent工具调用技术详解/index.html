@@ -1,0 +1,961 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZhiMy">
+  <meta name="keywords" content="技术博客,编程">
+  
+    <meta name="description" content="Agent 工具调用技术详解概述现代 AI Agent 需要与外部世界交互才能完成实际任务。本文详细介绍三种核心技术：Function Calling、MCP 和 Agent Skills，它们构成了 Agent 工具调用的完整技术栈。 12345678910┌─────────────────────────────────────────────────────────┐│">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent工具调用技术详解">
+<meta property="og:url" content="https://zmmmmy.github.io/2026/01/14/Agent%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Zmmmmy&#39;s Blog">
+<meta property="og:description" content="Agent 工具调用技术详解概述现代 AI Agent 需要与外部世界交互才能完成实际任务。本文详细介绍三种核心技术：Function Calling、MCP 和 Agent Skills，它们构成了 Agent 工具调用的完整技术栈。 12345678910┌─────────────────────────────────────────────────────────┐│">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-01-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-01-22T07:15:46.054Z">
+<meta property="article:author" content="ZhiMy">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="FunctionCalling">
+<meta property="article:tag" content="MCP">
+<meta property="article:tag" content="Skills">
+<meta property="article:tag" content="工具调用">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Agent工具调用技术详解 - Zmmmmy&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zmmmmy.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2,"offset_top":300},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Zmmmmy&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Agent工具调用技术详解"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        ZhiMy
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-14 00:00" pubdate>
+          2026-01-14
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          14 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Agent工具调用技术详解</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于2026年1月22日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Agent-工具调用技术详解"><a href="#Agent-工具调用技术详解" class="headerlink" title="Agent 工具调用技术详解"></a>Agent 工具调用技术详解</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>现代 AI Agent 需要与外部世界交互才能完成实际任务。本文详细介绍三种核心技术：<strong>Function Calling</strong>、<strong>MCP</strong> 和 <strong>Agent Skills</strong>，它们构成了 Agent 工具调用的完整技术栈。</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs ada">┌─────────────────────────────────────────────────────────┐<br>│                    Agent Skills                         │<br>│    （高层封装：工作流指令 + 脚本 + 参考文档）           │<br>├─────────────────────────────────────────────────────────┤<br>│                         MCP                             │<br>│       （协议层：标准化连接外部工具/数据源）             │<br>├─────────────────────────────────────────────────────────┤<br>│                  <span class="hljs-keyword">Function</span> <span class="hljs-title">Calling</span>                       │<br>│          （底层能力：模型生成结构化调用参数）           │<br>└─────────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="一、Function-Calling（函数调用）"><a href="#一、Function-Calling（函数调用）" class="headerlink" title="一、Function Calling（函数调用）"></a>一、Function Calling（函数调用）</h2><h3 id="1-1-定义"><a href="#1-1-定义" class="headerlink" title="1.1 定义"></a>1.1 定义</h3><p>Function Calling 是大模型的一种<strong>原生能力</strong>，允许模型：</p>
+<ul>
+<li>识别何时需要调用外部工具</li>
+<li>生成结构化的函数调用参数（JSON 格式）</li>
+<li>理解函数返回结果并继续对话</li>
+</ul>
+<h3 id="1-2-工作流程"><a href="#1-2-工作流程" class="headerlink" title="1.2 工作流程"></a>1.2 工作流程</h3><pre><code class=" mermaid">sequenceDiagram
+    participant U as 用户
+    participant M as 大模型
+    participant T as 外部工具
+    
+    U-&gt;&gt;M: 发送请求
+    M-&gt;&gt;M: 判断需要调用工具
+    M-&gt;&gt;T: 输出函数名 + 参数（JSON）
+    T-&gt;&gt;T: 执行函数
+    T-&gt;&gt;M: 返回执行结果
+    M-&gt;&gt;U: 整合结果并回复
+</code></pre>
+
+<h3 id="1-3-示例"><a href="#1-3-示例" class="headerlink" title="1.3 示例"></a>1.3 示例</h3><p>用户请求：<em>“北京今天天气怎么样？”</em></p>
+<p>模型输出：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;function&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;get_weather&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;parameters&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;city&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;北京&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;date&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2026-01-14&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="1-4-主流平台支持"><a href="#1-4-主流平台支持" class="headerlink" title="1.4 主流平台支持"></a>1.4 主流平台支持</h3><table>
+<thead>
+<tr>
+<th>平台</th>
+<th>支持情况</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>OpenAI</td>
+<td>✅ 原生支持（2023年6月推出）</td>
+</tr>
+<tr>
+<td>Anthropic Claude</td>
+<td>✅ Tool Use</td>
+</tr>
+<tr>
+<td>通义千问</td>
+<td>✅ Function Calling</td>
+</tr>
+<tr>
+<td>文心一言</td>
+<td>✅ 函数调用</td>
+</tr>
+</tbody></table>
+<h3 id="1-5-特点"><a href="#1-5-特点" class="headerlink" title="1.5 特点"></a>1.5 特点</h3><ul>
+<li><strong>底层能力</strong>：是其他工具调用技术的基础</li>
+<li><strong>结构化输出</strong>：强制模型输出符合 JSON Schema 的参数</li>
+<li><strong>各厂商不统一</strong>：每个平台的实现细节略有差异</li>
+</ul>
+<hr>
+<h2 id="二、MCP（Model-Context-Protocol）"><a href="#二、MCP（Model-Context-Protocol）" class="headerlink" title="二、MCP（Model Context Protocol）"></a>二、MCP（Model Context Protocol）</h2><h3 id="2-1-定义"><a href="#2-1-定义" class="headerlink" title="2.1 定义"></a>2.1 定义</h3><p>MCP 是 Anthropic 于 2024 年推出的<strong>开放协议标准</strong>，用于统一 AI 应用与外部数据源&#x2F;工具的连接方式。</p>
+<blockquote>
+<p><strong>核心理念</strong>：一次适配，多处复用——解决”每个工具都要单独适配”的问题。</p>
+</blockquote>
+<h3 id="2-2-架构"><a href="#2-2-架构" class="headerlink" title="2.2 架构"></a>2.2 架构</h3><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs scss">┌──────────────┐      ┌──────────────┐      ┌──────────────┐<br>│   MCP Host   │◄────►│  MCP Client  │◄────►│  MCP Server  │<br>│  (AI 应用)   │      │   (连接器)   │     │  (工具提供方)│<br>└──────────────┘      └──────────────┘      └──────────────┘<br>        │                                          │<br>        │            标准化协议通信                  │<br>        └──────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-3-三种能力类型"><a href="#2-3-三种能力类型" class="headerlink" title="2.3 三种能力类型"></a>2.3 三种能力类型</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Resources</strong></td>
+<td>静态数据资源</td>
+<td>文件、数据库记录、API 响应</td>
+</tr>
+<tr>
+<td><strong>Tools</strong></td>
+<td>可执行的操作</td>
+<td>发送邮件、执行代码、调用 API</td>
+</tr>
+<tr>
+<td><strong>Prompts</strong></td>
+<td>预定义的提示词模板</td>
+<td>代码审查模板、翻译模板</td>
+</tr>
+</tbody></table>
+<h3 id="2-4-类比理解"><a href="#2-4-类比理解" class="headerlink" title="2.4 类比理解"></a>2.4 类比理解</h3><blockquote>
+<p>MCP 就像 AI 领域的 <strong>USB 接口标准</strong>：</p>
+<ul>
+<li>USB 出现前：每种设备需要专用接口</li>
+<li>USB 出现后：统一接口，即插即用</li>
+<li>MCP：统一 AI 与工具的连接标准</li>
+</ul>
+</blockquote>
+<h3 id="2-5-与-Function-Calling-的关系"><a href="#2-5-与-Function-Calling-的关系" class="headerlink" title="2.5 与 Function Calling 的关系"></a>2.5 与 Function Calling 的关系</h3><ul>
+<li>Function Calling 是模型<strong>输出调用意图</strong>的能力</li>
+<li>MCP 是<strong>执行调用</strong>的标准化协议</li>
+<li>MCP Server 内部可能使用 Function Calling 来触发工具</li>
+</ul>
+<hr>
+<h2 id="三、Agent-Skills"><a href="#三、Agent-Skills" class="headerlink" title="三、Agent Skills"></a>三、Agent Skills</h2><h3 id="3-1-定义"><a href="#3-1-定义" class="headerlink" title="3.1 定义"></a>3.1 定义</h3><p>Agent Skills 是 Anthropic 于 2025 年 10 月推出的一种新方式，用于<strong>将专业知识封装成可复用的能力模块</strong>。</p>
+<blockquote>
+<p><strong>核心理念</strong>：为 Agent 准备”入职指南”——不是构建定制化 Agent，而是让通用 Agent 具备专业能力。</p>
+</blockquote>
+<h3 id="3-2-Skill-的结构"><a href="#3-2-Skill-的结构" class="headerlink" title="3.2 Skill 的结构"></a>3.2 Skill 的结构</h3><p>一个 Skill 是一个包含 <code>SKILL.md</code> 文件的目录：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs applescript"><span class="hljs-keyword">my</span>-skill/<br>├── SKILL.md          <span class="hljs-comment"># 必需：核心文件（YAML 元数据 + 指令）</span><br>├── <span class="hljs-keyword">reference</span>.md      <span class="hljs-comment"># 可选：详细参考文档</span><br>├── examples.md       <span class="hljs-comment"># 可选：使用示例</span><br>└── scripts/<br>    └── helper.py     <span class="hljs-comment"># 可选：可执行脚本</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="3-3-SKILL-md-格式"><a href="#3-3-SKILL-md-格式" class="headerlink" title="3.3 SKILL.md 格式"></a>3.3 SKILL.md 格式</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-meta">---</span><br><span class="hljs-attr">name:</span> <span class="hljs-string">pdf-processing</span><br><span class="hljs-attr">description:</span> <span class="hljs-string">Extract</span> <span class="hljs-string">text,</span> <span class="hljs-string">fill</span> <span class="hljs-string">forms,</span> <span class="hljs-string">merge</span> <span class="hljs-string">PDFs.</span> <span class="hljs-string">Use</span> <span class="hljs-string">when</span> <span class="hljs-string">working</span> <span class="hljs-string">with</span> <span class="hljs-string">PDF</span> <span class="hljs-string">files.</span><br><span class="hljs-attr">allowed-tools:</span> <span class="hljs-string">Read,</span> <span class="hljs-string">Bash(python:*)</span><br><span class="hljs-meta">---</span><br><span class="hljs-meta"></span><br><span class="hljs-comment"># PDF Processing</span><br><br><span class="hljs-comment">## Quick start</span><br><span class="hljs-attr">Extract text:</span><br><span class="hljs-string">```python</span><br><span class="hljs-string">import</span> <span class="hljs-string">pdfplumber</span><br><span class="hljs-string">with</span> <span class="hljs-string">pdfplumber.open(&quot;doc.pdf&quot;)</span> <span class="hljs-attr">as pdf:</span><br>    <span class="hljs-string">text</span> <span class="hljs-string">=</span> <span class="hljs-string">pdf.pages[0].extract_text()</span><br></code></pre></td></tr></table></figure>
+
+<p>For form filling, see <a href="FORMS.md">FORMS.md</a>.</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs gherkin"><br><span class="hljs-comment">### 3.4 元数据字段详解</span><br><br>|<span class="hljs-string"> 字段 </span>|<span class="hljs-string"> 必需 </span>|<span class="hljs-string"> 作用 </span>|<br>|<span class="hljs-string">------</span>|<span class="hljs-string">------</span>|<span class="hljs-string">------</span>|<br>|<span class="hljs-string"> `name` </span>|<span class="hljs-string"> ✅ </span>|<span class="hljs-string"> Skill 的唯一标识名 </span>|<br>|<span class="hljs-string"> `description` </span>|<span class="hljs-string"> ✅ </span>|<span class="hljs-string"> 描述何时触发该 Skill </span>|<br>|<span class="hljs-string"> `allowed-tools` </span>|<span class="hljs-string"> ❌ </span>|<span class="hljs-string"> 限制可用工具（安全考虑） </span>|<br>|<span class="hljs-string"> `model` </span>|<span class="hljs-string"> ❌ </span>|<span class="hljs-string"> 指定使用的模型版本 </span>|<br>|<span class="hljs-string"> `context: fork` </span>|<span class="hljs-string"> ❌ </span>|<span class="hljs-string"> 在独立上下文中运行 </span>|<br>|<span class="hljs-string"> `hooks` </span>|<span class="hljs-string"> ❌ </span>|<span class="hljs-string"> 定义工具调用前后的钩子 </span>|<br>|<span class="hljs-string"> `user-invocable` </span>|<span class="hljs-string"> ❌ </span>|<span class="hljs-string"> 是否允许用户通过 `/skill-name` 调用 </span>|<br><br><span class="hljs-comment">### 3.5 渐进式披露（Progressive Disclosure）</span><br><br>这是 Skills 的<span class="hljs-symbol">*</span><span class="hljs-symbol">*</span>核心设计原则<span class="hljs-symbol">*</span><span class="hljs-symbol">*</span>：<br><br>```mermaid<br>flowchart TD<br>    A[启动] --&gt; B[加载 name + description 到系统提示词]<br>    B --&gt; C&#123;用户请求与 Skill 相关?&#125;<br>    C --&gt;|<span class="hljs-string">是</span>|<span class="hljs-string"> D[读取完整 SKILL.md]</span><br><span class="hljs-string">    C --&gt;</span>|<span class="hljs-string">否</span>|<span class="hljs-string"> E[继续正常对话]</span><br><span class="hljs-string">    D --&gt; F&#123;需要更多细节?&#125;</span><br><span class="hljs-string">    F --&gt;</span>|<span class="hljs-string">是</span>|<span class="hljs-string"> G[按需读取 reference.md 等]</span><br><span class="hljs-string">    F --&gt;</span>|<span class="hljs-string">否</span>|<span class="hljs-string"> H[执行任务]</span><br><span class="hljs-string">    G --&gt; I&#123;需要执行脚本?&#125;</span><br><span class="hljs-string">    I --&gt;</span>|<span class="hljs-string">是</span>|<span class="hljs-string"> J[运行 scripts/ 中的脚本]</span><br><span class="hljs-string">    I --&gt;</span>|<span class="hljs-string">否</span>|<span class="hljs-string"> H</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>优势</strong>：上下文窗口使用量<strong>可无限扩展</strong>，只加载真正需要的内容。</p>
+<h3 id="3-6-Skills-存放位置"><a href="#3-6-Skills-存放位置" class="headerlink" title="3.6 Skills 存放位置"></a>3.6 Skills 存放位置</h3><table>
+<thead>
+<tr>
+<th>位置</th>
+<th>作用域</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>~/.claude/skills/</code></td>
+<td>用户级</td>
+<td>个人通用 Skills</td>
+</tr>
+<tr>
+<td><code>.claude/skills/</code></td>
+<td>项目级</td>
+<td>项目专用 Skills</td>
+</tr>
+<tr>
+<td>插件中的 <code>skills/</code></td>
+<td>可分发</td>
+<td>通过插件市场共享</td>
+</tr>
+</tbody></table>
+<h3 id="3-7-与-MCP-的关系"><a href="#3-7-与-MCP-的关系" class="headerlink" title="3.7 与 MCP 的关系"></a>3.7 与 MCP 的关系</h3><p>官方明确指出 Skills 和 MCP 是<strong>互补关系</strong>：</p>
+<blockquote>
+<p>“We’ll also explore how Skills can <strong>complement</strong> MCP servers by teaching agents more complex workflows that involve external tools and software.”</p>
+</blockquote>
+<ul>
+<li><strong>MCP</strong>：提供工具连接的标准协议（”有什么工具”）</li>
+<li><strong>Skills</strong>：教会 Agent 如何使用这些工具完成复杂工作流（”怎么用工具”）</li>
+</ul>
+<hr>
+<h2 id="四、三者对比"><a href="#四、三者对比" class="headerlink" title="四、三者对比"></a>四、三者对比</h2><h3 id="4-1-定位对比"><a href="#4-1-定位对比" class="headerlink" title="4.1 定位对比"></a>4.1 定位对比</h3><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Function Calling</th>
+<th>MCP</th>
+<th>Agent Skills</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>层级</strong></td>
+<td>底层能力</td>
+<td>协议标准</td>
+<td>高层封装</td>
+</tr>
+<tr>
+<td><strong>粒度</strong></td>
+<td>单个函数调用</td>
+<td>工具连接规范</td>
+<td>完整工作流</td>
+</tr>
+<tr>
+<td><strong>标准化</strong></td>
+<td>各厂商不统一</td>
+<td>统一协议</td>
+<td>Anthropic 标准</td>
+</tr>
+<tr>
+<td><strong>复用性</strong></td>
+<td>低（需重复定义）</td>
+<td>高（一次适配）</td>
+<td>高（文件夹共享）</td>
+</tr>
+<tr>
+<td><strong>推出时间</strong></td>
+<td>2023 年</td>
+<td>2024 年</td>
+<td>2025 年</td>
+</tr>
+</tbody></table>
+<h3 id="4-2-协作关系"><a href="#4-2-协作关系" class="headerlink" title="4.2 协作关系"></a>4.2 协作关系</h3><figure class="highlight nim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs nim">用户请求: <span class="hljs-string">&quot;帮我填写这个 PDF 表单&quot;</span><br>     │<br>     ▼<br>┌─────────────────────────────────────────────────────────┐<br>│ <span class="hljs-type">Agent</span> <span class="hljs-type">Skills</span>: pdf-processing                            │<br>│ ├─ 读取 <span class="hljs-type">SKILL</span>.md 获取处理指令                            │<br>│ ├─ 按需加载 <span class="hljs-type">FORMS</span>.md 获取表单填写规范                     │<br>│ └─ 调用 scripts/fill_form.py 执行填写                   │<br>└─────────────────────────────────────────────────────────┘<br>     │<br>     ▼ 通过 <span class="hljs-type">MCP</span> 协议连接<br>┌─────────────────────────────────────────────────────────┐<br>│ <span class="hljs-type">MCP</span> <span class="hljs-type">Server</span>: pdf-tools                                   │<br>│ └─ 提供 <span class="hljs-type">PDF</span> 读写工具                                     │<br>└─────────────────────────────────────────────────────────┘<br>     │<br>     ▼ 基于 <span class="hljs-type">Function</span> <span class="hljs-type">Calling</span><br>┌─────────────────────────────────────────────────────────┐<br>│ 大模型: 生成工具调用参数                                  │<br>│ └─ &#123;<span class="hljs-string">&quot;function&quot;</span>: <span class="hljs-string">&quot;fill_pdf_form&quot;</span>, <span class="hljs-string">&quot;params&quot;</span>: <span class="hljs-meta">&#123;...&#125;</span>&#125;      │<br>└─────────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-3-使用场景选择"><a href="#4-3-使用场景选择" class="headerlink" title="4.3 使用场景选择"></a>4.3 使用场景选择</h3><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>简单的单次工具调用</td>
+<td>Function Calling</td>
+</tr>
+<tr>
+<td>连接多个外部服务</td>
+<td>MCP</td>
+</tr>
+<tr>
+<td>复杂的多步骤工作流</td>
+<td>Agent Skills</td>
+</tr>
+<tr>
+<td>需要团队共享的专业能力</td>
+<td>Agent Skills + 插件分发</td>
+</tr>
+<tr>
+<td>需要动态上下文加载</td>
+<td>Agent Skills（渐进式披露）</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="五、实践建议"><a href="#五、实践建议" class="headerlink" title="五、实践建议"></a>五、实践建议</h2><h3 id="5-1-何时使用-Skills-vs-其他方式"><a href="#5-1-何时使用-Skills-vs-其他方式" class="headerlink" title="5.1 何时使用 Skills vs 其他方式"></a>5.1 何时使用 Skills vs 其他方式</h3><table>
+<thead>
+<tr>
+<th>方式</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Skills</strong></td>
+<td>复杂的多步骤工作流，需要动态加载上下文</td>
+</tr>
+<tr>
+<td><strong>CLAUDE.md</strong></td>
+<td>项目级通用规则（始终加载）</td>
+</tr>
+<tr>
+<td><strong>斜杠命令</strong></td>
+<td>用户主动触发的快捷操作（如 <code>/deploy</code>）</td>
+</tr>
+<tr>
+<td><strong>MCP 服务器</strong></td>
+<td>连接外部工具和数据源</td>
+</tr>
+<tr>
+<td><strong>Hooks</strong></td>
+<td>工具调用前后的自动化脚本</td>
+</tr>
+</tbody></table>
+<h3 id="5-2-Skills-开发最佳实践"><a href="#5-2-Skills-开发最佳实践" class="headerlink" title="5.2 Skills 开发最佳实践"></a>5.2 Skills 开发最佳实践</h3><ol>
+<li><strong>从评估开始</strong>：先观察 Agent 在哪些任务上表现不佳，再针对性开发 Skill</li>
+<li><strong>结构化扩展</strong>：当 SKILL.md 变得臃肿时，拆分到多个文件</li>
+<li><strong>从 Claude 视角思考</strong>：关注 name 和 description 的编写，这决定了触发时机</li>
+<li><strong>与 Claude 迭代</strong>：让 Claude 帮助总结成功模式和常见错误</li>
+</ol>
+<h3 id="5-3-安全考虑"><a href="#5-3-安全考虑" class="headerlink" title="5.3 安全考虑"></a>5.3 安全考虑</h3><ul>
+<li><strong>仅安装受信任来源的 Skills</strong></li>
+<li>审查 Skill 中的脚本和外部连接</li>
+<li>使用 <code>allowed-tools</code> 限制工具访问范围</li>
+</ul>
+<hr>
+<h2 id="六、参考资料"><a href="#六、参考资料" class="headerlink" title="六、参考资料"></a>六、参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills">Anthropic Engineering Blog: Equipping Agents for the Real World with Agent Skills</a></li>
+<li><a target="_blank" rel="noopener" href="https://agentskills.io/">Agent Skills 开放标准</a></li>
+<li><a target="_blank" rel="noopener" href="https://code.claude.com/docs/zh-CN/skills">Claude Code Skills 文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/">Model Context Protocol 官网</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/AI/" class="category-chain-item">AI</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/AI/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" class="category-chain-item">大模型</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Agent/" class="print-no-link">#Agent</a>
+      
+        <a href="/tags/FunctionCalling/" class="print-no-link">#FunctionCalling</a>
+      
+        <a href="/tags/MCP/" class="print-no-link">#MCP</a>
+      
+        <a href="/tags/Skills/" class="print-no-link">#Skills</a>
+      
+        <a href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/" class="print-no-link">#工具调用</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Agent工具调用技术详解</div>
+      <div>https://zmmmmy.github.io/2026/01/14/Agent工具调用技术详解/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZhiMy</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026-01-14</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>更新于</div>
+          <div>2026-01-22</div>
+        </div>
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                    <i class="iconfont icon-cc-nc"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/01/15/Jackson%E4%BE%9D%E8%B5%96%E8%AF%A6%E8%A7%A3/" title="Jackson依赖详解">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Jackson依赖详解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/01/12/AQS%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/" title="AQS原理详解">
+                        <span class="hidden-mobile">AQS原理详解</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener">Hexo</a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">Fluid</a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

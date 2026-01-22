@@ -1,0 +1,29 @@
+/* 去除导航栏底部阴影 */
+.navbar {
+  box-shadow: none !important;
+}
+
+.navbar.scrolling-navbar {
+  box-shadow: none !important;
+}
+
+/* 滚动后导航栏文字改为深色 */
+.navbar.top-nav-collapse .navbar-brand,
+.navbar.top-nav-collapse .nav-link {
+  color: #333 !important;
+}
+
+/* 滚动后汉堡菜单图标改为深色 */
+.navbar.top-nav-collapse .navbar-toggler .animated-icon span {
+  background-color: #333 !important;
+}
+
+/* 暗色模式下滚动后的文字颜色 */
+html[data-user-color-scheme="dark"] .navbar.top-nav-collapse .navbar-brand,
+html[data-user-color-scheme="dark"] .navbar.top-nav-collapse .nav-link {
+  color: #e0e0e0 !important;
+}
+
+html[data-user-color-scheme="dark"] .navbar.top-nav-collapse .navbar-toggler .animated-icon span {
+  background-color: #e0e0e0 !important;
+}

@@ -187,7 +187,7 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+     style="background: url('https://wx2.sinaimg.cn/large/006CtnXmly1i74jyml0xsj33y8280u14.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
@@ -231,15 +231,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2026/01/10/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" target="_self">
-          源码解析
+        <a href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86/" target="_self">
+          线程池原理
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2026/01/10/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86/" target="_self">
         <div>
-          源码解析Mono.just() 源码分析从最简单的 Mono.just() 开始： 12Mono.just(&quot;Hello&quot;)    .subscribe(System.out::println);  1. 创建 Mono12345678910111213// Mono.javapublic static &lt;T&gt; Mono&lt;T&gt; just(T data)
+          线程池原理核心参数（7大参数）ThreadPoolExecutor 是线程池的核心实现类，其构造函数包含 7 个关键参数： 123456789public ThreadPoolExecutor(    int corePoolSize,           // 核心线程数    int maximumPoolSize,        // 最大线程数    long keepAliveTime,
         </div>
       </a>
 
@@ -268,12 +268,12 @@
   
     <span>></span>
     
-  <a href="/categories/Java/Spring/" class="category-chain-item">Spring</a>
+  <a href="/categories/Java/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" class="category-chain-item">并发编程</a>
   
   
     <span>></span>
     
-  <a href="/categories/Java/Spring/Reactive-Streams/" class="category-chain-item">Reactive Streams</a>
+  <a href="/categories/Java/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" class="category-chain-item">线程池</a>
   
   
 
@@ -294,15 +294,11 @@
             
               <a href="/tags/Java/">#Java</a>
             
-              <a href="/tags/Spring/">#Spring</a>
+              <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">#并发编程</a>
             
-              <a href="/tags/ReactiveStreams/">#ReactiveStreams</a>
+              <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/">#线程池</a>
             
-              <a href="/tags/Reactor/">#Reactor</a>
-            
-              <a href="/tags/%E6%BA%90%E7%A0%81/">#源码</a>
-            
-              <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">#设计模式</a>
+              <a href="/tags/ThreadPoolExecutor/">#ThreadPoolExecutor</a>
             
           </div>
         
@@ -397,15 +393,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2026/01/10/%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B/" target="_self">
-          实战案例
+        <a href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%AE%80%E4%BB%8B/" target="_self">
+          线程池简介
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2026/01/10/%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%AE%80%E4%BB%8B/" target="_self">
         <div>
-          实战案例项目结构123456789101112131415161718webflux-demo/├── src/main/java/com/example/demo/│   ├── DemoApplication.java│   ├── config/│   │   └── RouterConfig.java│   ├── controller/│   │   └── UserController
+          线程池简介什么是线程池线程池（Thread Pool）是一种线程复用的技术，预先创建一定数量的线程放入池中，当有任务需要执行时，从池中获取空闲线程来执行任务，任务完成后线程不销毁，而是返回池中等待下一个任务。 123456// 最简单的线程池使用示例ExecutorService executor = Executors.newFixedThreadPool(5);executor.submit(
         </div>
       </a>
 
@@ -434,12 +430,12 @@
   
     <span>></span>
     
-  <a href="/categories/Java/Spring/" class="category-chain-item">Spring</a>
+  <a href="/categories/Java/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" class="category-chain-item">并发编程</a>
   
   
     <span>></span>
     
-  <a href="/categories/Java/Spring/Webflux/" class="category-chain-item">Webflux</a>
+  <a href="/categories/Java/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" class="category-chain-item">线程池</a>
   
   
 
@@ -460,15 +456,11 @@
             
               <a href="/tags/Java/">#Java</a>
             
-              <a href="/tags/Spring/">#Spring</a>
+              <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">#并发编程</a>
             
-              <a href="/tags/WebFlux/">#WebFlux</a>
+              <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/">#线程池</a>
             
-              <a href="/tags/%E5%AE%9E%E6%88%98/">#实战</a>
-            
-              <a href="/tags/R2DBC/">#R2DBC</a>
-            
-              <a href="/tags/%E6%B5%8B%E8%AF%95/">#测试</a>
+              <a href="/tags/ExecutorService/">#ExecutorService</a>
             
           </div>
         

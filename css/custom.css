@@ -1,3 +1,24 @@
+/* 禁用过度滚动效果，防止顶部白条 */
+html, body {
+  overscroll-behavior: none;
+}
+
+/* 修复视差滚动时快速回到顶部出现白条的问题 */
+#banner {
+  background-color: #4eb8d4; /* 背景图的天空蓝色作为底色 */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+html[data-user-color-scheme="dark"] #banner {
+  background-color: #1a1a2e;
+}
+
+#banner .full-bg-img {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
 /* 去除导航栏底部阴影 */
 .navbar {
   box-shadow: none !important;

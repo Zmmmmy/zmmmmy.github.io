@@ -1,0 +1,1076 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZhiMy">
+  <meta name="keywords" content="技术博客,编程">
+  
+    <meta name="description" content="Advanced RAG 详解概述RAG（Retrieval-Augmented Generation，检索增强生成） 是一种将外部知识检索与大语言模型生成能力相结合的技术架构。 Advanced RAG（高级 RAG） 是对基础 RAG（也称 Naive RAG）的系统性优化，通过在检索前、检索中、检索后引入多种优化技术，显著提升检索质量和生成准确性。 为什么需要 Advanced RAG？Na">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Advanced-RAG详解">
+<meta property="og:url" content="https://zmmmmy.github.io/2026/01/13/Advanced-RAG%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Zmmmmy&#39;s Blog">
+<meta property="og:description" content="Advanced RAG 详解概述RAG（Retrieval-Augmented Generation，检索增强生成） 是一种将外部知识检索与大语言模型生成能力相结合的技术架构。 Advanced RAG（高级 RAG） 是对基础 RAG（也称 Naive RAG）的系统性优化，通过在检索前、检索中、检索后引入多种优化技术，显著提升检索质量和生成准确性。 为什么需要 Advanced RAG？Na">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-01-12T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-01-22T07:44:14.946Z">
+<meta property="article:author" content="ZhiMy">
+<meta property="article:tag" content="Advanced-RAG">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="RAG">
+<meta property="article:tag" content="检索增强生成">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Advanced-RAG详解 - Zmmmmy&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zmmmmy.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2,"offset_top":300},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Zmmmmy&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Advanced-RAG详解"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        ZhiMy
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-13 00:00" pubdate>
+          2026-01-13
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          22 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Advanced-RAG详解</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于2026年1月22日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Advanced-RAG-详解"><a href="#Advanced-RAG-详解" class="headerlink" title="Advanced RAG 详解"></a>Advanced RAG 详解</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><strong>RAG（Retrieval-Augmented Generation，检索增强生成）</strong> 是一种将外部知识检索与大语言模型生成能力相结合的技术架构。</p>
+<p><strong>Advanced RAG（高级 RAG）</strong> 是对基础 RAG（也称 Naive RAG）的系统性优化，通过在检索前、检索中、检索后引入多种优化技术，显著提升检索质量和生成准确性。</p>
+<h3 id="为什么需要-Advanced-RAG？"><a href="#为什么需要-Advanced-RAG？" class="headerlink" title="为什么需要 Advanced RAG？"></a>为什么需要 Advanced RAG？</h3><p>Naive RAG 存在以下问题：</p>
+<table>
+<thead>
+<tr>
+<th>问题类型</th>
+<th>具体表现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>检索质量差</strong></td>
+<td>召回的文档与问题不相关</td>
+</tr>
+<tr>
+<td><strong>上下文丢失</strong></td>
+<td>分块切断了语义完整性</td>
+</tr>
+<tr>
+<td><strong>幻觉问题</strong></td>
+<td>模型生成与检索内容不符的答案</td>
+</tr>
+<tr>
+<td><strong>效率低下</strong></td>
+<td>检索大量无关内容浪费 Token</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="RAG-演进路线"><a href="#RAG-演进路线" class="headerlink" title="RAG 演进路线"></a>RAG 演进路线</h2><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs scss">┌─────────────┐    ┌─────────────┐    ┌─────────────┐<br>│  Naive RAG  │ ─→ │ Advanced RAG│ ─→ │ Modular RAG │<br>│  (基础版)    │    │  (进阶版)    │    │  (模块化版)  │<br>└─────────────┘    └─────────────┘    └─────────────┘<br>       ↓                  ↓                  ↓<br>  简单流程           优化流程            灵活组合<br>  问题多             质量提升            高度定制<br></code></pre></td></tr></table></figure>
+
+<h3 id="三代-RAG-对比"><a href="#三代-RAG-对比" class="headerlink" title="三代 RAG 对比"></a>三代 RAG 对比</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Naive RAG</th>
+<th>Advanced RAG</th>
+<th>Modular RAG</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>检索方式</td>
+<td>单一向量检索</td>
+<td>混合检索 + 重排序</td>
+<td>可插拔检索模块</td>
+</tr>
+<tr>
+<td>查询处理</td>
+<td>直接使用原始查询</td>
+<td>查询改写&#x2F;扩展</td>
+<td>自适应查询路由</td>
+</tr>
+<tr>
+<td>上下文处理</td>
+<td>简单拼接</td>
+<td>压缩&#x2F;过滤&#x2F;去重</td>
+<td>动态上下文管理</td>
+</tr>
+<tr>
+<td>索引策略</td>
+<td>固定分块</td>
+<td>多粒度索引</td>
+<td>自定义索引管道</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="Advanced-RAG-核心架构"><a href="#Advanced-RAG-核心架构" class="headerlink" title="Advanced RAG 核心架构"></a>Advanced RAG 核心架构</h2><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">用户查询<br>    │<br>    ▼<br>┌───────────────────────────────────────────────────────┐<br>│                    预检索阶段                          │<br>│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐  │<br>│  │查询改写  │  │查询扩展  │  │查询路由  │  │  HyDE   │  │<br>│  └─────────┘  └─────────┘  └─────────┘  └─────────┘  │<br>└───────────────────────────────────────────────────────┘<br>    │<br>    ▼<br>┌───────────────────────────────────────────────────────┐<br>│                     检索阶段                           │<br>│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐  │<br>│  │混合检索  │  │多路召回  │  │ 重排序  │  │元数据过滤│  │<br>│  └─────────┘  └─────────┘  └─────────┘  └─────────┘  │<br>└───────────────────────────────────────────────────────┘<br>    │<br>    ▼<br>┌───────────────────────────────────────────────────────┐<br>│                    后检索阶段                          │<br>│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐  │<br>│  │上下文压缩│  │ 去重过滤 │  │相关性校验│  │内容重组  │  │<br>│  └─────────┘  └─────────┘  └─────────┘  └─────────┘  │<br>└───────────────────────────────────────────────────────┘<br>    │<br>    ▼<br>┌───────────────────────────────────────────────────────┐<br>│                     生成阶段                           │<br>│  ┌─────────────────────────────────────────────────┐  │<br>│  │   <span class="hljs-keyword">LLM </span>根据优化后的上下文生成高质量答案            │  │<br>│  └─────────────────────────────────────────────────┘  │<br>└───────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="预检索优化技术"><a href="#预检索优化技术" class="headerlink" title="预检索优化技术"></a>预检索优化技术</h2><p>预检索阶段的目标是<strong>优化用户查询</strong>，使其更适合检索系统。</p>
+<h3 id="1-查询改写（Query-Rewriting）"><a href="#1-查询改写（Query-Rewriting）" class="headerlink" title="1. 查询改写（Query Rewriting）"></a>1. 查询改写（Query Rewriting）</h3><p>将用户的原始查询改写为更适合检索的形式。</p>
+<p><strong>为什么需要？</strong></p>
+<ul>
+<li>用户查询可能口语化、模糊、有歧义</li>
+<li>检索系统需要精确、明确的查询</li>
+</ul>
+<p><strong>示例：</strong></p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs 1c">原始查询<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;那个东西怎么用啊&quot;</span><br>改写后<span class="hljs-punctuation">:</span>   <span class="hljs-string">&quot;请解释该工具的使用方法和操作步骤&quot;</span><br><br>原始查询<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Python 爬虫报错了&quot;</span>  <br>改写后<span class="hljs-punctuation">:</span>   <span class="hljs-string">&quot;Python 爬虫常见错误类型及解决方案&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>实现方式：</strong></p>
+<ul>
+<li>使用 LLM 进行查询改写</li>
+<li>基于规则的改写（去停用词、纠错等）</li>
+</ul>
+<h3 id="2-查询扩展（Query-Expansion）"><a href="#2-查询扩展（Query-Expansion）" class="headerlink" title="2. 查询扩展（Query Expansion）"></a>2. 查询扩展（Query Expansion）</h3><p>将单个查询扩展为多个相关查询，增加召回覆盖面。</p>
+<p><strong>技术方案：</strong></p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>同义词扩展</strong></td>
+<td>添加同义词</td>
+<td>“机器学习” → “ML”、”Machine Learning”</td>
+</tr>
+<tr>
+<td><strong>上下位词扩展</strong></td>
+<td>添加上位&#x2F;下位概念</td>
+<td>“Python” → “编程语言”、”Python3”</td>
+</tr>
+<tr>
+<td><strong>多角度扩展</strong></td>
+<td>从不同角度生成查询</td>
+<td>原因、方法、比较、应用</td>
+</tr>
+</tbody></table>
+<p><strong>Multi-Query 示例：</strong></p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs makefile"><span class="hljs-section">原始: &quot;如何优化 RAG 系统？&quot;</span><br><br><span class="hljs-section">扩展为:</span><br>1. <span class="hljs-string">&quot;RAG 系统性能优化方法&quot;</span><br>2. <span class="hljs-string">&quot;提升 RAG 检索准确率的技术&quot;</span><br>3. <span class="hljs-string">&quot;RAG 系统常见问题及解决方案&quot;</span><br>4. <span class="hljs-string">&quot;Advanced RAG 最佳实践&quot;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="3-HyDE（Hypothetical-Document-Embeddings）"><a href="#3-HyDE（Hypothetical-Document-Embeddings）" class="headerlink" title="3. HyDE（Hypothetical Document Embeddings）"></a>3. HyDE（Hypothetical Document Embeddings）</h3><p><strong>核心思想</strong>：先让 LLM 生成一个「假设性答案文档」，再用这个文档去检索。</p>
+<p><strong>为什么有效？</strong></p>
+<ul>
+<li>问题和答案的语义空间不同</li>
+<li>用「答案」检索比用「问题」检索更精准</li>
+</ul>
+<p><strong>流程图：</strong></p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">用户问题<br>    │<br>    ▼<br>┌─────────────────┐<br>│ <span class="hljs-keyword">LLM </span>生成假设答案 │<br>└─────────────────┘<br>    │<br>    ▼<br>┌─────────────────┐<br>│ 对假设答案做嵌入 │<br>└─────────────────┘<br>    │<br>    ▼<br>┌─────────────────┐<br>│ 用嵌入向量检索   │<br>└─────────────────┘<br>    │<br>    ▼<br>  检索结果<br></code></pre></td></tr></table></figure>
+
+<p><strong>示例：</strong></p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs 1c">问题<span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;什么是向量数据库？&quot;</span><br><br>假设答案（LLM 生成）<span class="hljs-punctuation">:</span><br><span class="hljs-string">&quot;向量数据库是一种专门用于存储和检索高维向量数据的数据库系统。</span><br>它支持相似性搜索，常用于推荐系统、图像搜索、语义搜索等场景。<br>常见的向量数据库包括 Milvus、Pinecone、Weaviate 等。<span class="hljs-string">&quot;</span><br><br>→ 用这段文本的嵌入向量去检索，比直接用问题检索效果更好<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-查询路由（Query-Routing）"><a href="#4-查询路由（Query-Routing）" class="headerlink" title="4. 查询路由（Query Routing）"></a>4. 查询路由（Query Routing）</h3><p>根据查询类型，将其路由到最合适的检索源或处理流程。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs sql">                 用户查询<br>                     │<br>                     ▼<br>              ┌─────────────┐<br>              │  路由判断器  │<br>              └─────────────┘<br>                     │<br>     ┌───────────────┼───────────────┐<br>     ▼               ▼               ▼<br>┌─────────┐    ┌─────────┐    ┌─────────┐<br>│ 向量库  │    │ 知识图谱 │    │ <span class="hljs-keyword">SQL</span>数据库│<br>└─────────┘    └─────────┘    └─────────┘<br></code></pre></td></tr></table></figure>
+
+<p><strong>路由策略：</strong></p>
+<ul>
+<li><strong>基于关键词</strong>：包含特定关键词走特定通道</li>
+<li><strong>基于 LLM 分类</strong>：让 LLM 判断查询类型</li>
+<li><strong>基于嵌入相似度</strong>：与预设类别嵌入比较</li>
+</ul>
+<hr>
+<h2 id="检索优化技术"><a href="#检索优化技术" class="headerlink" title="检索优化技术"></a>检索优化技术</h2><h3 id="1-混合检索（Hybrid-Search）"><a href="#1-混合检索（Hybrid-Search）" class="headerlink" title="1. 混合检索（Hybrid Search）"></a>1. 混合检索（Hybrid Search）</h3><p>结合<strong>关键词检索</strong>和<strong>向量检索</strong>的优势。</p>
+<table>
+<thead>
+<tr>
+<th>检索方式</th>
+<th>优势</th>
+<th>劣势</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>关键词检索</strong> (BM25)</td>
+<td>精确匹配、可解释</td>
+<td>无法理解语义</td>
+</tr>
+<tr>
+<td><strong>向量检索</strong> (Embedding)</td>
+<td>语义理解、模糊匹配</td>
+<td>可能丢失关键词</td>
+</tr>
+<tr>
+<td><strong>混合检索</strong></td>
+<td>兼顾精确与语义</td>
+<td>需要融合策略</td>
+</tr>
+</tbody></table>
+<p><strong>融合策略示例（RRF - Reciprocal Rank Fusion）：</strong></p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc">RRF_score = Σ 1 / (k + rank_i)<br><br>其中：<br><span class="hljs-bullet">- </span>k 为常数（通常为 60）<br><span class="hljs-bullet">- </span>rank_i 为文档在第 i 个检索结果中的排名<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-重排序（Reranking）"><a href="#2-重排序（Reranking）" class="headerlink" title="2. 重排序（Reranking）"></a>2. 重排序（Reranking）</h3><p>对初步检索结果进行二次排序，提升相关性。</p>
+<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs mathematica">检索结果（<span class="hljs-built_in">Top</span> <span class="hljs-number">100</span>）<br>        │<br>        ▼<br>┌─────────────────┐<br>│   <span class="hljs-variable">Reranker</span> 模型  │<br>│  <span class="hljs-punctuation">(</span><span class="hljs-built_in">Cross</span><span class="hljs-operator">-</span><span class="hljs-variable">Encoder</span><span class="hljs-punctuation">)</span> │<br>└─────────────────┘<br>        │<br>        ▼<br>重排序结果（<span class="hljs-built_in">Top</span> <span class="hljs-number">10</span>）<br></code></pre></td></tr></table></figure>
+
+<p><strong>常用 Reranker 模型：</strong></p>
+<ul>
+<li><strong>Cohere Rerank</strong></li>
+<li><strong>BGE Reranker</strong></li>
+<li><strong>Jina Reranker</strong></li>
+<li><strong>Cross-Encoder 模型</strong></li>
+</ul>
+<p><strong>Bi-Encoder vs Cross-Encoder：</strong></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs stylus">Bi-Encoder（用于初检索，快但不够精确）:<br>  Query  →  <span class="hljs-selector-attr">[Encoder]</span>  →  向量<br>  Doc    →  <span class="hljs-selector-attr">[Encoder]</span>  →  向量<br>  相似度 = <span class="hljs-built_in">cosine</span>(Query向量, Doc向量)<br><br>Cross-Encoder（用于重排序，慢但精确）:<br>  <span class="hljs-selector-attr">[Query, Doc]</span> → <span class="hljs-selector-attr">[Encoder]</span> → 相关性分数<br>  直接输出相关性，更准确<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-多路召回（Multi-way-Retrieval）"><a href="#3-多路召回（Multi-way-Retrieval）" class="headerlink" title="3. 多路召回（Multi-way Retrieval）"></a>3. 多路召回（Multi-way Retrieval）</h3><p>从多个维度同时检索，扩大召回范围。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs">          用户查询<br>              │<br>    ┌─────────┼─────────┐<br>    ▼         ▼         ▼<br>┌───────┐ ┌───────┐ ┌───────┐<br>│语义检索│ │关键词 │ │知识图谱│<br>└───────┘ └───────┘ └───────┘<br>    │         │         │<br>    └─────────┼─────────┘<br>              ▼<br>        ┌─────────┐<br>        │结果融合  │<br>        └─────────┘<br>              │<br>              ▼<br>          最终结果<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="索引优化技术"><a href="#索引优化技术" class="headerlink" title="索引优化技术"></a>索引优化技术</h2><h3 id="1-分块策略优化"><a href="#1-分块策略优化" class="headerlink" title="1. 分块策略优化"></a>1. 分块策略优化</h3><p><strong>常见分块方法：</strong></p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>固定大小分块</strong></td>
+<td>按字符&#x2F;Token 数切分</td>
+<td>通用场景</td>
+</tr>
+<tr>
+<td><strong>语义分块</strong></td>
+<td>按语义边界切分</td>
+<td>文章、报告</td>
+</tr>
+<tr>
+<td><strong>递归分块</strong></td>
+<td>按标题层级递归切分</td>
+<td>结构化文档</td>
+</tr>
+<tr>
+<td><strong>句子窗口</strong></td>
+<td>检索句子 + 返回周围窗口</td>
+<td>精确定位</td>
+</tr>
+</tbody></table>
+<p><strong>句子窗口（Sentence Window）示例：</strong></p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs makefile"><span class="hljs-section">原始文档:</span><br><span class="hljs-string">&quot;句子1。句子2。句子3。句子4。句子5。&quot;</span><br><br><span class="hljs-section">索引单位: 句子3</span><br><span class="hljs-section">返回内容: 句子2 + 句子3 + 句子4（窗口大小=1）</span><br><br><span class="hljs-section">优势: 索引粒度细，返回上下文完整</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="2-层次化索引（Hierarchical-Indexing）"><a href="#2-层次化索引（Hierarchical-Indexing）" class="headerlink" title="2. 层次化索引（Hierarchical Indexing）"></a>2. 层次化索引（Hierarchical Indexing）</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs css">                  ┌─────────────┐<br>                  │   文档摘要   │  ← 粗粒度检索<br>                  └─────────────┘<br>                        │<br>        ┌───────────────┼───────────────┐<br>        ▼               ▼               ▼<br>   ┌─────────┐    ┌─────────┐    ┌─────────┐<br>   │ 章节摘要 │    │ 章节摘要 │    │ 章节摘要 │  ← 中粒度<br>   └─────────┘    └─────────┘    └─────────┘<br>        │<br>  ┌─────┼─────┐<br>  ▼     ▼     ▼<br><span class="hljs-selector-attr">[段落]</span> <span class="hljs-selector-attr">[段落]</span> <span class="hljs-selector-attr">[段落]</span>  ← 细粒度检索<br></code></pre></td></tr></table></figure>
+
+<p><strong>检索流程：</strong></p>
+<ol>
+<li>先用摘要快速定位相关文档</li>
+<li>再深入检索具体段落</li>
+</ol>
+<h3 id="3-父子文档索引（Parent-Child-Indexing）"><a href="#3-父子文档索引（Parent-Child-Indexing）" class="headerlink" title="3. 父子文档索引（Parent-Child Indexing）"></a>3. 父子文档索引（Parent-Child Indexing）</h3><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs makefile">父文档（用于返回，包含完整上下文）<br>├── 子块1（用于检索，精确匹配）<br>├── 子块2<br>└── 子块3<br><br><span class="hljs-section">检索时: 匹配子块</span><br><span class="hljs-section">返回时: 返回父文档</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>优势：</strong></p>
+<ul>
+<li>检索精确（小块匹配度高）</li>
+<li>上下文完整（返回大块内容）</li>
+</ul>
+<hr>
+<h2 id="后检索优化技术"><a href="#后检索优化技术" class="headerlink" title="后检索优化技术"></a>后检索优化技术</h2><h3 id="1-上下文压缩（Context-Compression）"><a href="#1-上下文压缩（Context-Compression）" class="headerlink" title="1. 上下文压缩（Context Compression）"></a>1. 上下文压缩（Context Compression）</h3><p>移除检索结果中与问题无关的内容，节省 Token。</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs 1c">原始检索结果（<span class="hljs-number">1000</span> Token）<span class="hljs-punctuation">:</span><br><span class="hljs-string">&quot;本文介绍了机器学习的基础知识...（大量背景信息）...</span><br>其中，向量数据库是...（相关内容）...<br>参考文献：...<span class="hljs-string">&quot;</span><br><br>压缩后（<span class="hljs-number">200</span> Token）<span class="hljs-punctuation">:</span><br><span class="hljs-string">&quot;向量数据库是一种专门存储高维向量的数据库...&quot;</span><br><br>压缩率<span class="hljs-punctuation">:</span> <span class="hljs-number">80</span>%<br></code></pre></td></tr></table></figure>
+
+<p><strong>实现方式：</strong></p>
+<ul>
+<li><strong>LLM 压缩</strong>：让 LLM 提取相关内容</li>
+<li><strong>LLMLingua</strong>：基于困惑度的压缩</li>
+<li><strong>Recomp</strong>：抽取式&#x2F;生成式压缩</li>
+</ul>
+<h3 id="2-去重与过滤"><a href="#2-去重与过滤" class="headerlink" title="2. 去重与过滤"></a>2. 去重与过滤</h3><ul>
+<li><strong>语义去重</strong>：合并语义相似的检索结果</li>
+<li><strong>相关性过滤</strong>：移除相关性低于阈值的结果</li>
+<li><strong>元数据过滤</strong>：按时间、来源等条件过滤</li>
+</ul>
+<h3 id="3-上下文重组"><a href="#3-上下文重组" class="headerlink" title="3. 上下文重组"></a>3. 上下文重组</h3><p>将检索结果按逻辑顺序重组，提升生成质量。</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs markdown">检索顺序（按相关性）:<br><span class="hljs-bullet">1.</span> 结论段落<br><span class="hljs-bullet">2.</span> 背景段落<br><span class="hljs-bullet">3.</span> 方法段落<br><br>重组顺序（按逻辑）:<br><span class="hljs-bullet">1.</span> 背景段落<br><span class="hljs-bullet">2.</span> 方法段落<br><span class="hljs-bullet">3.</span> 结论段落<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="高级-RAG-范式"><a href="#高级-RAG-范式" class="headerlink" title="高级 RAG 范式"></a>高级 RAG 范式</h2><h3 id="1-Self-RAG（自反思-RAG）"><a href="#1-Self-RAG（自反思-RAG）" class="headerlink" title="1. Self-RAG（自反思 RAG）"></a>1. Self-RAG（自反思 RAG）</h3><p>模型在生成过程中<strong>自我评估</strong>是否需要检索、检索结果是否相关、生成是否符合事实。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs css">┌─────────────────────────────────────────────────────┐<br>│                    Self-RAG 流程                     │<br>├─────────────────────────────────────────────────────┤<br>│  <span class="hljs-number">1</span>. <span class="hljs-selector-attr">[Retrieve]</span> 是否需要检索？                        │<br>│     → Yes/No                                        │<br>│                                                     │<br>│  <span class="hljs-number">2</span>. <span class="hljs-selector-attr">[IsRel]</span> 检索结果是否相关？                       │<br>│     → Relevant/Irrelevant                           │<br>│                                                     │<br>│  <span class="hljs-number">3</span>. <span class="hljs-selector-attr">[IsSup]</span> 生成内容是否有检索支持？                 │<br>│     → Fully/Partially/No Support                    │<br>│                                                     │<br>│  <span class="hljs-number">4</span>. <span class="hljs-selector-attr">[IsUse]</span> 生成内容是否有用？                       │<br>│     → <span class="hljs-number">1</span>-<span class="hljs-number">5</span> 分                                        │<br>└─────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-CRAG（Corrective-RAG）"><a href="#2-CRAG（Corrective-RAG）" class="headerlink" title="2. CRAG（Corrective RAG）"></a>2. CRAG（Corrective RAG）</h3><p>带有<strong>纠错机制</strong>的 RAG，能够识别并修正检索错误。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs">用户查询<br>    │<br>    ▼<br>┌─────────────┐<br>│   初次检索   │<br>└─────────────┘<br>    │<br>    ▼<br>┌─────────────┐<br>│ 相关性评估  │<br>└─────────────┘<br>    │<br>    ├── 相关 → 直接使用<br>    │<br>    ├── 模糊 → 知识精炼（提取关键信息）<br>    │<br>    └── 不相关 → 触发网络搜索<br>              │<br>              ▼<br>        ┌─────────────┐<br>        │  知识重获取  │<br>        └─────────────┘<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-RAG-Fusion"><a href="#3-RAG-Fusion" class="headerlink" title="3. RAG Fusion"></a>3. RAG Fusion</h3><p>执行多个改写查询的检索，然后融合结果。</p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs tap">原始查询<br>    │<br>    ▼<br>┌─────────────┐<br>│ 生成多个改写 │<br>└─────────────┘<br>    │<br>    ├── 改写查询<span class="hljs-number"> 1 </span>→ 检索结果 1<br>    ├── 改写查询<span class="hljs-number"> 2 </span>→ 检索结果 2<br>    ├── 改写查询<span class="hljs-number"> 3 </span>→ 检索结果 3<br>    └── 改写查询<span class="hljs-number"> 4 </span>→ 检索结果 4<br>              │<br>              ▼<br>        ┌─────────────┐<br>        │  RRF 融合   │<br>        └─────────────┘<br>              │<br>              ▼<br>          最终结果<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="评估指标"><a href="#评估指标" class="headerlink" title="评估指标"></a>评估指标</h2><h3 id="检索质量评估"><a href="#检索质量评估" class="headerlink" title="检索质量评估"></a>检索质量评估</h3><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>说明</th>
+<th>公式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Recall@K</strong></td>
+<td>Top-K 中包含正确答案的比例</td>
+<td>相关文档数 &#x2F; 总相关文档数</td>
+</tr>
+<tr>
+<td><strong>Precision@K</strong></td>
+<td>Top-K 中相关文档的比例</td>
+<td>相关文档数 &#x2F; K</td>
+</tr>
+<tr>
+<td><strong>MRR</strong></td>
+<td>第一个正确结果的排名倒数</td>
+<td>1 &#x2F; rank</td>
+</tr>
+<tr>
+<td><strong>NDCG</strong></td>
+<td>归一化折损累积增益</td>
+<td>考虑位置的相关性评分</td>
+</tr>
+</tbody></table>
+<h3 id="生成质量评估"><a href="#生成质量评估" class="headerlink" title="生成质量评估"></a>生成质量评估</h3><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Faithfulness</strong></td>
+<td>生成内容是否忠于检索结果</td>
+</tr>
+<tr>
+<td><strong>Answer Relevancy</strong></td>
+<td>答案与问题的相关性</td>
+</tr>
+<tr>
+<td><strong>Context Relevancy</strong></td>
+<td>上下文与问题的相关性</td>
+</tr>
+<tr>
+<td><strong>Hallucination Rate</strong></td>
+<td>幻觉比例</td>
+</tr>
+</tbody></table>
+<h3 id="常用评估框架"><a href="#常用评估框架" class="headerlink" title="常用评估框架"></a>常用评估框架</h3><ul>
+<li><strong>RAGAS</strong>：专门用于 RAG 评估的框架</li>
+<li><strong>TruLens</strong>：LLM 应用评估工具</li>
+<li><strong>LangSmith</strong>：LangChain 的评估追踪工具</li>
+</ul>
+<hr>
+<h2 id="技术选型建议"><a href="#技术选型建议" class="headerlink" title="技术选型建议"></a>技术选型建议</h2><h3 id="场景对应方案"><a href="#场景对应方案" class="headerlink" title="场景对应方案"></a>场景对应方案</h3><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐技术</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>精确匹配重要</strong></td>
+<td>混合检索（BM25 + Vector）</td>
+</tr>
+<tr>
+<td><strong>长文档理解</strong></td>
+<td>层次化索引 + 父子文档</td>
+</tr>
+<tr>
+<td><strong>多源数据</strong></td>
+<td>查询路由 + 多路召回</td>
+</tr>
+<tr>
+<td><strong>Token 受限</strong></td>
+<td>上下文压缩 + 重排序</td>
+</tr>
+<tr>
+<td><strong>高准确性要求</strong></td>
+<td>Self-RAG &#x2F; CRAG</td>
+</tr>
+</tbody></table>
+<h3 id="技术栈推荐"><a href="#技术栈推荐" class="headerlink" title="技术栈推荐"></a>技术栈推荐</h3><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>推荐工具</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>向量数据库</strong></td>
+<td>Milvus、Qdrant、Weaviate、Chroma</td>
+</tr>
+<tr>
+<td><strong>Embedding 模型</strong></td>
+<td>BGE、GTE、Jina、OpenAI Embedding</td>
+</tr>
+<tr>
+<td><strong>Reranker</strong></td>
+<td>BGE Reranker、Cohere Rerank</td>
+</tr>
+<tr>
+<td><strong>框架</strong></td>
+<td>LangChain、LlamaIndex、Haystack</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Advanced RAG 通过在 RAG 管道的各个阶段引入优化技术，系统性地提升了检索增强生成的效果：</p>
+<ol>
+<li><strong>预检索</strong>：查询改写、扩展、路由、HyDE</li>
+<li><strong>检索</strong>：混合检索、多路召回、重排序</li>
+<li><strong>索引</strong>：分块优化、层次索引、父子文档</li>
+<li><strong>后检索</strong>：上下文压缩、去重、重组</li>
+<li><strong>高级范式</strong>：Self-RAG、CRAG、RAG Fusion</li>
+</ol>
+<p>选择合适的技术组合需要根据具体场景权衡<strong>准确性、延迟、成本</strong>三者的关系。</p>
+<hr>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
+<li>RAG 基础</li>
+<li>Agent 架构</li>
+<li>Prompt Engineering</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/AI/" class="category-chain-item">AI</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/AI/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" class="category-chain-item">大模型</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/RAG/" class="print-no-link">#RAG</a>
+      
+        <a href="/tags/Advanced-RAG/" class="print-no-link">#Advanced-RAG</a>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90/" class="print-no-link">#检索增强生成</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Advanced-RAG详解</div>
+      <div>https://zmmmmy.github.io/2026/01/13/Advanced-RAG详解/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZhiMy</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026-01-13</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>更新于</div>
+          <div>2026-01-22</div>
+        </div>
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                    <i class="iconfont icon-cc-nc"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/01/14/Agent%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/" title="Agent工具调用技术详解">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Agent工具调用技术详解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/01/13/RAG%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/" title="RAG技术详解">
+                        <span class="hidden-mobile">RAG技术详解</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener">Hexo</a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">Fluid</a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

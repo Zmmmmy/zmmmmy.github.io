@@ -1,0 +1,1000 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZhiMy">
+  <meta name="keywords" content="技术博客,编程">
+  
+    <meta name="description" content="Reflexion 自反思 Agent 详解概述Reflexion 是一种让 Agent 具备”从错误中学习”能力的架构模式。核心思想是：执行任务后进行自我评估和反思，将经验教训存入记忆，在后续尝试中避免重复错误。  💡 提示: 核心价值传统 Agent 每次都是”从零开始”，而 Reflexion Agent 能够积累经验、持续改进。  与传统 Agent 的对比   维度 传统 Agent">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reflexion自反思Agent详解">
+<meta property="og:url" content="https://zmmmmy.github.io/2026/01/12/Reflexion%E8%87%AA%E5%8F%8D%E6%80%9DAgent%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Zmmmmy&#39;s Blog">
+<meta property="og:description" content="Reflexion 自反思 Agent 详解概述Reflexion 是一种让 Agent 具备”从错误中学习”能力的架构模式。核心思想是：执行任务后进行自我评估和反思，将经验教训存入记忆，在后续尝试中避免重复错误。  💡 提示: 核心价值传统 Agent 每次都是”从零开始”，而 Reflexion Agent 能够积累经验、持续改进。  与传统 Agent 的对比   维度 传统 Agent">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-01-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-01-22T07:44:14.944Z">
+<meta property="article:author" content="ZhiMy">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="Reflexion">
+<meta property="article:tag" content="自反思">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Reflexion自反思Agent详解 - Zmmmmy&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zmmmmy.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2,"offset_top":300},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Zmmmmy&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Reflexion自反思Agent详解"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        ZhiMy
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-12 00:00" pubdate>
+          2026-01-12
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          45 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Reflexion自反思Agent详解</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于2026年1月22日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Reflexion-自反思-Agent-详解"><a href="#Reflexion-自反思-Agent-详解" class="headerlink" title="Reflexion 自反思 Agent 详解"></a>Reflexion 自反思 Agent 详解</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><strong>Reflexion</strong> 是一种让 Agent 具备”从错误中学习”能力的架构模式。核心思想是：执行任务后进行自我评估和反思，将经验教训存入记忆，在后续尝试中避免重复错误。</p>
+<blockquote>
+<p><strong>💡 提示: 核心价值</strong><br>传统 Agent 每次都是”从零开始”，而 Reflexion Agent 能够<strong>积累经验、持续改进</strong>。</p>
+</blockquote>
+<h2 id="与传统-Agent-的对比"><a href="#与传统-Agent-的对比" class="headerlink" title="与传统 Agent 的对比"></a>与传统 Agent 的对比</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>传统 Agent</th>
+<th>Reflexion Agent</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>失败处理</td>
+<td>简单重试</td>
+<td>反思后改进再试</td>
+</tr>
+<tr>
+<td>经验积累</td>
+<td>无</td>
+<td>有（记忆模块）</td>
+</tr>
+<tr>
+<td>学习能力</td>
+<td>无</td>
+<td>从错误中学习</td>
+</tr>
+<tr>
+<td>成功率</td>
+<td>随机</td>
+<td>逐次提升</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="一、核心架构"><a href="#一、核心架构" class="headerlink" title="一、核心架构"></a>一、核心架构</h2><h3 id="1-1-三大组件"><a href="#1-1-三大组件" class="headerlink" title="1.1 三大组件"></a>1.1 三大组件</h3><pre><code class=" mermaid">graph TB
+    subgraph Reflexion Agent
+        A[Actor&lt;br/&gt;执行者] --&gt; B[Evaluator&lt;br/&gt;评估者]
+        B --&gt; C&#123;成功?&#125;
+        C --&gt;|是| D[返回结果]
+        C --&gt;|否| E[Self-Reflection&lt;br/&gt;自反思]
+        E --&gt; F[Memory&lt;br/&gt;经验记忆]
+        F --&gt; A
+    end
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>职责</th>
+<th>输入</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Actor</strong></td>
+<td>执行任务</td>
+<td>任务 + 历史经验</td>
+<td>执行结果</td>
+</tr>
+<tr>
+<td><strong>Evaluator</strong></td>
+<td>评估结果质量</td>
+<td>任务 + 结果</td>
+<td>成功&#x2F;失败 + 反馈</td>
+</tr>
+<tr>
+<td><strong>Self-Reflection</strong></td>
+<td>分析失败原因</td>
+<td>执行历史 + 评估反馈</td>
+<td>经验教训</td>
+</tr>
+<tr>
+<td><strong>Memory</strong></td>
+<td>存储经验</td>
+<td>反思结果</td>
+<td>历史经验列表</td>
+</tr>
+</tbody></table>
+<h3 id="1-2-执行流程"><a href="#1-2-执行流程" class="headerlink" title="1.2 执行流程"></a>1.2 执行流程</h3><pre><code class=" mermaid">sequenceDiagram
+    participant U as 用户
+    participant A as Actor
+    participant E as Evaluator
+    participant R as Self-Reflection
+    participant M as Memory
+    
+    U-&gt;&gt;A: 任务
+    M-&gt;&gt;A: 历史经验
+    A-&gt;&gt;E: 执行结果
+    E-&gt;&gt;E: 评估
+    
+    alt 成功
+        E-&gt;&gt;U: 返回结果
+    else 失败
+        E-&gt;&gt;R: 评估反馈
+        R-&gt;&gt;R: 反思分析
+        R-&gt;&gt;M: 存储经验
+        M-&gt;&gt;A: 更新经验
+        Note over A: 重新尝试
+    end
+</code></pre>
+
+<hr>
+<h2 id="二、各组件详解"><a href="#二、各组件详解" class="headerlink" title="二、各组件详解"></a>二、各组件详解</h2><h3 id="2-1-Actor（执行者）"><a href="#2-1-Actor（执行者）" class="headerlink" title="2.1 Actor（执行者）"></a>2.1 Actor（执行者）</h3><p>Actor 负责实际执行任务，但会参考历史经验避免重复错误。</p>
+<h4 id="Prompt-模板"><a href="#Prompt-模板" class="headerlink" title="Prompt 模板"></a>Prompt 模板</h4><figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs clean">你是一个智能助手，负责完成用户任务。<br><br>## 任务<br>&#123;task&#125;<br><br>## 历史经验教训（请务必参考，避免重复错误）<br>&#123;experiences&#125;<br><br>## 要求<br><span class="hljs-number">1.</span> 仔细阅读历史经验，避免犯同样的错误<br><span class="hljs-number">2.</span> 如果历史经验提到某种方法不可行，请尝试其他方法<br><span class="hljs-number">3.</span> 输出你的思考过程和最终结果<br><br>## 输出格式<br>### 思考<br>[分析任务，参考经验，规划方案]<br><br>### 执行<br>[具体执行步骤和结果]<br></code></pre></td></tr></table></figure>
+
+<h4 id="Java-实现"><a href="#Java-实现" class="headerlink" title="Java 实现"></a>Java 实现</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Actor</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ChatClient chatClient;<br>    <br>    <span class="hljs-keyword">public</span> ActorResult <span class="hljs-title function_">execute</span><span class="hljs-params">(String task, List&lt;String&gt; experiences)</span> &#123;<br>        <span class="hljs-type">String</span> <span class="hljs-variable">experienceText</span> <span class="hljs-operator">=</span> experiences.isEmpty() <br>            ? <span class="hljs-string">&quot;暂无历史经验&quot;</span><br>            : experiences.stream()<br>                .map(e -&gt; <span class="hljs-string">&quot;- &quot;</span> + e)<br>                .collect(Collectors.joining(<span class="hljs-string">&quot;\n&quot;</span>));<br>        <br>        <span class="hljs-type">String</span> <span class="hljs-variable">response</span> <span class="hljs-operator">=</span> chatClient.prompt()<br>            .system(ACTOR_PROMPT)<br>            .user(<span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">                ## 任务</span><br><span class="hljs-string">                %s</span><br><span class="hljs-string">                </span><br><span class="hljs-string">                ## 历史经验教训</span><br><span class="hljs-string">                %s</span><br><span class="hljs-string">                &quot;&quot;&quot;</span>.formatted(task, experienceText))<br>            .call()<br>            .content();<br>        <br>        <span class="hljs-keyword">return</span> parseActorResult(response);<br>    &#125;<br>&#125;<br><br><span class="hljs-meta">@Data</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ActorResult</span> &#123;<br>    <span class="hljs-keyword">private</span> String thinking;      <span class="hljs-comment">// 思考过程</span><br>    <span class="hljs-keyword">private</span> String execution;     <span class="hljs-comment">// 执行结果</span><br>    <span class="hljs-keyword">private</span> List&lt;String&gt; actions; <span class="hljs-comment">// 执行的动作列表</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="2-2-Evaluator（评估者）"><a href="#2-2-Evaluator（评估者）" class="headerlink" title="2.2 Evaluator（评估者）"></a>2.2 Evaluator（评估者）</h3><p>Evaluator 负责判断执行结果是否达标，可以用 LLM 评估、规则评估或测试用例评估。</p>
+<h4 id="评估方式对比"><a href="#评估方式对比" class="headerlink" title="评估方式对比"></a>评估方式对比</h4><table>
+<thead>
+<tr>
+<th>评估方式</th>
+<th>适用场景</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>LLM 评估</strong></td>
+<td>开放性任务</td>
+<td>灵活</td>
+<td>可能不准确</td>
+</tr>
+<tr>
+<td><strong>规则评估</strong></td>
+<td>有明确标准的任务</td>
+<td>准确</td>
+<td>不够灵活</td>
+</tr>
+<tr>
+<td><strong>测试用例</strong></td>
+<td>代码生成任务</td>
+<td>客观准确</td>
+<td>需要预先准备</td>
+</tr>
+<tr>
+<td><strong>人工评估</strong></td>
+<td>高风险决策</td>
+<td>最准确</td>
+<td>成本高</td>
+</tr>
+</tbody></table>
+<h4 id="LLM-评估-Prompt"><a href="#LLM-评估-Prompt" class="headerlink" title="LLM 评估 Prompt"></a>LLM 评估 Prompt</h4><figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs clean">你是一个严格的任务评估专家。<br><br>## 原始任务<br>&#123;task&#125;<br><br>## 执行结果<br>&#123;result&#125;<br><br>## 评估维度<br><span class="hljs-number">1.</span> **正确性**：结果是否正确完成了任务要求<br><span class="hljs-number">2.</span> **完整性**：是否覆盖了所有要求<br><span class="hljs-number">3.</span> **质量**：结果的质量如何<br><br>## 输出格式（JSON）<br>&#123;<br>  <span class="hljs-string">&quot;success&quot;</span>: true/false,<br>  <span class="hljs-string">&quot;score&quot;</span>: <span class="hljs-number">0</span><span class="hljs-number">-100</span>,<br>  <span class="hljs-string">&quot;dimensions&quot;</span>: &#123;<br>    <span class="hljs-string">&quot;correctness&quot;</span>: &#123;<span class="hljs-string">&quot;score&quot;</span>: <span class="hljs-number">0</span><span class="hljs-number">-100</span>, <span class="hljs-string">&quot;feedback&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>&#125;,<br>    <span class="hljs-string">&quot;completeness&quot;</span>: &#123;<span class="hljs-string">&quot;score&quot;</span>: <span class="hljs-number">0</span><span class="hljs-number">-100</span>, <span class="hljs-string">&quot;feedback&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>&#125;,<br>    <span class="hljs-string">&quot;quality&quot;</span>: &#123;<span class="hljs-string">&quot;score&quot;</span>: <span class="hljs-number">0</span><span class="hljs-number">-100</span>, <span class="hljs-string">&quot;feedback&quot;</span>: <span class="hljs-string">&quot;...&quot;</span>&#125;<br>  &#125;,<br>  <span class="hljs-string">&quot;overall_feedback&quot;</span>: <span class="hljs-string">&quot;总体评价&quot;</span>,<br>  <span class="hljs-string">&quot;specific_issues&quot;</span>: [<span class="hljs-string">&quot;问题1&quot;</span>, <span class="hljs-string">&quot;问题2&quot;</span>]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="Java-实现-1"><a href="#Java-实现-1" class="headerlink" title="Java 实现"></a>Java 实现</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Evaluator</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ChatClient chatClient;<br>    <br>    <span class="hljs-comment">// LLM 评估</span><br>    <span class="hljs-keyword">public</span> EvaluationResult <span class="hljs-title function_">evaluateWithLLM</span><span class="hljs-params">(String task, String result)</span> &#123;<br>        <span class="hljs-type">String</span> <span class="hljs-variable">response</span> <span class="hljs-operator">=</span> chatClient.prompt()<br>            .system(EVALUATOR_PROMPT)<br>            .user(<span class="hljs-string">&quot;任务：%s\n\n结果：%s&quot;</span>.formatted(task, result))<br>            .call()<br>            .content();<br>        <br>        <span class="hljs-keyword">return</span> parseJson(response, EvaluationResult.class);<br>    &#125;<br>    <br>    <span class="hljs-comment">// 代码任务：测试用例评估</span><br>    <span class="hljs-keyword">public</span> EvaluationResult <span class="hljs-title function_">evaluateCode</span><span class="hljs-params">(String code, List&lt;TestCase&gt; testCases)</span> &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">passed</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>        List&lt;String&gt; failures = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        <br>        <span class="hljs-keyword">for</span> (TestCase tc : testCases) &#123;<br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> executeCode(code, tc.getInput());<br>                <span class="hljs-keyword">if</span> (tc.getExpected().equals(result)) &#123;<br>                    passed++;<br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                    failures.add(<span class="hljs-string">&quot;输入 %s 期望 %s 实际 %s&quot;</span><br>                        .formatted(tc.getInput(), tc.getExpected(), result));<br>                &#125;<br>            &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>                failures.add(<span class="hljs-string">&quot;输入 %s 执行异常：%s&quot;</span><br>                    .formatted(tc.getInput(), e.getMessage()));<br>            &#125;<br>        &#125;<br>        <br>        <span class="hljs-type">int</span> <span class="hljs-variable">score</span> <span class="hljs-operator">=</span> passed * <span class="hljs-number">100</span> / testCases.size();<br>        <span class="hljs-keyword">return</span> EvaluationResult.builder()<br>            .success(score &gt;= <span class="hljs-number">100</span>)<br>            .score(score)<br>            .specificIssues(failures)<br>            .build();<br>    &#125;<br>&#125;<br><br><span class="hljs-meta">@Data</span><br><span class="hljs-meta">@Builder</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EvaluationResult</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">boolean</span> success;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> score;<br>    <span class="hljs-keyword">private</span> Map&lt;String, DimensionScore&gt; dimensions;<br>    <span class="hljs-keyword">private</span> String overallFeedback;<br>    <span class="hljs-keyword">private</span> List&lt;String&gt; specificIssues;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="2-3-Self-Reflection（自反思）"><a href="#2-3-Self-Reflection（自反思）" class="headerlink" title="2.3 Self-Reflection（自反思）"></a>2.3 Self-Reflection（自反思）</h3><p>Self-Reflection 是 Reflexion 的核心，负责深度分析失败原因并总结经验。</p>
+<h4 id="反思-Prompt"><a href="#反思-Prompt" class="headerlink" title="反思 Prompt"></a>反思 Prompt</h4><figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs clean">你是一个善于反思和总结的分析专家。<br><br>## 任务目标<br>&#123;task&#125;<br><br>## 执行过程<br>&#123;execution_trace&#125;<br><br>## 执行结果<br>&#123;result&#125;<br><br>## 评估反馈<br>&#123;evaluation_feedback&#125;<br><br>## 请进行深度反思<br><br>### <span class="hljs-number">1.</span> 问题诊断<br>- 这次尝试具体哪里出了问题？<br>- 是理解错误、方法错误还是执行错误？<br><br>### <span class="hljs-number">2.</span> 根因分析<br>- 问题的根本原因是什么？<br>- 是否有错误的假设？<br><br>### <span class="hljs-number">3.</span> 经验总结<br>- 从这次失败中学到了什么？<br>- 下次遇到类似问题应该如何处理？<br><br>### <span class="hljs-number">4.</span> 改进方案<br>- 具体的改进措施是什么？<br>- 下一次尝试应该怎么做？<br><br>## 输出格式（JSON）<br>&#123;<br>  <span class="hljs-string">&quot;problem_diagnosis&quot;</span>: <span class="hljs-string">&quot;问题诊断&quot;</span>,<br>  <span class="hljs-string">&quot;root_cause&quot;</span>: <span class="hljs-string">&quot;根本原因&quot;</span>,<br>  <span class="hljs-string">&quot;lessons_learned&quot;</span>: [<br>    <span class="hljs-string">&quot;经验1：...&quot;</span>,<br>    <span class="hljs-string">&quot;经验2：...&quot;</span><br>  ],<br>  <span class="hljs-string">&quot;improvement_plan&quot;</span>: <span class="hljs-string">&quot;改进方案&quot;</span>,<br>  <span class="hljs-string">&quot;confidence&quot;</span>: <span class="hljs-number">0</span><span class="hljs-number">-100</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="Java-实现-2"><a href="#Java-实现-2" class="headerlink" title="Java 实现"></a>Java 实现</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SelfReflection</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ChatClient chatClient;<br>    <br>    <span class="hljs-keyword">public</span> ReflectionResult <span class="hljs-title function_">reflect</span><span class="hljs-params">(ReflectionInput input)</span> &#123;<br>        <span class="hljs-type">String</span> <span class="hljs-variable">response</span> <span class="hljs-operator">=</span> chatClient.prompt()<br>            .system(REFLECTION_PROMPT)<br>            .user(<span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">                ## 任务目标</span><br><span class="hljs-string">                %s</span><br><span class="hljs-string">                </span><br><span class="hljs-string">                ## 执行过程</span><br><span class="hljs-string">                %s</span><br><span class="hljs-string">                </span><br><span class="hljs-string">                ## 执行结果</span><br><span class="hljs-string">                %s</span><br><span class="hljs-string">                </span><br><span class="hljs-string">                ## 评估反馈</span><br><span class="hljs-string">                %s</span><br><span class="hljs-string">                &quot;&quot;&quot;</span>.formatted(<br>                    input.getTask(),<br>                    input.getExecutionTrace(),<br>                    input.getResult(),<br>                    input.getEvaluationFeedback()<br>                ))<br>            .call()<br>            .content();<br>        <br>        <span class="hljs-keyword">return</span> parseJson(response, ReflectionResult.class);<br>    &#125;<br>&#125;<br><br><span class="hljs-meta">@Data</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ReflectionInput</span> &#123;<br>    <span class="hljs-keyword">private</span> String task;<br>    <span class="hljs-keyword">private</span> String executionTrace;<br>    <span class="hljs-keyword">private</span> String result;<br>    <span class="hljs-keyword">private</span> String evaluationFeedback;<br>&#125;<br><br><span class="hljs-meta">@Data</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ReflectionResult</span> &#123;<br>    <span class="hljs-keyword">private</span> String problemDiagnosis;<br>    <span class="hljs-keyword">private</span> String rootCause;<br>    <span class="hljs-keyword">private</span> List&lt;String&gt; lessonsLearned;<br>    <span class="hljs-keyword">private</span> String improvementPlan;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> confidence;<br>    <br>    <span class="hljs-comment">// 转换为可存储的经验文本</span><br>    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">toExperienceText</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">            问题：%s</span><br><span class="hljs-string">            原因：%s</span><br><span class="hljs-string">            教训：%s</span><br><span class="hljs-string">            改进：%s</span><br><span class="hljs-string">            &quot;&quot;&quot;</span>.formatted(<br>                problemDiagnosis,<br>                rootCause,<br>                String.join(<span class="hljs-string">&quot;；&quot;</span>, lessonsLearned),<br>                improvementPlan<br>            );<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="2-4-Memory（记忆模块）"><a href="#2-4-Memory（记忆模块）" class="headerlink" title="2.4 Memory（记忆模块）"></a>2.4 Memory（记忆模块）</h3><p>Memory 负责存储和检索经验，支持短期记忆（当前任务）和长期记忆（跨任务）。</p>
+<h4 id="记忆架构"><a href="#记忆架构" class="headerlink" title="记忆架构"></a>记忆架构</h4><pre><code class=" mermaid">graph TB
+    subgraph Memory
+        A[短期记忆] --&gt; C[经验检索]
+        B[长期记忆] --&gt; C
+    end
+    
+    D[当前任务经验] --&gt; A
+    E[历史任务经验] --&gt; B
+    C --&gt; F[相关经验]
+</code></pre>
+
+<h4 id="Java-实现-3"><a href="#Java-实现-3" class="headerlink" title="Java 实现"></a>Java 实现</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Service</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ReflexionMemory</span> &#123;<br>    <br>    <span class="hljs-comment">// 短期记忆：当前任务的尝试历史</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> List&lt;String&gt; shortTermMemory = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>    <br>    <span class="hljs-comment">// 长期记忆：向量数据库</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> VectorStore vectorStore;<br>    <br>    <span class="hljs-comment">// 添加短期记忆</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">addShortTerm</span><span class="hljs-params">(String experience)</span> &#123;<br>        shortTermMemory.add(experience);<br>    &#125;<br>    <br>    <span class="hljs-comment">// 清空短期记忆（任务完成后）</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">clearShortTerm</span><span class="hljs-params">()</span> &#123;<br>        shortTermMemory.clear();<br>    &#125;<br>    <br>    <span class="hljs-comment">// 添加长期记忆</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">addLongTerm</span><span class="hljs-params">(String experience, String taskType)</span> &#123;<br>        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Document</span>(<br>            experience,<br>            Map.of(<br>                <span class="hljs-string">&quot;task_type&quot;</span>, taskType,<br>                <span class="hljs-string">&quot;timestamp&quot;</span>, System.currentTimeMillis(),<br>                <span class="hljs-string">&quot;source&quot;</span>, <span class="hljs-string">&quot;reflexion&quot;</span><br>            )<br>        );<br>        vectorStore.add(List.of(doc));<br>    &#125;<br>    <br>    <span class="hljs-comment">// 检索相关经验</span><br>    <span class="hljs-keyword">public</span> List&lt;String&gt; <span class="hljs-title function_">recall</span><span class="hljs-params">(String task, <span class="hljs-type">int</span> topK)</span> &#123;<br>        List&lt;String&gt; experiences = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        <br>        <span class="hljs-comment">// 1. 添加短期记忆（当前任务的所有尝试）</span><br>        experiences.addAll(shortTermMemory);<br>        <br>        <span class="hljs-comment">// 2. 检索长期记忆中的相关经验</span><br>        List&lt;Document&gt; docs = vectorStore.similaritySearch(<br>            SearchRequest.query(task).withTopK(topK)<br>        );<br>        <br>        <span class="hljs-keyword">for</span> (Document doc : docs) &#123;<br>            experiences.add(doc.getContent());<br>        &#125;<br>        <br>        <span class="hljs-keyword">return</span> experiences;<br>    &#125;<br>    <br>    <span class="hljs-comment">// 获取短期记忆</span><br>    <span class="hljs-keyword">public</span> List&lt;String&gt; <span class="hljs-title function_">getShortTermMemory</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;(shortTermMemory);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="三、完整实现"><a href="#三、完整实现" class="headerlink" title="三、完整实现"></a>三、完整实现</h2><h3 id="3-1-Reflexion-Agent-主类"><a href="#3-1-Reflexion-Agent-主类" class="headerlink" title="3.1 Reflexion Agent 主类"></a>3.1 Reflexion Agent 主类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Service</span><br><span class="hljs-meta">@Slf4j</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ReflexionAgent</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Actor actor;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Evaluator evaluator;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> SelfReflection selfReflection;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ReflexionMemory memory;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">MAX_RETRIES</span> <span class="hljs-operator">=</span> <span class="hljs-number">3</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">SUCCESS_THRESHOLD</span> <span class="hljs-operator">=</span> <span class="hljs-number">80</span>;<br>    <br>    <span class="hljs-keyword">public</span> ReflexionResponse <span class="hljs-title function_">execute</span><span class="hljs-params">(String task)</span> &#123;<br>        log.info(<span class="hljs-string">&quot;开始执行任务: &#123;&#125;&quot;</span>, task);<br>        <br>        List&lt;AttemptRecord&gt; attempts = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        <br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">attempt</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; attempt &lt;= MAX_RETRIES; attempt++) &#123;<br>            log.info(<span class="hljs-string">&quot;=== 第 &#123;&#125; 次尝试 ===&quot;</span>, attempt);<br>            <br>            <span class="hljs-comment">// 1. 检索相关经验</span><br>            List&lt;String&gt; experiences = memory.recall(task, <span class="hljs-number">5</span>);<br>            log.info(<span class="hljs-string">&quot;检索到 &#123;&#125; 条相关经验&quot;</span>, experiences.size());<br>            <br>            <span class="hljs-comment">// 2. Actor 执行</span><br>            <span class="hljs-type">ActorResult</span> <span class="hljs-variable">actorResult</span> <span class="hljs-operator">=</span> actor.execute(task, experiences);<br>            log.info(<span class="hljs-string">&quot;执行完成&quot;</span>);<br>            <br>            <span class="hljs-comment">// 3. Evaluator 评估</span><br>            <span class="hljs-type">EvaluationResult</span> <span class="hljs-variable">evalResult</span> <span class="hljs-operator">=</span> evaluator.evaluateWithLLM(<br>                task, actorResult.getExecution()<br>            );<br>            log.info(<span class="hljs-string">&quot;评估得分: &#123;&#125;&quot;</span>, evalResult.getScore());<br>            <br>            <span class="hljs-comment">// 记录本次尝试</span><br>            attempts.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">AttemptRecord</span>(attempt, actorResult, evalResult));<br>            <br>            <span class="hljs-comment">// 4. 检查是否成功</span><br>            <span class="hljs-keyword">if</span> (evalResult.isSuccess() || evalResult.getScore() &gt;= SUCCESS_THRESHOLD) &#123;<br>                log.info(<span class="hljs-string">&quot;✅ 任务成功完成&quot;</span>);<br>                <br>                <span class="hljs-comment">// 成功也可以总结经验（可选）</span><br>                <span class="hljs-keyword">if</span> (evalResult.getScore() == <span class="hljs-number">100</span>) &#123;<br>                    saveSuccessExperience(task, actorResult);<br>                &#125;<br>                <br>                memory.clearShortTerm();<br>                <span class="hljs-keyword">return</span> ReflexionResponse.success(<br>                    actorResult.getExecution(), attempts<br>                );<br>            &#125;<br>            <br>            <span class="hljs-comment">// 5. Self-Reflection 反思</span><br>            log.info(<span class="hljs-string">&quot;开始反思...&quot;</span>);<br>            <span class="hljs-type">ReflectionResult</span> <span class="hljs-variable">reflection</span> <span class="hljs-operator">=</span> selfReflection.reflect(<br>                ReflectionInput.builder()<br>                    .task(task)<br>                    .executionTrace(actorResult.getThinking())<br>                    .result(actorResult.getExecution())<br>                    .evaluationFeedback(evalResult.getOverallFeedback())<br>                    .build()<br>            );<br>            <br>            log.info(<span class="hljs-string">&quot;反思结果: &#123;&#125;&quot;</span>, reflection.getLessonsLearned());<br>            <br>            <span class="hljs-comment">// 6. 存储经验</span><br>            <span class="hljs-type">String</span> <span class="hljs-variable">experience</span> <span class="hljs-operator">=</span> reflection.toExperienceText();<br>            memory.addShortTerm(experience);<br>            <br>            <span class="hljs-comment">// 如果是有价值的经验，存入长期记忆</span><br>            <span class="hljs-keyword">if</span> (reflection.getConfidence() &gt; <span class="hljs-number">70</span>) &#123;<br>                memory.addLongTerm(experience, classifyTask(task));<br>            &#125;<br>        &#125;<br>        <br>        log.warn(<span class="hljs-string">&quot;❌ 达到最大重试次数，任务未能成功完成&quot;</span>);<br>        memory.clearShortTerm();<br>        <br>        <span class="hljs-keyword">return</span> ReflexionResponse.failure(<br>            attempts.get(attempts.size() - <span class="hljs-number">1</span>).getActorResult().getExecution(),<br>            attempts<br>        );<br>    &#125;<br>    <br>    <span class="hljs-keyword">private</span> String <span class="hljs-title function_">classifyTask</span><span class="hljs-params">(String task)</span> &#123;<br>        <span class="hljs-comment">// 简单的任务分类逻辑</span><br>        <span class="hljs-keyword">if</span> (task.contains(<span class="hljs-string">&quot;代码&quot;</span>) || task.contains(<span class="hljs-string">&quot;实现&quot;</span>) || task.contains(<span class="hljs-string">&quot;函数&quot;</span>)) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;coding&quot;</span>;<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (task.contains(<span class="hljs-string">&quot;分析&quot;</span>) || task.contains(<span class="hljs-string">&quot;解释&quot;</span>)) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;analysis&quot;</span>;<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;general&quot;</span>;<br>        &#125;<br>    &#125;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">saveSuccessExperience</span><span class="hljs-params">(String task, ActorResult result)</span> &#123;<br>        <span class="hljs-type">String</span> <span class="hljs-variable">experience</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;成功经验：任务「%s」的有效解决方案是：%s&quot;</span><br>            .formatted(task, result.getThinking());<br>        memory.addLongTerm(experience, classifyTask(task));<br>    &#125;<br>&#125;<br><br><span class="hljs-meta">@Data</span><br><span class="hljs-meta">@AllArgsConstructor</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AttemptRecord</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> attemptNumber;<br>    <span class="hljs-keyword">private</span> ActorResult actorResult;<br>    <span class="hljs-keyword">private</span> EvaluationResult evaluationResult;<br>&#125;<br><br><span class="hljs-meta">@Data</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ReflexionResponse</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">boolean</span> success;<br>    <span class="hljs-keyword">private</span> String result;<br>    <span class="hljs-keyword">private</span> List&lt;AttemptRecord&gt; attempts;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> totalAttempts;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> ReflexionResponse <span class="hljs-title function_">success</span><span class="hljs-params">(String result, List&lt;AttemptRecord&gt; attempts)</span> &#123;<br>        <span class="hljs-type">ReflexionResponse</span> <span class="hljs-variable">response</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ReflexionResponse</span>();<br>        response.success = <span class="hljs-literal">true</span>;<br>        response.result = result;<br>        response.attempts = attempts;<br>        response.totalAttempts = attempts.size();<br>        <span class="hljs-keyword">return</span> response;<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> ReflexionResponse <span class="hljs-title function_">failure</span><span class="hljs-params">(String result, List&lt;AttemptRecord&gt; attempts)</span> &#123;<br>        <span class="hljs-type">ReflexionResponse</span> <span class="hljs-variable">response</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ReflexionResponse</span>();<br>        response.success = <span class="hljs-literal">false</span>;<br>        response.result = result;<br>        response.attempts = attempts;<br>        response.totalAttempts = attempts.size();<br>        <span class="hljs-keyword">return</span> response;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-2-Controller-层"><a href="#3-2-Controller-层" class="headerlink" title="3.2 Controller 层"></a>3.2 Controller 层</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@RestController</span><br><span class="hljs-meta">@RequestMapping(&quot;/api/reflexion&quot;)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ReflexionController</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ReflexionAgent reflexionAgent;<br>    <br>    <span class="hljs-meta">@PostMapping(&quot;/execute&quot;)</span><br>    <span class="hljs-keyword">public</span> ReflexionResponse <span class="hljs-title function_">execute</span><span class="hljs-params">(<span class="hljs-meta">@RequestBody</span> TaskRequest request)</span> &#123;<br>        <span class="hljs-keyword">return</span> reflexionAgent.execute(request.getTask());<br>    &#125;<br>    <br>    <span class="hljs-meta">@GetMapping(&quot;/memory/stats&quot;)</span><br>    <span class="hljs-keyword">public</span> Map&lt;String, Object&gt; <span class="hljs-title function_">getMemoryStats</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-comment">// 返回记忆统计信息</span><br>        <span class="hljs-keyword">return</span> Map.of(<br>            <span class="hljs-string">&quot;shortTermCount&quot;</span>, memory.getShortTermMemory().size(),<br>            <span class="hljs-string">&quot;longTermCount&quot;</span>, memory.getLongTermCount()<br>        );<br>    &#125;<br>&#125;<br><br><span class="hljs-meta">@Data</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">TaskRequest</span> &#123;<br>    <span class="hljs-keyword">private</span> String task;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="四、实战案例"><a href="#四、实战案例" class="headerlink" title="四、实战案例"></a>四、实战案例</h2><h3 id="4-1-代码生成任务"><a href="#4-1-代码生成任务" class="headerlink" title="4.1 代码生成任务"></a>4.1 代码生成任务</h3><p><strong>任务</strong>：”用 Java 实现一个 LRU 缓存，支持 get 和 put 操作，时间复杂度 O(1)”</p>
+<h4 id="第-1-次尝试"><a href="#第-1-次尝试" class="headerlink" title="第 1 次尝试"></a>第 1 次尝试</h4><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs processing">Actor 输出:<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">LRUCache</span> &#123;<br>    <span class="hljs-keyword">private</span> Map&lt;Integer, Integer&gt; cache;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> capacity;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">LRUCache</span>(<span class="hljs-type">int</span> capacity) &#123;<br>        <span class="hljs-variable">this</span>.<span class="hljs-property">cache</span> = <span class="hljs-keyword">new </span><span class="hljs-class title_">HashMap</span>&lt;&gt;();<br>        <span class="hljs-variable">this</span>.<span class="hljs-property">capacity</span> = capacity;<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-built_in">get</span>(<span class="hljs-type">int</span> <span class="hljs-built_in">key</span>) &#123;<br>        <span class="hljs-keyword">return</span> cache.<span class="hljs-property">getOrDefault</span>(<span class="hljs-built_in">key</span>, <span class="hljs-number">-1</span>);<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">put</span>(<span class="hljs-type">int</span> <span class="hljs-built_in">key</span>, <span class="hljs-type">int</span> value) &#123;<br>        <span class="hljs-keyword">if</span> (cache.<span class="hljs-property">size</span>() &gt;= capacity) &#123;<br>            <span class="hljs-comment">// 删除最旧的？但 HashMap 无序...</span><br>            cache.<span class="hljs-property">remove</span>(cache.<span class="hljs-property">keySet</span>().<span class="hljs-property">iterator</span>().<span class="hljs-property">next</span>());<br>        &#125;<br>        cache.<span class="hljs-property">put</span>(<span class="hljs-built_in">key</span>, value);<br>    &#125;<br>&#125;<br><br>Evaluator 反馈:<br>&#123;<br>  <span class="hljs-string">&quot;success&quot;</span>: <span class="hljs-literal">false</span>,<br>  <span class="hljs-string">&quot;score&quot;</span>: <span class="hljs-number">40</span>,<br>  <span class="hljs-string">&quot;specific_issues&quot;</span>: [<br>    <span class="hljs-string">&quot;HashMap 无法保证 LRU 顺序&quot;</span>,<br>    <span class="hljs-string">&quot;删除的不一定是最久未使用的元素&quot;</span>,<br>    <span class="hljs-string">&quot;get 操作没有更新访问顺序&quot;</span><br>  ]<br>&#125;<br><br>Self-Reflection:<br>&#123;<br>  <span class="hljs-string">&quot;problem_diagnosis&quot;</span>: <span class="hljs-string">&quot;使用了普通 HashMap，无法维护访问顺序&quot;</span>,<br>  <span class="hljs-string">&quot;root_cause&quot;</span>: <span class="hljs-string">&quot;没有考虑 LRU 需要记录访问顺序的特性&quot;</span>,<br>  <span class="hljs-string">&quot;lessons_learned&quot;</span>: [<br>    <span class="hljs-string">&quot;LRU 缓存需要能记录访问顺序的数据结构&quot;</span>,<br>    <span class="hljs-string">&quot;可以使用 LinkedHashMap 或自己实现双向链表 + HashMap&quot;</span><br>  ],<br>  <span class="hljs-string">&quot;improvement_plan&quot;</span>: <span class="hljs-string">&quot;使用 LinkedHashMap 并重写 removeEldestEntry 方法&quot;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="第-2-次尝试"><a href="#第-2-次尝试" class="headerlink" title="第 2 次尝试"></a>第 2 次尝试</h4><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs aspectj">Actor 输出（带经验）:<br><span class="hljs-keyword">public</span> class LRUCache <span class="hljs-keyword">extends</span> LinkedHashMap&lt;Integer, Integer&gt; &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> capacity;<br>    <br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">LRUCache</span><span class="hljs-params">(<span class="hljs-keyword">int</span> capacity)</span> </span>&#123;<br>        <span class="hljs-keyword">super</span>(capacity, <span class="hljs-number">0.75</span>f, <span class="hljs-keyword">true</span>); <span class="hljs-comment">// true 表示按访问顺序</span><br>        <span class="hljs-keyword">this</span>.capacity = capacity;<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">get</span><span class="hljs-params">(<span class="hljs-keyword">int</span> key)</span> </span>&#123;<br>        <span class="hljs-function"><span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.<span class="hljs-title">getOrDefault</span><span class="hljs-params">(key, <span class="hljs-number">-1</span>)</span></span>;<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">put</span><span class="hljs-params">(<span class="hljs-keyword">int</span> key, <span class="hljs-keyword">int</span> value)</span> </span>&#123;<br>        <span class="hljs-keyword">super</span>.put(key, value);<br>    &#125;<br>    <br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">protected</span> <span class="hljs-function"><span class="hljs-keyword">boolean</span> <span class="hljs-title">removeEldestEntry</span><span class="hljs-params">(Map.Entry eldest)</span> </span>&#123;<br>        <span class="hljs-keyword">return</span> size() &gt; capacity;<br>    &#125;<br>&#125;<br><br>Evaluator 反馈:<br>&#123;<br>  <span class="hljs-string">&quot;success&quot;</span>: <span class="hljs-keyword">true</span>,<br>  <span class="hljs-string">&quot;score&quot;</span>: 95,<br>  <span class="hljs-string">&quot;overall_feedback&quot;</span>: <span class="hljs-string">&quot;正确实现了 LRU 缓存，使用 LinkedHashMap 简洁高效&quot;</span><br>&#125;<br><br>✅ 成功完成<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-2-数据分析任务"><a href="#4-2-数据分析任务" class="headerlink" title="4.2 数据分析任务"></a>4.2 数据分析任务</h3><p><strong>任务</strong>：”分析这段 SQL 的性能问题并给出优化建议”</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">FROM</span> orders o<br><span class="hljs-keyword">LEFT</span> <span class="hljs-keyword">JOIN</span> users u <span class="hljs-keyword">ON</span> o.user_id <span class="hljs-operator">=</span> u.id<br><span class="hljs-keyword">LEFT</span> <span class="hljs-keyword">JOIN</span> products p <span class="hljs-keyword">ON</span> o.product_id <span class="hljs-operator">=</span> p.id<br><span class="hljs-keyword">WHERE</span> o.created_at <span class="hljs-operator">&gt;</span> <span class="hljs-string">&#x27;2024-01-01&#x27;</span><br><span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> o.created_at <span class="hljs-keyword">DESC</span>;<br></code></pre></td></tr></table></figure>
+
+<h4 id="反思改进过程"><a href="#反思改进过程" class="headerlink" title="反思改进过程"></a>反思改进过程</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs sql">第 <span class="hljs-number">1</span> 次：只关注了索引问题<br>经验：<span class="hljs-keyword">SQL</span> 优化要全面考虑索引、查询字段、连接方式等<br><br>第 <span class="hljs-number">2</span> 次：增加了字段选择建议<br>经验：<span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> 是常见性能问题，应明确指出<br><br>第 <span class="hljs-number">3</span> 次：完整分析<br><span class="hljs-operator">-</span> 索引建议：created_at, user_id, product_id<br><span class="hljs-operator">-</span> 查询优化：避免 <span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span><br><span class="hljs-operator">-</span> 连接优化：考虑是否需要 <span class="hljs-keyword">LEFT</span> <span class="hljs-keyword">JOIN</span><br><span class="hljs-operator">-</span> 分页建议：大数据量需要分页<br><br>✅ 成功<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="五、进阶优化"><a href="#五、进阶优化" class="headerlink" title="五、进阶优化"></a>五、进阶优化</h2><h3 id="5-1-分层反思"><a href="#5-1-分层反思" class="headerlink" title="5.1 分层反思"></a>5.1 分层反思</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">HierarchicalReflection</span> &#123;<br>    <br>    <span class="hljs-comment">// 浅层反思：快速修复</span><br>    <span class="hljs-keyword">public</span> QuickFix <span class="hljs-title function_">shallowReflect</span><span class="hljs-params">(EvaluationResult eval)</span> &#123;<br>        <span class="hljs-comment">// 针对具体错误的快速修复建议</span><br>    &#125;<br>    <br>    <span class="hljs-comment">// 深层反思：根因分析</span><br>    <span class="hljs-keyword">public</span> DeepAnalysis <span class="hljs-title function_">deepReflect</span><span class="hljs-params">(List&lt;AttemptRecord&gt; attempts)</span> &#123;<br>        <span class="hljs-comment">// 多次失败后的深度分析</span><br>    &#125;<br>    <br>    <span class="hljs-comment">// 元反思：反思策略本身</span><br>    <span class="hljs-keyword">public</span> MetaReflection <span class="hljs-title function_">metaReflect</span><span class="hljs-params">(List&lt;ReflectionResult&gt; reflections)</span> &#123;<br>        <span class="hljs-comment">// 反思的反思：反思策略是否有效</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="5-2-经验蒸馏"><a href="#5-2-经验蒸馏" class="headerlink" title="5.2 经验蒸馏"></a>5.2 经验蒸馏</h3><p>定期将碎片化经验整合为结构化知识：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Scheduled(cron = &quot;0 0 2 * * ?&quot;)</span> <span class="hljs-comment">// 每天凌晨2点</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">distillExperiences</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-comment">// 1. 获取最近的经验</span><br>    List&lt;Document&gt; recentExperiences = memory.getRecentExperiences(<span class="hljs-number">100</span>);<br>    <br>    <span class="hljs-comment">// 2. 聚类相似经验</span><br>    Map&lt;String, List&lt;Document&gt;&gt; clusters = clusterExperiences(recentExperiences);<br>    <br>    <span class="hljs-comment">// 3. 为每个聚类生成总结</span><br>    <span class="hljs-keyword">for</span> (Map.Entry&lt;String, List&lt;Document&gt;&gt; entry : clusters.entrySet()) &#123;<br>        <span class="hljs-type">String</span> <span class="hljs-variable">summary</span> <span class="hljs-operator">=</span> llm.summarize(entry.getValue());<br>        memory.addDistilledKnowledge(entry.getKey(), summary);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="5-3-经验迁移"><a href="#5-3-经验迁移" class="headerlink" title="5.3 经验迁移"></a>5.3 经验迁移</h3><p>跨任务类型迁移通用经验：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> List&lt;String&gt; <span class="hljs-title function_">transferExperiences</span><span class="hljs-params">(String newTask)</span> &#123;<br>    <span class="hljs-type">String</span> <span class="hljs-variable">taskType</span> <span class="hljs-operator">=</span> classifyTask(newTask);<br>    <br>    <span class="hljs-comment">// 获取同类型任务经验</span><br>    List&lt;String&gt; sameTypeExp = memory.getByTaskType(taskType);<br>    <br>    <span class="hljs-comment">// 获取通用经验（适用于所有任务）</span><br>    List&lt;String&gt; universalExp = memory.getUniversalExperiences();<br>    <br>    <span class="hljs-comment">// 智能筛选可迁移的经验</span><br>    <span class="hljs-keyword">return</span> filterTransferableExperiences(newTask, sameTypeExp, universalExp);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="六、最佳实践"><a href="#六、最佳实践" class="headerlink" title="六、最佳实践"></a>六、最佳实践</h2><h3 id="6-1-评估器设计"><a href="#6-1-评估器设计" class="headerlink" title="6.1 评估器设计"></a>6.1 评估器设计</h3><table>
+<thead>
+<tr>
+<th>任务类型</th>
+<th>推荐评估方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>代码生成</td>
+<td>测试用例 + 静态分析</td>
+</tr>
+<tr>
+<td>文本写作</td>
+<td>LLM 评估 + 规则检查</td>
+</tr>
+<tr>
+<td>数学计算</td>
+<td>结果验证</td>
+</tr>
+<tr>
+<td>信息检索</td>
+<td>人工抽检 + LLM 评估</td>
+</tr>
+</tbody></table>
+<h3 id="6-2-反思深度控制"><a href="#6-2-反思深度控制" class="headerlink" title="6.2 反思深度控制"></a>6.2 反思深度控制</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 根据失败次数调整反思深度</span><br><span class="hljs-keyword">public</span> ReflectionResult <span class="hljs-title function_">adaptiveReflect</span><span class="hljs-params">(<span class="hljs-type">int</span> attemptCount, ...)</span> &#123;<br>    <span class="hljs-keyword">if</span> (attemptCount == <span class="hljs-number">1</span>) &#123;<br>        <span class="hljs-keyword">return</span> quickReflect(...);  <span class="hljs-comment">// 快速反思</span><br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (attemptCount == <span class="hljs-number">2</span>) &#123;<br>        <span class="hljs-keyword">return</span> normalReflect(...); <span class="hljs-comment">// 标准反思</span><br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">return</span> deepReflect(...);   <span class="hljs-comment">// 深度反思</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="6-3-避免过度反思"><a href="#6-3-避免过度反思" class="headerlink" title="6.3 避免过度反思"></a>6.3 避免过度反思</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 检测是否陷入无效循环</span><br><span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">isStuck</span><span class="hljs-params">(List&lt;ReflectionResult&gt; reflections)</span> &#123;<br>    <span class="hljs-keyword">if</span> (reflections.size() &lt; <span class="hljs-number">2</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    <br>    <span class="hljs-comment">// 检查最近两次反思是否相似度过高</span><br>    <span class="hljs-type">String</span> <span class="hljs-variable">last</span> <span class="hljs-operator">=</span> reflections.get(reflections.size() - <span class="hljs-number">1</span>).toExperienceText();<br>    <span class="hljs-type">String</span> <span class="hljs-variable">prev</span> <span class="hljs-operator">=</span> reflections.get(reflections.size() - <span class="hljs-number">2</span>).toExperienceText();<br>    <br>    <span class="hljs-keyword">return</span> calculateSimilarity(last, prev) &gt; <span class="hljs-number">0.8</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="七、迭代控制与循环避免"><a href="#七、迭代控制与循环避免" class="headerlink" title="七、迭代控制与循环避免"></a>七、迭代控制与循环避免</h2><h3 id="7-1-迭代次数控制机制"><a href="#7-1-迭代次数控制机制" class="headerlink" title="7.1 迭代次数控制机制"></a>7.1 迭代次数控制机制</h3><h4 id="基础控制：最大重试次数"><a href="#基础控制：最大重试次数" class="headerlink" title="基础控制：最大重试次数"></a>基础控制：最大重试次数</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Service</span><br><span class="hljs-meta">@Slf4j</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ReflexionAgent</span> &#123;<br>    <br>    <span class="hljs-comment">// 核心控制参数</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">MAX_RETRIES</span> <span class="hljs-operator">=</span> <span class="hljs-number">3</span>;           <span class="hljs-comment">// 最多重试 3 次</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">SUCCESS_THRESHOLD</span> <span class="hljs-operator">=</span> <span class="hljs-number">80</span>;    <span class="hljs-comment">// 成功阈值 80 分</span><br>    <br>    <span class="hljs-keyword">public</span> ReflexionResponse <span class="hljs-title function_">execute</span><span class="hljs-params">(String task)</span> &#123;<br>        List&lt;AttemptRecord&gt; attempts = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        <br>        <span class="hljs-comment">// 关键：for 循环限制迭代次数</span><br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">attempt</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; attempt &lt;= MAX_RETRIES; attempt++) &#123;<br>            log.info(<span class="hljs-string">&quot;=== 第 &#123;&#125; 次尝试 ===&quot;</span>, attempt);<br>            <br>            <span class="hljs-comment">// ... 执行逻辑 ...</span><br>            <br>            <span class="hljs-comment">// 成功则立即返回，不继续迭代</span><br>            <span class="hljs-keyword">if</span> (evalResult.isSuccess() || evalResult.getScore() &gt;= SUCCESS_THRESHOLD) &#123;<br>                log.info(<span class="hljs-string">&quot;✅ 任务成功完成&quot;</span>);<br>                <span class="hljs-keyword">return</span> ReflexionResponse.success(result, attempts);<br>            &#125;<br>            <br>            <span class="hljs-comment">// 失败则继续下一次迭代</span><br>        &#125;<br>        <br>        <span class="hljs-comment">// 达到最大次数后返回失败</span><br>        log.warn(<span class="hljs-string">&quot;❌ 达到最大重试次数，任务未能成功完成&quot;</span>);<br>        <span class="hljs-keyword">return</span> ReflexionResponse.failure(lastResult, attempts);<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// 时间复杂度：O(MAX_RETRIES)</span><br><span class="hljs-comment">// 空间复杂度：O(MAX_RETRIES)</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>思路分析</strong>：</p>
+<ul>
+<li>使用 <code>for</code> 循环而不是 <code>while</code>，明确限制迭代次数</li>
+<li>成功时立即返回，不浪费资源</li>
+<li>达到最大次数自动停止，不会无限循环</li>
+</ul>
+<h4 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h4><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>建议值</th>
+<th>影响</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>MAX_RETRIES</strong></td>
+<td>最大重试次数</td>
+<td>3-5</td>
+<td>次数越多，成功率越高但成本越高</td>
+</tr>
+<tr>
+<td><strong>SUCCESS_THRESHOLD</strong></td>
+<td>成功评分阈值</td>
+<td>80-90</td>
+<td>阈值越高，要求越严格</td>
+</tr>
+<tr>
+<td><strong>MAX_REFLECTION_DEPTH</strong></td>
+<td>最大反思深度</td>
+<td>2-3</td>
+<td>控制反思的详细程度</td>
+</tr>
+</tbody></table>
+<h3 id="7-2-多层次的循环控制"><a href="#7-2-多层次的循环控制" class="headerlink" title="7.2 多层次的循环控制"></a>7.2 多层次的循环控制</h3><h4 id="方式1：基于成功率的动态控制"><a href="#方式1：基于成功率的动态控制" class="headerlink" title="方式1：基于成功率的动态控制"></a>方式1：基于成功率的动态控制</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Service</span><br><span class="hljs-meta">@Slf4j</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AdaptiveReflexionAgent</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">MAX_RETRIES</span> <span class="hljs-operator">=</span> <span class="hljs-number">5</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">SUCCESS_THRESHOLD</span> <span class="hljs-operator">=</span> <span class="hljs-number">80</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">double</span> <span class="hljs-variable">MIN_IMPROVEMENT_RATE</span> <span class="hljs-operator">=</span> <span class="hljs-number">0.05</span>;  <span class="hljs-comment">// 最小改进率 5%</span><br>    <br>    <span class="hljs-keyword">public</span> ReflexionResponse <span class="hljs-title function_">execute</span><span class="hljs-params">(String task)</span> &#123;<br>        List&lt;AttemptRecord&gt; attempts = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        <span class="hljs-type">int</span> <span class="hljs-variable">lastScore</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>        <br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">attempt</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; attempt &lt;= MAX_RETRIES; attempt++) &#123;<br>            <span class="hljs-comment">// ... 执行逻辑 ...</span><br>            <span class="hljs-type">int</span> <span class="hljs-variable">currentScore</span> <span class="hljs-operator">=</span> evalResult.getScore();<br>            <br>            <span class="hljs-comment">// 1. 成功则返回</span><br>            <span class="hljs-keyword">if</span> (currentScore &gt;= SUCCESS_THRESHOLD) &#123;<br>                log.info(<span class="hljs-string">&quot;✅ 任务成功&quot;</span>);<br>                <span class="hljs-keyword">return</span> ReflexionResponse.success(result, attempts);<br>            &#125;<br>            <br>            <span class="hljs-comment">// 2. 检查是否有改进</span><br>            <span class="hljs-type">double</span> <span class="hljs-variable">improvementRate</span> <span class="hljs-operator">=</span> (<span class="hljs-type">double</span>)(currentScore - lastScore) / lastScore;<br>            <span class="hljs-keyword">if</span> (attempt &gt; <span class="hljs-number">2</span> &amp;&amp; improvementRate &lt; MIN_IMPROVEMENT_RATE) &#123;<br>                log.warn(<span class="hljs-string">&quot;⚠️ 改进不足 &#123;&#125;%，停止迭代&quot;</span>, MIN_IMPROVEMENT_RATE * <span class="hljs-number">100</span>);<br>                <span class="hljs-keyword">return</span> ReflexionResponse.failure(result, attempts);<br>            &#125;<br>            <br>            lastScore = currentScore;<br>        &#125;<br>        <br>        log.warn(<span class="hljs-string">&quot;❌ 达到最大重试次数&quot;</span>);<br>        <span class="hljs-keyword">return</span> ReflexionResponse.failure(lastResult, attempts);<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// 思路：</span><br><span class="hljs-comment">// 第1次：得分 40</span><br><span class="hljs-comment">// 第2次：得分 60（改进 50%，继续）</span><br><span class="hljs-comment">// 第3次：得分 65（改进 8%，继续）</span><br><span class="hljs-comment">// 第4次：得分 66（改进 1.5% &lt; 5%，停止）</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>思路分析</strong>：</p>
+<ul>
+<li>不仅限制次数，还检查改进幅度</li>
+<li>如果连续改进不足，提前停止</li>
+<li>避免在无效循环中浪费资源</li>
+</ul>
+<h4 id="方式2：基于反思相似度的控制"><a href="#方式2：基于反思相似度的控制" class="headerlink" title="方式2：基于反思相似度的控制"></a>方式2：基于反思相似度的控制</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Service</span><br><span class="hljs-meta">@Slf4j</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SmartReflexionAgent</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">MAX_RETRIES</span> <span class="hljs-operator">=</span> <span class="hljs-number">5</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">double</span> <span class="hljs-variable">SIMILARITY_THRESHOLD</span> <span class="hljs-operator">=</span> <span class="hljs-number">0.8</span>;  <span class="hljs-comment">// 相似度阈值</span><br>    <br>    <span class="hljs-keyword">public</span> ReflexionResponse <span class="hljs-title function_">execute</span><span class="hljs-params">(String task)</span> &#123;<br>        List&lt;AttemptRecord&gt; attempts = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        List&lt;ReflectionResult&gt; reflections = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        <br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">attempt</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; attempt &lt;= MAX_RETRIES; attempt++) &#123;<br>            <span class="hljs-comment">// ... 执行逻辑 ...</span><br>            <br>            <span class="hljs-keyword">if</span> (evalResult.isSuccess()) &#123;<br>                <span class="hljs-keyword">return</span> ReflexionResponse.success(result, attempts);<br>            &#125;<br>            <br>            <span class="hljs-comment">// 反思</span><br>            <span class="hljs-type">ReflectionResult</span> <span class="hljs-variable">reflection</span> <span class="hljs-operator">=</span> selfReflection.reflect(input);<br>            reflections.add(reflection);<br>            <br>            <span class="hljs-comment">// 检测是否陷入循环</span><br>            <span class="hljs-keyword">if</span> (isStuckInLoop(reflections)) &#123;<br>                log.warn(<span class="hljs-string">&quot;⚠️ 检测到无效循环，停止迭代&quot;</span>);<br>                <span class="hljs-keyword">return</span> ReflexionResponse.failure(result, attempts);<br>            &#125;<br>        &#125;<br>        <br>        <span class="hljs-keyword">return</span> ReflexionResponse.failure(lastResult, attempts);<br>    &#125;<br>    <br>    <span class="hljs-comment">// 检测是否陷入循环</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">isStuckInLoop</span><span class="hljs-params">(List&lt;ReflectionResult&gt; reflections)</span> &#123;<br>        <span class="hljs-keyword">if</span> (reflections.size() &lt; <span class="hljs-number">2</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>        <br>        <span class="hljs-comment">// 获取最近两次反思</span><br>        <span class="hljs-type">ReflectionResult</span> <span class="hljs-variable">last</span> <span class="hljs-operator">=</span> reflections.get(reflections.size() - <span class="hljs-number">1</span>);<br>        <span class="hljs-type">ReflectionResult</span> <span class="hljs-variable">prev</span> <span class="hljs-operator">=</span> reflections.get(reflections.size() - <span class="hljs-number">2</span>);<br>        <br>        <span class="hljs-comment">// 计算相似度</span><br>        <span class="hljs-type">double</span> <span class="hljs-variable">similarity</span> <span class="hljs-operator">=</span> calculateSimilarity(<br>            last.toExperienceText(),<br>            prev.toExperienceText()<br>        );<br>        <br>        log.info(<span class="hljs-string">&quot;反思相似度: &#123;&#125;&quot;</span>, similarity);<br>        <br>        <span class="hljs-comment">// 如果相似度过高，说明陷入循环</span><br>        <span class="hljs-keyword">return</span> similarity &gt; SIMILARITY_THRESHOLD;<br>    &#125;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-type">double</span> <span class="hljs-title function_">calculateSimilarity</span><span class="hljs-params">(String text1, String text2)</span> &#123;<br>        <span class="hljs-comment">// 使用余弦相似度或编辑距离</span><br>        <span class="hljs-comment">// 这里简化处理</span><br>        <span class="hljs-type">int</span> <span class="hljs-variable">commonChars</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">maxLen</span> <span class="hljs-operator">=</span> Math.max(text1.length(), text2.length());<br>        <br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">char</span> c : text1.toCharArray()) &#123;<br>            <span class="hljs-keyword">if</span> (text2.contains(String.valueOf(c))) &#123;<br>                commonChars++;<br>            &#125;<br>        &#125;<br>        <br>        <span class="hljs-keyword">return</span> (<span class="hljs-type">double</span>) commonChars / maxLen;<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// 思路：</span><br><span class="hljs-comment">// 第1次反思：问题是&quot;没有考虑边界情况&quot;</span><br><span class="hljs-comment">// 第2次反思：问题是&quot;没有考虑边界情况&quot;（相似度 95%）</span><br><span class="hljs-comment">// → 检测到循环，停止迭代</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>思路分析</strong>：</p>
+<ul>
+<li>监测反思内容的相似度</li>
+<li>如果反思重复，说明陷入死循环</li>
+<li>提前停止避免浪费资源</li>
+</ul>
+<h3 id="7-3-循环风险识别"><a href="#7-3-循环风险识别" class="headerlink" title="7.3 循环风险识别"></a>7.3 循环风险识别</h3><h4 id="常见的无限循环场景"><a href="#常见的无限循环场景" class="headerlink" title="常见的无限循环场景"></a>常见的无限循环场景</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// ❌ 场景1：评估标准过高</span><br><span class="hljs-comment">// 问题：SUCCESS_THRESHOLD = 100（完美）</span><br><span class="hljs-comment">// 结果：永远无法满足，陷入循环</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">SUCCESS_THRESHOLD</span> <span class="hljs-operator">=</span> <span class="hljs-number">100</span>;  <span class="hljs-comment">// 不现实</span><br><br><span class="hljs-comment">// ✅ 解决：设置合理的阈值</span><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">SUCCESS_THRESHOLD</span> <span class="hljs-operator">=</span> <span class="hljs-number">80</span>;   <span class="hljs-comment">// 80% 就认为成功</span><br><br><span class="hljs-comment">// ❌ 场景2：反思没有产生新的改进方案</span><br><span class="hljs-comment">// 问题：每次反思都说&quot;需要更仔细&quot;，但没有具体改进</span><br><span class="hljs-comment">// 结果：Actor 重复同样的错误</span><br><span class="hljs-keyword">void</span> <span class="hljs-title function_">reflect</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-comment">// 反思结果：需要更仔细地处理</span><br>    <span class="hljs-comment">// 改进方案：无（空）</span><br>    <span class="hljs-comment">// → 下次还是同样的错误</span><br>&#125;<br><br><span class="hljs-comment">// ✅ 解决：要求反思必须产生具体的改进方案</span><br><span class="hljs-type">ReflectionResult</span> <span class="hljs-variable">reflection</span> <span class="hljs-operator">=</span> selfReflection.reflect(input);<br><span class="hljs-keyword">if</span> (reflection.getImprovementPlan() == <span class="hljs-literal">null</span> || <br>    reflection.getImprovementPlan().isEmpty()) &#123;<br>    log.warn(<span class="hljs-string">&quot;反思未产生改进方案，停止迭代&quot;</span>);<br>    <span class="hljs-keyword">return</span> ReflexionResponse.failure(result, attempts);<br>&#125;<br><br><span class="hljs-comment">// ❌ 场景3：经验没有被正确应用</span><br><span class="hljs-comment">// 问题：Actor 收到经验但没有真正应用</span><br><span class="hljs-comment">// 结果：每次都犯同样的错误</span><br><span class="hljs-keyword">void</span> <span class="hljs-title function_">execute</span><span class="hljs-params">(String task, List&lt;String&gt; experiences)</span> &#123;<br>    <span class="hljs-comment">// 虽然收到了经验，但在 Prompt 中没有强调</span><br>    <span class="hljs-comment">// → Actor 忽视了经验</span><br>&#125;<br><br><span class="hljs-comment">// ✅ 解决：在 Prompt 中强调经验的重要性</span><br><span class="hljs-type">String</span> <span class="hljs-variable">prompt</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">    ## 历史经验教训（必须参考！）</span><br><span class="hljs-string">    %s</span><br><span class="hljs-string">    </span><br><span class="hljs-string">    ## 重要提示</span><br><span class="hljs-string">    上次失败的原因是：%s</span><br><span class="hljs-string">    请务必避免重复这个错误！</span><br><span class="hljs-string">    &quot;&quot;&quot;</span>.formatted(experiences, lastFailureReason);<br></code></pre></td></tr></table></figure>
+
+<p><strong>思路分析</strong>：</p>
+<ul>
+<li>识别循环的根本原因</li>
+<li>在设计阶段就预防循环</li>
+<li>不是简单地增加重试次数</li>
+</ul>
+<h3 id="7-4-完整的循环控制实现"><a href="#7-4-完整的循环控制实现" class="headerlink" title="7.4 完整的循环控制实现"></a>7.4 完整的循环控制实现</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Service</span><br><span class="hljs-meta">@Slf4j</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RobustReflexionAgent</span> &#123;<br>    <br>    <span class="hljs-comment">// 多层次的控制参数</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">MAX_RETRIES</span> <span class="hljs-operator">=</span> <span class="hljs-number">5</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">SUCCESS_THRESHOLD</span> <span class="hljs-operator">=</span> <span class="hljs-number">80</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">double</span> <span class="hljs-variable">MIN_IMPROVEMENT_RATE</span> <span class="hljs-operator">=</span> <span class="hljs-number">0.05</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">double</span> <span class="hljs-variable">SIMILARITY_THRESHOLD</span> <span class="hljs-operator">=</span> <span class="hljs-number">0.8</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">MAX_CONSECUTIVE_FAILURES</span> <span class="hljs-operator">=</span> <span class="hljs-number">2</span>;<br>    <br>    <span class="hljs-keyword">public</span> ReflexionResponse <span class="hljs-title function_">execute</span><span class="hljs-params">(String task)</span> &#123;<br>        List&lt;AttemptRecord&gt; attempts = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        List&lt;ReflectionResult&gt; reflections = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        <span class="hljs-type">int</span> <span class="hljs-variable">lastScore</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">consecutiveFailures</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>        <br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">attempt</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; attempt &lt;= MAX_RETRIES; attempt++) &#123;<br>            log.info(<span class="hljs-string">&quot;=== 第 &#123;&#125; 次尝试 ===&quot;</span>, attempt);<br>            <br>            <span class="hljs-comment">// 1. 执行</span><br>            <span class="hljs-type">ActorResult</span> <span class="hljs-variable">actorResult</span> <span class="hljs-operator">=</span> actor.execute(task, memory.recall(task, <span class="hljs-number">5</span>));<br>            <span class="hljs-type">EvaluationResult</span> <span class="hljs-variable">evalResult</span> <span class="hljs-operator">=</span> evaluator.evaluateWithLLM(task, actorResult.getExecution());<br>            <span class="hljs-type">int</span> <span class="hljs-variable">currentScore</span> <span class="hljs-operator">=</span> evalResult.getScore();<br>            <br>            attempts.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">AttemptRecord</span>(attempt, actorResult, evalResult));<br>            <br>            <span class="hljs-comment">// 2. 检查成功</span><br>            <span class="hljs-keyword">if</span> (currentScore &gt;= SUCCESS_THRESHOLD) &#123;<br>                log.info(<span class="hljs-string">&quot;✅ 任务成功完成&quot;</span>);<br>                <span class="hljs-keyword">return</span> ReflexionResponse.success(actorResult.getExecution(), attempts);<br>            &#125;<br>            <br>            <span class="hljs-comment">// 3. 检查改进率（从第2次开始）</span><br>            <span class="hljs-keyword">if</span> (attempt &gt; <span class="hljs-number">1</span>) &#123;<br>                <span class="hljs-type">double</span> <span class="hljs-variable">improvementRate</span> <span class="hljs-operator">=</span> (<span class="hljs-type">double</span>)(currentScore - lastScore) / Math.max(lastScore, <span class="hljs-number">1</span>);<br>                <span class="hljs-keyword">if</span> (improvementRate &lt; MIN_IMPROVEMENT_RATE) &#123;<br>                    consecutiveFailures++;<br>                    log.warn(<span class="hljs-string">&quot;改进不足: &#123;&#125;%&quot;</span>, improvementRate * <span class="hljs-number">100</span>);<br>                    <br>                    <span class="hljs-keyword">if</span> (consecutiveFailures &gt;= MAX_CONSECUTIVE_FAILURES) &#123;<br>                        log.warn(<span class="hljs-string">&quot;⚠️ 连续 &#123;&#125; 次改进不足，停止迭代&quot;</span>, MAX_CONSECUTIVE_FAILURES);<br>                        <span class="hljs-keyword">return</span> ReflexionResponse.failure(actorResult.getExecution(), attempts);<br>                    &#125;<br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                    consecutiveFailures = <span class="hljs-number">0</span>;  <span class="hljs-comment">// 重置计数器</span><br>                &#125;<br>            &#125;<br>            <br>            <span class="hljs-comment">// 4. 反思</span><br>            <span class="hljs-type">ReflectionResult</span> <span class="hljs-variable">reflection</span> <span class="hljs-operator">=</span> selfReflection.reflect(<br>                ReflectionInput.builder()<br>                    .task(task)<br>                    .executionTrace(actorResult.getThinking())<br>                    .result(actorResult.getExecution())<br>                    .evaluationFeedback(evalResult.getOverallFeedback())<br>                    .build()<br>            );<br>            reflections.add(reflection);<br>            <br>            <span class="hljs-comment">// 5. 检查是否陷入循环</span><br>            <span class="hljs-keyword">if</span> (isStuckInLoop(reflections)) &#123;<br>                log.warn(<span class="hljs-string">&quot;⚠️ 检测到无效循环，停止迭代&quot;</span>);<br>                <span class="hljs-keyword">return</span> ReflexionResponse.failure(actorResult.getExecution(), attempts);<br>            &#125;<br>            <br>            <span class="hljs-comment">// 6. 检查反思质量</span><br>            <span class="hljs-keyword">if</span> (reflection.getImprovementPlan() == <span class="hljs-literal">null</span> || <br>                reflection.getImprovementPlan().isEmpty()) &#123;<br>                log.warn(<span class="hljs-string">&quot;⚠️ 反思未产生改进方案，停止迭代&quot;</span>);<br>                <span class="hljs-keyword">return</span> ReflexionResponse.failure(actorResult.getExecution(), attempts);<br>            &#125;<br>            <br>            <span class="hljs-comment">// 7. 存储经验</span><br>            memory.addShortTerm(reflection.toExperienceText());<br>            <span class="hljs-keyword">if</span> (reflection.getConfidence() &gt; <span class="hljs-number">70</span>) &#123;<br>                memory.addLongTerm(reflection.toExperienceText(), classifyTask(task));<br>            &#125;<br>            <br>            lastScore = currentScore;<br>        &#125;<br>        <br>        log.warn(<span class="hljs-string">&quot;❌ 达到最大重试次数&quot;</span>);<br>        <span class="hljs-keyword">return</span> ReflexionResponse.failure(attempts.get(attempts.size() - <span class="hljs-number">1</span>).getActorResult().getExecution(), attempts);<br>    &#125;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">isStuckInLoop</span><span class="hljs-params">(List&lt;ReflectionResult&gt; reflections)</span> &#123;<br>        <span class="hljs-keyword">if</span> (reflections.size() &lt; <span class="hljs-number">2</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>        <br>        <span class="hljs-type">String</span> <span class="hljs-variable">last</span> <span class="hljs-operator">=</span> reflections.get(reflections.size() - <span class="hljs-number">1</span>).toExperienceText();<br>        <span class="hljs-type">String</span> <span class="hljs-variable">prev</span> <span class="hljs-operator">=</span> reflections.get(reflections.size() - <span class="hljs-number">2</span>).toExperienceText();<br>        <br>        <span class="hljs-type">double</span> <span class="hljs-variable">similarity</span> <span class="hljs-operator">=</span> calculateSimilarity(last, prev);<br>        <span class="hljs-keyword">return</span> similarity &gt; SIMILARITY_THRESHOLD;<br>    &#125;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-type">double</span> <span class="hljs-title function_">calculateSimilarity</span><span class="hljs-params">(String text1, String text2)</span> &#123;<br>        <span class="hljs-comment">// 实现相似度计算</span><br>        <span class="hljs-comment">// 可以使用 Levenshtein 距离、余弦相似度等</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0.0</span>;<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// 控制流程：</span><br><span class="hljs-comment">// 第1次：得分 40 → 继续</span><br><span class="hljs-comment">// 第2次：得分 60（改进 50%）→ 继续</span><br><span class="hljs-comment">// 第3次：得分 62（改进 3% &lt; 5%）→ 计数器 +1</span><br><span class="hljs-comment">// 第4次：得分 63（改进 1.6% &lt; 5%）→ 计数器 +1（达到 2）→ 停止</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>思路分析</strong>：</p>
+<ul>
+<li><strong>多层次防护</strong>：次数限制 + 改进率检查 + 循环检测 + 反思质量检查</li>
+<li><strong>连续失败计数</strong>：允许偶尔的改进不足，但连续多次就停止</li>
+<li><strong>综合判断</strong>：不依赖单一指标，多个条件共同决定是否继续</li>
+</ul>
+<h3 id="7-5-监控和日志"><a href="#7-5-监控和日志" class="headerlink" title="7.5 监控和日志"></a>7.5 监控和日志</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Service</span><br><span class="hljs-meta">@Slf4j</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MonitoredReflexionAgent</span> &#123;<br>    <br>    <span class="hljs-keyword">public</span> ReflexionResponse <span class="hljs-title function_">execute</span><span class="hljs-params">(String task)</span> &#123;<br>        <span class="hljs-type">long</span> <span class="hljs-variable">startTime</span> <span class="hljs-operator">=</span> System.currentTimeMillis();<br>        List&lt;AttemptRecord&gt; attempts = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        <br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">attempt</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; attempt &lt;= MAX_RETRIES; attempt++) &#123;<br>                <span class="hljs-type">long</span> <span class="hljs-variable">attemptStart</span> <span class="hljs-operator">=</span> System.currentTimeMillis();<br>                <br>                <span class="hljs-comment">// ... 执行逻辑 ...</span><br>                <br>                <span class="hljs-type">long</span> <span class="hljs-variable">attemptDuration</span> <span class="hljs-operator">=</span> System.currentTimeMillis() - attemptStart;<br>                log.info(<span class="hljs-string">&quot;第 &#123;&#125; 次尝试耗时: &#123;&#125;ms，得分: &#123;&#125;&quot;</span>, <br>                    attempt, attemptDuration, evalResult.getScore());<br>            &#125;<br>        &#125; <span class="hljs-keyword">finally</span> &#123;<br>            <span class="hljs-type">long</span> <span class="hljs-variable">totalDuration</span> <span class="hljs-operator">=</span> System.currentTimeMillis() - startTime;<br>            log.info(<span class="hljs-string">&quot;任务总耗时: &#123;&#125;ms，总尝试次数: &#123;&#125;&quot;</span>, totalDuration, attempts.size());<br>            <br>            <span class="hljs-comment">// 记录统计信息</span><br>            logStatistics(attempts);<br>        &#125;<br>        <br>        <span class="hljs-keyword">return</span> result;<br>    &#125;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">logStatistics</span><span class="hljs-params">(List&lt;AttemptRecord&gt; attempts)</span> &#123;<br>        <span class="hljs-keyword">if</span> (attempts.isEmpty()) <span class="hljs-keyword">return</span>;<br>        <br>        <span class="hljs-type">int</span> <span class="hljs-variable">maxScore</span> <span class="hljs-operator">=</span> attempts.stream()<br>            .mapToInt(a -&gt; a.getEvaluationResult().getScore())<br>            .max()<br>            .orElse(<span class="hljs-number">0</span>);<br>        <br>        <span class="hljs-type">double</span> <span class="hljs-variable">avgScore</span> <span class="hljs-operator">=</span> attempts.stream()<br>            .mapToInt(a -&gt; a.getEvaluationResult().getScore())<br>            .average()<br>            .orElse(<span class="hljs-number">0</span>);<br>        <br>        log.info(<span class="hljs-string">&quot;统计信息 - 最高分: &#123;&#125;，平均分: &#123;:.2f&#125;，总次数: &#123;&#125;&quot;</span>, <br>            maxScore, avgScore, attempts.size());<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// 日志输出示例：</span><br><span class="hljs-comment">// === 第 1 次尝试 ===</span><br><span class="hljs-comment">// 第 1 次尝试耗时: 2341ms，得分: 40</span><br><span class="hljs-comment">// === 第 2 次尝试 ===</span><br><span class="hljs-comment">// 第 2 次尝试耗时: 2156ms，得分: 65</span><br><span class="hljs-comment">// === 第 3 次尝试 ===</span><br><span class="hljs-comment">// 第 3 次尝试耗时: 2089ms，得分: 68</span><br><span class="hljs-comment">// ⚠️ 改进不足: 4.6%，停止迭代</span><br><span class="hljs-comment">// 统计信息 - 最高分: 68，平均分: 57.67，总次数: 3</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>思路分析</strong>：</p>
+<ul>
+<li>记录每次尝试的耗时和得分</li>
+<li>便于分析性能和改进效果</li>
+<li>帮助调整控制参数</li>
+</ul>
+<hr>
+<h2 id="相关笔记"><a href="#相关笔记" class="headerlink" title="相关笔记"></a>相关笔记</h2><ul>
+<li>Agent架构模式详解</li>
+<li>Prompt Engineering详解</li>
+<li>大模型学习路线</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/AI/" class="category-chain-item">AI</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/AI/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" class="category-chain-item">大模型</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Agent/" class="print-no-link">#Agent</a>
+      
+        <a href="/tags/AI/" class="print-no-link">#AI</a>
+      
+        <a href="/tags/Reflexion/" class="print-no-link">#Reflexion</a>
+      
+        <a href="/tags/%E8%87%AA%E5%8F%8D%E6%80%9D/" class="print-no-link">#自反思</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Reflexion自反思Agent详解</div>
+      <div>https://zmmmmy.github.io/2026/01/12/Reflexion自反思Agent详解/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZhiMy</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026-01-12</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>更新于</div>
+          <div>2026-01-22</div>
+        </div>
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
+                    <i class="iconfont icon-cc-nc"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-cc-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/01/12/SPARQL%E8%AF%A6%E8%A7%A3/" title="SPARQL详解">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">SPARQL详解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/01/12/%E4%B8%89%E5%85%83%E7%BB%84%E8%AF%A6%E8%A7%A3/" title="三元组详解">
+                        <span class="hidden-mobile">三元组详解</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener">Hexo</a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">Fluid</a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

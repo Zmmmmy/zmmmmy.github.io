@@ -1,25 +1,24 @@
+
+
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/favicon-32x32.png">
+  
 
-<link rel="stylesheet" href="/css/main.css">
-
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"zmmmmy.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":"auto","version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZhiMy">
+  <meta name="keywords" content="技术博客,编程">
+  
     <meta name="description" content="流合并与操作符链水利系统比喻在学习 Reactor 时，可以用水利系统来理解： 12345678910111213141516171819202122232425262728┌──────────────────────────────────────────────────────────────┐│                     Reactor 水利系统">
 <meta property="og:type" content="article">
 <meta property="og:title" content="流合并与操作符链">
@@ -39,257 +38,254 @@
 <meta property="article:tag" content="zip">
 <meta property="article:tag" content="操作符">
 <meta property="article:tag" content="最佳实践">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>流合并与操作符链 - Zmmmmy&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
 
-<link rel="canonical" href="https://zmmmmy.github.io/2026/01/10/%E6%B5%81%E5%90%88%E5%B9%B6%E4%B8%8E%E6%93%8D%E4%BD%9C%E7%AC%A6%E9%93%BE/">
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zmmmmy.github.io/2026/01/10/%E6%B5%81%E5%90%88%E5%B9%B6%E4%B8%8E%E6%93%8D%E4%BD%9C%E7%AC%A6%E9%93%BE/","path":"2026/01/10/流合并与操作符链/","title":"流合并与操作符链"}</script>
 
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>流合并与操作符链 | Zmmmmy's Blog</title>
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
   
 
 
 
 
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zmmmmy.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
-
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
-<script src="/js/third-party/search/local-search.js" defer></script>
-
-
-
-
-
-
-
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
   
 
 
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
 
 
+<body>
+  
 
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
+  <header>
+    
 
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">Zmmmmy's Blog</p>
-      <i class="logo-line"></i>
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Zmmmmy&#39;s Blog</strong>
     </a>
-      <p class="site-subtitle" itemprop="description">今天想和 AI 聊点什么？</p>
-  </div>
 
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="搜索" role="button">
-        <i class="fa fa-search fa-fw fa-lg"></i>
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
     </div>
   </div>
-</div>
-
-
-
-<nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
 </nav>
 
+  
 
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-      <div class="search-header">
-        <span class="search-icon">
-          <i class="fa fa-search"></i>
-        </span>
-        <div class="search-input-container">
-          <input autocomplete="off" autocapitalize="off" maxlength="80"
-                placeholder="搜索..." spellcheck="false"
-                type="search" class="search-input">
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="流合并与操作符链"></span>
+          
         </div>
-        <span class="popup-btn-close" role="button">
-          <i class="fa fa-times-circle"></i>
-        </span>
-      </div>
-      <div class="search-result-container">
-        <div class="search-result-icon">
-          <i class="fa fa-spinner fa-pulse fa-5x"></i>
-        </div>
-      </div>
-    </div>
-  </div>
 
-</header>
         
-  
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%81%E5%90%88%E5%B9%B6%E4%B8%8E%E6%93%8D%E4%BD%9C%E7%AC%A6%E9%93%BE"><span class="nav-number">1.</span> <span class="nav-text">流合并与操作符链</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B0%B4%E5%88%A9%E7%B3%BB%E7%BB%9F%E6%AF%94%E5%96%BB"><span class="nav-number">1.1.</span> <span class="nav-text">水利系统比喻</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%93%8D%E4%BD%9C%E7%AC%A6%E9%93%BE%EF%BC%88%E6%B0%B4%E7%AE%A1%E6%8E%A5%E6%B0%B4%E7%AE%A1%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">一、操作符链（水管接水管）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.2.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%B5%81%E5%8A%A8%E8%BF%87%E7%A8%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">数据流动过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E7%AC%A6%E5%88%86%E7%B1%BB"><span class="nav-number">1.2.3.</span> <span class="nav-text">常用操作符分类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%B5%81%E5%90%88%E5%B9%B6%EF%BC%88%E5%A4%9A%E4%B8%AA%E6%B0%B4%E9%BE%99%E5%A4%B4%E5%90%88%E5%B9%B6%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">二、流合并（多个水龙头合并）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-merge-%E5%AE%9E%E6%97%B6%E6%B7%B7%E5%90%88"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. merge - 实时混合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-concat-%E9%A1%BA%E5%BA%8F%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. concat - 顺序连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-zip-%E4%B8%80%E5%AF%B9%E4%B8%80%E9%85%8D%E5%AF%B9"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. zip - 一对一配对</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-combineLatest-%E7%BB%84%E5%90%88%E6%9C%80%E6%96%B0%E5%80%BC"><span class="nav-number">1.3.4.</span> <span class="nav-text">4. combineLatest - 组合最新值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E6%96%B9%E5%BC%8F%E5%AF%B9%E6%AF%94"><span class="nav-number">1.3.5.</span> <span class="nav-text">合并方式对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%9E%E6%88%98%EF%BC%9A%E5%A4%96%E9%83%A8%E6%B5%81-%E6%9C%AC%E5%9C%B0%E6%B5%81%E5%90%88%E5%B9%B6"><span class="nav-number">1.4.</span> <span class="nav-text">三、实战：外部流 + 本地流合并</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.4.1.</span> <span class="nav-text">场景描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.4.2.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%88%E6%9E%9C%E6%BC%94%E7%A4%BA"><span class="nav-number">1.4.3.</span> <span class="nav-text">效果演示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E7%A4%BA"><span class="nav-number">1.4.4.</span> <span class="nav-text">图示</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.5.</span> <span class="nav-text">四、生产环境注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%83%8C%E5%8E%8B%E5%A4%84%E7%90%86"><span class="nav-number">1.5.1.</span> <span class="nav-text">1. 背压处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">1.5.2.</span> <span class="nav-text">2. 错误处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86"><span class="nav-number">1.5.3.</span> <span class="nav-text">3. 超时处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E8%B5%84%E6%BA%90%E6%B8%85%E7%90%86"><span class="nav-number">1.5.4.</span> <span class="nav-text">4. 资源清理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8"><span class="nav-number">1.5.5.</span> <span class="nav-text">5. 线程安全</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E9%81%BF%E5%85%8D%E9%98%BB%E5%A1%9E"><span class="nav-number">1.5.6.</span> <span class="nav-text">6. 避免阻塞</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.6.</span> <span class="nav-text">五、最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%93%8D%E4%BD%9C%E7%AC%A6%E9%93%BE%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.6.1.</span> <span class="nav-text">1. 操作符链设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Sinks-%E4%BD%BF%E7%94%A8%E8%A7%84%E8%8C%83"><span class="nav-number">1.6.2.</span> <span class="nav-text">2. Sinks 使用规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%90%88%E5%B9%B6%E6%B5%81%E7%9A%84%E9%94%99%E8%AF%AF%E9%9A%94%E7%A6%BB"><span class="nav-number">1.6.3.</span> <span class="nav-text">3. 合并流的错误隔离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%97%A5%E5%BF%97%E4%B8%8E%E7%9B%91%E6%8E%A7"><span class="nav-number">1.6.4.</span> <span class="nav-text">4. 日志与监控</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%B5%8B%E8%AF%95"><span class="nav-number">1.6.5.</span> <span class="nav-text">5. 测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="nav-number">1.7.</span> <span class="nav-text">六、常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Q1-merge-%E5%92%8C-concat-%E6%80%8E%E4%B9%88%E9%80%89%EF%BC%9F"><span class="nav-number">1.7.1.</span> <span class="nav-text">Q1: merge 和 concat 怎么选？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Q2-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E7%9A%84-Sinks-%E5%8F%91%E9%80%81%E7%9A%84%E6%95%B0%E6%8D%AE%E6%B2%A1%E4%BA%BA%E6%94%B6%E5%88%B0%EF%BC%9F"><span class="nav-number">1.7.2.</span> <span class="nav-text">Q2: 为什么我的 Sinks 发送的数据没人收到？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Q3-%E6%B5%81%E5%90%88%E5%B9%B6%E5%90%8E%EF%BC%8C%E4%B8%80%E4%B8%AA%E5%87%BA%E9%94%99%E6%95%B4%E4%B8%AA%E9%83%BD%E5%81%9C%E4%BA%86%EF%BC%9F"><span class="nav-number">1.7.3.</span> <span class="nav-text">Q3: 流合并后，一个出错整个都停了？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Q4-%E5%86%85%E5%AD%98%E4%B8%80%E7%9B%B4%E6%B6%A8%EF%BC%9F"><span class="nav-number">1.7.4.</span> <span class="nav-text">Q4: 内存一直涨？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%93%BE%E6%8E%A5"><span class="nav-number">1.8.</span> <span class="nav-text">相关链接</span></a></li></ol></li></ol></div>
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="ZhiMy"
-      src="/images/avatar.png">
-  <p class="site-author-name" itemprop="name">ZhiMy</p>
-  <div class="site-description" itemprop="description">一个来自于 AI+Obsidian 的知识库</div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">43</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">18</span>
-        <span class="site-state-item-name">分类</span>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">100</span>
-        <span class="site-state-item-name">标签</span>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author animated">
-      <span class="links-of-author-item">
-        <a href="https://github.com/Zmmmmy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Zmmmmy" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-10 00:00" pubdate>
+          2026年1月10日 凌晨
+        </time>
       </span>
+    
   </div>
 
-        </div>
-      </div>
-    </div>
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.3k 字
+        
+      </span>
+    
 
     
-  </aside>
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          19 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
 
 
+        
+      </div>
+
+      
     </div>
-
-    <div class="main-inner post posts-expand">
-
-
-  
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/10/%E6%B5%81%E5%90%88%E5%B9%B6%E4%B8%8E%E6%93%8D%E4%BD%9C%E7%AC%A6%E9%93%BE/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="ZhiMy">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zmmmmy's Blog">
-      <meta itemprop="description" content="一个来自于 AI+Obsidian 的知识库">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="流合并与操作符链 | Zmmmmy's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          流合并与操作符链
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2026-01-10 00:00:00" itemprop="dateCreated datePublished" datetime="2026-01-10T00:00:00+08:00">2026-01-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-22 15:44:14" itemprop="dateModified" datetime="2026-01-22T15:44:14+08:00">2026-01-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/Spring/Reactive-Streams/" itemprop="url" rel="index"><span itemprop="name">Reactive Streams</span></a>
-        </span>
-    </span>
-
-  
+  </div>
 </div>
 
-        </div>
-      </header>
+</div>
 
+  </header>
+
+  <main>
     
-    
-    
-    <div class="post-body" itemprop="articleBody"><h1 id="流合并与操作符链"><a href="#流合并与操作符链" class="headerlink" title="流合并与操作符链"></a>流合并与操作符链</h1><h2 id="水利系统比喻"><a href="#水利系统比喻" class="headerlink" title="水利系统比喻"></a>水利系统比喻</h2><p>在学习 Reactor 时，可以用水利系统来理解：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">┌──────────────────────────────────────────────────────────────┐</span><br><span class="line">│                     Reactor 水利系统                          │</span><br><span class="line">├──────────────────────────────────────────────────────────────┤</span><br><span class="line">│                                                              │</span><br><span class="line">│  水源类型：                                                   │</span><br><span class="line">│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐     │</span><br><span class="line">│  │ just()   │  │ interval │  │  HTTP    │  │  Sinks   │     │</span><br><span class="line">│  │ 矿泉水瓶  │  │ 定时滴水  │  │ 外部水管  │  │ 你的水龙头│     │</span><br><span class="line">│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘     │</span><br><span class="line">│       │             │             │             │            │</span><br><span class="line">│       └──────┬──────┴──────┬──────┴──────┬──────┘            │</span><br><span class="line">│              │             │             │                   │</span><br><span class="line">│              ▼             ▼             ▼                   │</span><br><span class="line">│         ┌─────────────────────────────────────┐              │</span><br><span class="line">│         │  merge / concat / zip (合并水管)     │              │</span><br><span class="line">│         └─────────────────┬───────────────────┘              │</span><br><span class="line">│                           │                                  │</span><br><span class="line">│                           ▼                                  │</span><br><span class="line">│         ┌─────────────────────────────────────┐              │</span><br><span class="line">│         │  filter / map / take (处理水管)      │              │</span><br><span class="line">│         └─────────────────┬───────────────────┘              │</span><br><span class="line">│                           │                                  │</span><br><span class="line">│                           ▼                                  │</span><br><span class="line">│         ┌─────────────────────────────────────┐              │</span><br><span class="line">│         │         subscribe (水池)            │              │</span><br><span class="line">│         └─────────────────────────────────────┘              │</span><br><span class="line">│                                                              │</span><br><span class="line">└──────────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">流合并与操作符链</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="流合并与操作符链"><a href="#流合并与操作符链" class="headerlink" title="流合并与操作符链"></a>流合并与操作符链</h1><h2 id="水利系统比喻"><a href="#水利系统比喻" class="headerlink" title="水利系统比喻"></a>水利系统比喻</h2><p>在学习 Reactor 时，可以用水利系统来理解：</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs nix">┌──────────────────────────────────────────────────────────────┐<br>│                     Reactor 水利系统                          │<br>├──────────────────────────────────────────────────────────────┤<br>│                                                              │<br>│  水源类型：                                                   │<br>│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐     │<br>│  │ just()   │  │ interval │  │  HTTP    │  │  Sinks   │     │<br>│  │ 矿泉水瓶  │  │ 定时滴水  │  │ 外部水管  │  │ 你的水龙头│     │<br>│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘     │<br>│       │             │             │             │            │<br>│       └──────┬──────┴──────┬──────┴──────┬──────┘            │<br>│              │             │             │                   │<br>│              ▼             ▼             ▼                   │<br>│         ┌─────────────────────────────────────┐              │<br>│         │  merge <span class="hljs-symbol">/</span> concat <span class="hljs-symbol">/</span> zip (合并水管)     │              │<br>│         └─────────────────┬───────────────────┘              │<br>│                           │                                  │<br>│                           ▼                                  │<br>│         ┌─────────────────────────────────────┐              │<br>│         │  filter <span class="hljs-symbol">/</span> <span class="hljs-built_in">map</span> <span class="hljs-symbol">/</span> take (处理水管)      │              │<br>│         └─────────────────┬───────────────────┘              │<br>│                           │                                  │<br>│                           ▼                                  │<br>│         ┌─────────────────────────────────────┐              │<br>│         │         subscribe (水池)            │              │<br>│         └─────────────────────────────────────┘              │<br>│                                                              │<br>└──────────────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
 
 <table>
 <thead>
@@ -322,9 +318,9 @@
 </tbody></table>
 <hr>
 <h2 id="一、操作符链（水管接水管）"><a href="#一、操作符链（水管接水管）" class="headerlink" title="一、操作符链（水管接水管）"></a>一、操作符链（水管接水管）</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><p>每个操作符都会创建一个新的 Flux，形成链式调用：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Flux.range(<span class="number">1</span>, <span class="number">10</span>)       <span class="comment">// 水源：1到10</span></span><br><span class="line">    .filter(i -&gt; i &gt; <span class="number">5</span>)  <span class="comment">// 过滤：只留大于5的</span></span><br><span class="line">    .map(i -&gt; i * <span class="number">2</span>)     <span class="comment">// 转换：每个乘2</span></span><br><span class="line">    .take(<span class="number">3</span>)             <span class="comment">// 限流：只取3个</span></span><br><span class="line">    .subscribe();        <span class="comment">// 水池：接收</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java">Flux.range(<span class="hljs-number">1</span>, <span class="hljs-number">10</span>)       <span class="hljs-comment">// 水源：1到10</span><br>    .filter(i -&gt; i &gt; <span class="hljs-number">5</span>)  <span class="hljs-comment">// 过滤：只留大于5的</span><br>    .map(i -&gt; i * <span class="hljs-number">2</span>)     <span class="hljs-comment">// 转换：每个乘2</span><br>    .take(<span class="hljs-number">3</span>)             <span class="hljs-comment">// 限流：只取3个</span><br>    .subscribe();        <span class="hljs-comment">// 水池：接收</span><br></code></pre></td></tr></table></figure>
 
-<h3 id="数据流动过程"><a href="#数据流动过程" class="headerlink" title="数据流动过程"></a>数据流动过程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">┌────────┐    ┌────────┐    ┌────────┐    ┌────────┐    ┌────────┐</span><br><span class="line">│ range  │───▶│ filter │───▶│  map   │───▶│  take  │───▶│ 订阅者 │</span><br><span class="line">│1,2...10│    │  &gt;5    │    │  *2    │    │  3个   │    │        │</span><br><span class="line">└────────┘    └────────┘    └────────┘    └────────┘    └────────┘</span><br><span class="line">   10个    →    5个     →     5个     →     3个     →    收到3个</span><br><span class="line">  (6,7,8,9,10) (6,7,8,9,10)  (12,14,16,18,20) (12,14,16)</span><br></pre></td></tr></table></figure>
+<h3 id="数据流动过程"><a href="#数据流动过程" class="headerlink" title="数据流动过程"></a>数据流动过程</h3><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs scss">┌────────┐    ┌────────┐    ┌────────┐    ┌────────┐    ┌────────┐<br>│ range  │───▶│ <span class="hljs-attribute">filter</span> │───▶│  map   │───▶│  take  │───▶│ 订阅者 │<br>│<span class="hljs-number">1</span>,<span class="hljs-number">2</span>..<span class="hljs-selector-class">.10</span>│    │  &gt;<span class="hljs-number">5</span>    │    │  *<span class="hljs-number">2</span>    │    │  <span class="hljs-number">3</span>个   │    │        │<br>└────────┘    └────────┘    └────────┘    └────────┘    └────────┘<br>   <span class="hljs-number">10</span>个    →    <span class="hljs-number">5</span>个     →     <span class="hljs-number">5</span>个     →     <span class="hljs-number">3</span>个     →    收到<span class="hljs-number">3</span>个<br>  (<span class="hljs-number">6</span>,<span class="hljs-number">7</span>,<span class="hljs-number">8</span>,<span class="hljs-number">9</span>,<span class="hljs-number">10</span>) (<span class="hljs-number">6</span>,<span class="hljs-number">7</span>,<span class="hljs-number">8</span>,<span class="hljs-number">9</span>,<span class="hljs-number">10</span>)  (<span class="hljs-number">12</span>,<span class="hljs-number">14</span>,<span class="hljs-number">16</span>,<span class="hljs-number">18</span>,<span class="hljs-number">20</span>) (<span class="hljs-number">12</span>,<span class="hljs-number">14</span>,<span class="hljs-number">16</span>)<br></code></pre></td></tr></table></figure>
 
 <h3 id="常用操作符分类"><a href="#常用操作符分类" class="headerlink" title="常用操作符分类"></a>常用操作符分类</h3><table>
 <thead>
@@ -362,25 +358,25 @@
 </tbody></table>
 <hr>
 <h2 id="二、流合并（多个水龙头合并）"><a href="#二、流合并（多个水龙头合并）" class="headerlink" title="二、流合并（多个水龙头合并）"></a>二、流合并（多个水龙头合并）</h2><h3 id="1-merge-实时混合"><a href="#1-merge-实时混合" class="headerlink" title="1. merge - 实时混合"></a>1. merge - 实时混合</h3><p><strong>特点</strong>：谁有数据谁先输出，不保证顺序</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Flux&lt;String&gt; flux1 = Flux.just(<span class="string">&quot;A1&quot;</span>, <span class="string">&quot;A2&quot;</span>).delayElements(Duration.ofMillis(<span class="number">100</span>));</span><br><span class="line">Flux&lt;String&gt; flux2 = Flux.just(<span class="string">&quot;B1&quot;</span>, <span class="string">&quot;B2&quot;</span>).delayElements(Duration.ofMillis(<span class="number">80</span>));</span><br><span class="line"></span><br><span class="line">Flux.merge(flux1, flux2).subscribe(System.out::println);</span><br><span class="line"><span class="comment">// 可能输出: B1, A1, B2, A2（谁快谁先）</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java">Flux&lt;String&gt; flux1 = Flux.just(<span class="hljs-string">&quot;A1&quot;</span>, <span class="hljs-string">&quot;A2&quot;</span>).delayElements(Duration.ofMillis(<span class="hljs-number">100</span>));<br>Flux&lt;String&gt; flux2 = Flux.just(<span class="hljs-string">&quot;B1&quot;</span>, <span class="hljs-string">&quot;B2&quot;</span>).delayElements(Duration.ofMillis(<span class="hljs-number">80</span>));<br><br>Flux.merge(flux1, flux2).subscribe(System.out::println);<br><span class="hljs-comment">// 可能输出: B1, A1, B2, A2（谁快谁先）</span><br></code></pre></td></tr></table></figure>
 
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">flux1 ──A1────A2────┐</span><br><span class="line">                    ├──▶ merge ──▶ B1, A1, B2, A2</span><br><span class="line">flux2 ──B1──B2──────┘</span><br></pre></td></tr></table></figure>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">flux1 ──<span class="hljs-built_in">A1</span>────<span class="hljs-built_in">A2</span>────┐<br>                    ├──▶ merge ──▶ <span class="hljs-keyword">B1, </span><span class="hljs-built_in">A1</span>, <span class="hljs-keyword">B2, </span><span class="hljs-built_in">A2</span><br>flux2 ──<span class="hljs-keyword">B1──B2──────┘</span><br></code></pre></td></tr></table></figure>
 
 <p><strong>适用场景</strong>：实时数据混合、不关心顺序</p>
 <h3 id="2-concat-顺序连接"><a href="#2-concat-顺序连接" class="headerlink" title="2. concat - 顺序连接"></a>2. concat - 顺序连接</h3><p><strong>特点</strong>：第一个流完成后，才开始第二个流</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Flux.concat(flux1, flux2).subscribe(System.out::println);</span><br><span class="line"><span class="comment">// 输出: A1, A2, B1, B2（先A全部，再B全部）</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">Flux.concat(flux1, flux2).subscribe(System.out::println);<br><span class="hljs-comment">// 输出: A1, A2, B1, B2（先A全部，再B全部）</span><br></code></pre></td></tr></table></figure>
 
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">flux1 ──A1──A2──┐</span><br><span class="line">                ├──▶ concat ──▶ A1, A2, B1, B2</span><br><span class="line">flux2 ──B1──B2──┘（等A完成再开始）</span><br></pre></td></tr></table></figure>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">flux1 ──<span class="hljs-built_in">A1</span>──<span class="hljs-built_in">A2</span>──┐<br>                ├──▶ concat ──▶ <span class="hljs-built_in">A1</span>, <span class="hljs-built_in">A2</span>, <span class="hljs-keyword">B1, </span><span class="hljs-keyword">B2</span><br><span class="hljs-keyword"></span>flux2 ──<span class="hljs-keyword">B1──B2──┘（等A完成再开始）</span><br></code></pre></td></tr></table></figure>
 
 <p><strong>适用场景</strong>：需要保证顺序、分页加载</p>
 <h3 id="3-zip-一对一配对"><a href="#3-zip-一对一配对" class="headerlink" title="3. zip - 一对一配对"></a>3. zip - 一对一配对</h3><p><strong>特点</strong>：从每个流各取一个元素，组合成一对</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Flux&lt;String&gt; names = Flux.just(<span class="string">&quot;张三&quot;</span>, <span class="string">&quot;李四&quot;</span>, <span class="string">&quot;王五&quot;</span>);</span><br><span class="line">Flux&lt;Integer&gt; ages = Flux.just(<span class="number">25</span>, <span class="number">30</span>, <span class="number">28</span>);</span><br><span class="line"></span><br><span class="line">Flux.zip(names, ages, (name, age) -&gt; name + <span class="string">&quot;: &quot;</span> + age)</span><br><span class="line">    .subscribe(System.out::println);</span><br><span class="line"><span class="comment">// 输出: 张三: 25, 李四: 30, 王五: 28</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java">Flux&lt;String&gt; names = Flux.just(<span class="hljs-string">&quot;张三&quot;</span>, <span class="hljs-string">&quot;李四&quot;</span>, <span class="hljs-string">&quot;王五&quot;</span>);<br>Flux&lt;Integer&gt; ages = Flux.just(<span class="hljs-number">25</span>, <span class="hljs-number">30</span>, <span class="hljs-number">28</span>);<br><br>Flux.zip(names, ages, (name, age) -&gt; name + <span class="hljs-string">&quot;: &quot;</span> + age)<br>    .subscribe(System.out::println);<br><span class="hljs-comment">// 输出: 张三: 25, 李四: 30, 王五: 28</span><br></code></pre></td></tr></table></figure>
 
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">names ──张三────李四────王五────┐</span><br><span class="line">                               ├──▶ zip ──▶ (张三:25), (李四:30), (王五:28)</span><br><span class="line">ages  ──25──────30──────28─────┘</span><br></pre></td></tr></table></figure>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs scss">names ──张三────李四────王五────┐<br>                               ├──▶ zip ──▶ (张三:<span class="hljs-number">25</span>), (李四:<span class="hljs-number">30</span>), (王五:<span class="hljs-number">28</span>)<br>ages  ──<span class="hljs-number">25</span>──────<span class="hljs-number">30</span>──────<span class="hljs-number">28</span>─────┘<br></code></pre></td></tr></table></figure>
 
 <p><strong>适用场景</strong>：数据配对、并行请求结果组合</p>
 <h3 id="4-combineLatest-组合最新值"><a href="#4-combineLatest-组合最新值" class="headerlink" title="4. combineLatest - 组合最新值"></a>4. combineLatest - 组合最新值</h3><p><strong>特点</strong>：任一流有新值时，与其他流的最新值组合</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Flux&lt;String&gt; flux1 = Flux.interval(Duration.ofMillis(<span class="number">100</span>)).map(i -&gt; <span class="string">&quot;A&quot;</span> + i);</span><br><span class="line">Flux&lt;String&gt; flux2 = Flux.interval(Duration.ofMillis(<span class="number">150</span>)).map(i -&gt; <span class="string">&quot;B&quot;</span> + i);</span><br><span class="line"></span><br><span class="line">Flux.combineLatest(flux1, flux2, (a, b) -&gt; a + <span class="string">&quot;+&quot;</span> + b)</span><br><span class="line">    .take(<span class="number">5</span>)</span><br><span class="line">    .subscribe(System.out::println);</span><br><span class="line"><span class="comment">// 输出: A0+B0, A1+B0, A1+B1, A2+B1, A3+B1...</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java">Flux&lt;String&gt; flux1 = Flux.interval(Duration.ofMillis(<span class="hljs-number">100</span>)).map(i -&gt; <span class="hljs-string">&quot;A&quot;</span> + i);<br>Flux&lt;String&gt; flux2 = Flux.interval(Duration.ofMillis(<span class="hljs-number">150</span>)).map(i -&gt; <span class="hljs-string">&quot;B&quot;</span> + i);<br><br>Flux.combineLatest(flux1, flux2, (a, b) -&gt; a + <span class="hljs-string">&quot;+&quot;</span> + b)<br>    .take(<span class="hljs-number">5</span>)<br>    .subscribe(System.out::println);<br><span class="hljs-comment">// 输出: A0+B0, A1+B0, A1+B1, A2+B1, A3+B1...</span><br></code></pre></td></tr></table></figure>
 
 <p><strong>适用场景</strong>：实时数据组合、表单联动</p>
 <h3 id="合并方式对比"><a href="#合并方式对比" class="headerlink" title="合并方式对比"></a>合并方式对比</h3><table>
@@ -419,15 +415,15 @@
 </tbody></table>
 <hr>
 <h2 id="三、实战：外部流-本地流合并"><a href="#三、实战：外部流-本地流合并" class="headerlink" title="三、实战：外部流 + 本地流合并"></a>三、实战：外部流 + 本地流合并</h2><h3 id="场景描述"><a href="#场景描述" class="headerlink" title="场景描述"></a>场景描述</h3><p>调用外部 API（如大模型），同时本地也能推送消息，两个流合并后返回给前端。</p>
-<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ChatService</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WebClient webClient;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 系统通知的水龙头</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Sinks.Many&lt;String&gt; notificationSink = </span><br><span class="line">        Sinks.many().multicast().onBackpressureBuffer();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取合并后的消息流</span></span><br><span class="line"><span class="comment">     * 用户既能收到大模型回复，也能收到系统通知</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> Flux&lt;String&gt; <span class="title function_">getChatStream</span><span class="params">(String prompt)</span> &#123;</span><br><span class="line">        <span class="comment">// 1. 外部流：大模型回复</span></span><br><span class="line">        Flux&lt;String&gt; llmResponse = webClient.post()</span><br><span class="line">            .uri(<span class="string">&quot;/v1/chat/completions&quot;</span>)</span><br><span class="line">            .bodyValue(buildRequest(prompt))</span><br><span class="line">            .retrieve()</span><br><span class="line">            .bodyToFlux(String.class)</span><br><span class="line">            .map(<span class="built_in">this</span>::extractContent)</span><br><span class="line">            .filter(Objects::nonNull);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 2. 本地流：系统通知</span></span><br><span class="line">        Flux&lt;String&gt; notifications = notificationSink.asFlux()</span><br><span class="line">            .map(msg -&gt; <span class="string">&quot;[系统] &quot;</span> + msg);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 3. 合并两个流</span></span><br><span class="line">        <span class="keyword">return</span> Flux.merge(llmResponse, notifications);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 发送系统通知（可以在任何地方调用）</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sendNotification</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        notificationSink.tryEmitNext(message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ChatService</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> WebClient webClient;<br>    <br>    <span class="hljs-comment">// 系统通知的水龙头</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Sinks.Many&lt;String&gt; notificationSink = <br>        Sinks.many().multicast().onBackpressureBuffer();<br>    <br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 获取合并后的消息流</span><br><span class="hljs-comment">     * 用户既能收到大模型回复，也能收到系统通知</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> Flux&lt;String&gt; <span class="hljs-title function_">getChatStream</span><span class="hljs-params">(String prompt)</span> &#123;<br>        <span class="hljs-comment">// 1. 外部流：大模型回复</span><br>        Flux&lt;String&gt; llmResponse = webClient.post()<br>            .uri(<span class="hljs-string">&quot;/v1/chat/completions&quot;</span>)<br>            .bodyValue(buildRequest(prompt))<br>            .retrieve()<br>            .bodyToFlux(String.class)<br>            .map(<span class="hljs-built_in">this</span>::extractContent)<br>            .filter(Objects::nonNull);<br>        <br>        <span class="hljs-comment">// 2. 本地流：系统通知</span><br>        Flux&lt;String&gt; notifications = notificationSink.asFlux()<br>            .map(msg -&gt; <span class="hljs-string">&quot;[系统] &quot;</span> + msg);<br>        <br>        <span class="hljs-comment">// 3. 合并两个流</span><br>        <span class="hljs-keyword">return</span> Flux.merge(llmResponse, notifications);<br>    &#125;<br>    <br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 发送系统通知（可以在任何地方调用）</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">sendNotification</span><span class="hljs-params">(String message)</span> &#123;<br>        notificationSink.tryEmitNext(message);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h3 id="效果演示"><a href="#效果演示" class="headerlink" title="效果演示"></a>效果演示</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">用户订阅 getChatStream(&quot;你好&quot;)</span><br><span class="line">    │</span><br><span class="line">    ├── 大模型: &quot;你&quot;</span><br><span class="line">    ├── 大模型: &quot;好&quot;</span><br><span class="line">    ├── 系统通知: &quot;[系统] 服务器将在5分钟后维护&quot;  ← 随时插入</span><br><span class="line">    ├── 大模型: &quot;，我是AI助手&quot;</span><br><span class="line">    ├── 系统通知: &quot;[系统] 新功能上线&quot;  ← 随时插入</span><br><span class="line">    └── 大模型: &quot;...&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="效果演示"><a href="#效果演示" class="headerlink" title="效果演示"></a>效果演示</h3><figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs isbl">用户订阅 <span class="hljs-function"><span class="hljs-title">getChatStream</span>(<span class="hljs-string">&quot;你好&quot;</span>)</span><br>    │<br>    ├── 大模型: <span class="hljs-string">&quot;你&quot;</span><br>    ├── 大模型: <span class="hljs-string">&quot;好&quot;</span><br>    ├── 系统通知: <span class="hljs-string">&quot;[系统] 服务器将在5分钟后维护&quot;</span>  ← 随时插入<br>    ├── 大模型: <span class="hljs-string">&quot;，我是AI助手&quot;</span><br>    ├── 系统通知: <span class="hljs-string">&quot;[系统] 新功能上线&quot;</span>  ← 随时插入<br>    └── 大模型: <span class="hljs-string">&quot;...&quot;</span><br></code></pre></td></tr></table></figure>
 
-<h3 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────┐</span><br><span class="line">│   外部 API      │</span><br><span class="line">│  (大模型返回)    │──── llmResponse ─────┐</span><br><span class="line">└─────────────────┘                       │</span><br><span class="line">                                          ├──▶ Flux.merge() ──▶ 前端</span><br><span class="line">┌─────────────────┐                       │</span><br><span class="line">│   本地 Sinks    │                       │</span><br><span class="line">│  (系统通知)      │──── notifications ───┘</span><br><span class="line">└─────────────────┘</span><br><span class="line">       ↑</span><br><span class="line">  sendNotification(&quot;消息&quot;)</span><br></pre></td></tr></table></figure>
+<h3 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h3><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs scss">┌─────────────────┐<br>│   外部 API      │<br>│  (大模型返回)    │──── llmResponse ─────┐<br>└─────────────────┘                       │<br>                                          ├──▶ Flux<span class="hljs-selector-class">.merge</span>() ──▶ 前端<br>┌─────────────────┐                       │<br>│   本地 Sinks    │                       │<br>│  (系统通知)      │──── notifications ───┘<br>└─────────────────┘<br>       ↑<br>  <span class="hljs-built_in">sendNotification</span>(&quot;消息&quot;)<br></code></pre></td></tr></table></figure>
 
 <hr>
 <h2 id="四、生产环境注意事项"><a href="#四、生产环境注意事项" class="headerlink" title="四、生产环境注意事项"></a>四、生产环境注意事项</h2><h3 id="1-背压处理"><a href="#1-背压处理" class="headerlink" title="1. 背压处理"></a>1. 背压处理</h3><p><strong>问题</strong>：上游产生数据太快，下游处理不过来</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// [错误] 可能导致内存溢出</span></span><br><span class="line">Flux.interval(Duration.ofMillis(<span class="number">1</span>))  <span class="comment">// 每毫秒一个</span></span><br><span class="line">    .subscribe(data -&gt; &#123;</span><br><span class="line">        Thread.sleep(<span class="number">100</span>);  <span class="comment">// 处理很慢</span></span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// [正确] 添加背压策略</span></span><br><span class="line">Flux.interval(Duration.ofMillis(<span class="number">1</span>))</span><br><span class="line">    .onBackpressureDrop(dropped -&gt; log.warn(<span class="string">&quot;丢弃: &#123;&#125;&quot;</span>, dropped))</span><br><span class="line">    .subscribe(data -&gt; &#123;</span><br><span class="line">        Thread.sleep(<span class="number">100</span>);</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// [错误] 可能导致内存溢出</span><br>Flux.interval(Duration.ofMillis(<span class="hljs-number">1</span>))  <span class="hljs-comment">// 每毫秒一个</span><br>    .subscribe(data -&gt; &#123;<br>        Thread.sleep(<span class="hljs-number">100</span>);  <span class="hljs-comment">// 处理很慢</span><br>    &#125;);<br><br><span class="hljs-comment">// [正确] 添加背压策略</span><br>Flux.interval(Duration.ofMillis(<span class="hljs-number">1</span>))<br>    .onBackpressureDrop(dropped -&gt; log.warn(<span class="hljs-string">&quot;丢弃: &#123;&#125;&quot;</span>, dropped))<br>    .subscribe(data -&gt; &#123;<br>        Thread.sleep(<span class="hljs-number">100</span>);<br>    &#125;);<br></code></pre></td></tr></table></figure>
 
 <p><strong>背压策略选择</strong>：</p>
 <table>
@@ -465,29 +461,29 @@
 </tr>
 </tbody></table>
 <h3 id="2-错误处理"><a href="#2-错误处理" class="headerlink" title="2. 错误处理"></a>2. 错误处理</h3><p><strong>问题</strong>：一个流出错会导致整个合并流终止</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// [错误] llmResponse 出错会导致整个流终止</span></span><br><span class="line">Flux.merge(llmResponse, notifications);</span><br><span class="line"></span><br><span class="line"><span class="comment">// [正确] 单独处理每个流的错误</span></span><br><span class="line">Flux&lt;String&gt; safeLlmResponse = llmResponse</span><br><span class="line">    .onErrorResume(e -&gt; &#123;</span><br><span class="line">        log.error(<span class="string">&quot;大模型调用失败&quot;</span>, e);</span><br><span class="line">        <span class="keyword">return</span> Flux.just(<span class="string">&quot;[错误] 大模型暂时不可用&quot;</span>);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">Flux.merge(safeLlmResponse, notifications);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// [错误] llmResponse 出错会导致整个流终止</span><br>Flux.merge(llmResponse, notifications);<br><br><span class="hljs-comment">// [正确] 单独处理每个流的错误</span><br>Flux&lt;String&gt; safeLlmResponse = llmResponse<br>    .onErrorResume(e -&gt; &#123;<br>        log.error(<span class="hljs-string">&quot;大模型调用失败&quot;</span>, e);<br>        <span class="hljs-keyword">return</span> Flux.just(<span class="hljs-string">&quot;[错误] 大模型暂时不可用&quot;</span>);<br>    &#125;);<br><br>Flux.merge(safeLlmResponse, notifications);<br></code></pre></td></tr></table></figure>
 
 <p><strong>错误处理策略</strong>：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回默认值</span></span><br><span class="line">.onErrorReturn(<span class="string">&quot;默认值&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 切换到备用流</span></span><br><span class="line">.onErrorResume(e -&gt; backupFlux)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 重试</span></span><br><span class="line">.retry(<span class="number">3</span>)</span><br><span class="line">.retryWhen(Retry.backoff(<span class="number">3</span>, Duration.ofSeconds(<span class="number">1</span>)))</span><br><span class="line"></span><br><span class="line"><span class="comment">// 记录错误但继续</span></span><br><span class="line">.onErrorContinue((e, data) -&gt; log.error(<span class="string">&quot;处理失败: &#123;&#125;&quot;</span>, data, e))</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 返回默认值</span><br>.onErrorReturn(<span class="hljs-string">&quot;默认值&quot;</span>)<br><br><span class="hljs-comment">// 切换到备用流</span><br>.onErrorResume(e -&gt; backupFlux)<br><br><span class="hljs-comment">// 重试</span><br>.retry(<span class="hljs-number">3</span>)<br>.retryWhen(Retry.backoff(<span class="hljs-number">3</span>, Duration.ofSeconds(<span class="hljs-number">1</span>)))<br><br><span class="hljs-comment">// 记录错误但继续</span><br>.onErrorContinue((e, data) -&gt; log.error(<span class="hljs-string">&quot;处理失败: &#123;&#125;&quot;</span>, data, e))<br></code></pre></td></tr></table></figure>
 
-<h3 id="3-超时处理"><a href="#3-超时处理" class="headerlink" title="3. 超时处理"></a>3. 超时处理</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// [错误] 外部 API 可能永远不返回</span></span><br><span class="line">Flux&lt;String&gt; response = webClient.get().retrieve().bodyToFlux(String.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">// [正确] 设置超时</span></span><br><span class="line">Flux&lt;String&gt; response = webClient.get()</span><br><span class="line">    .retrieve()</span><br><span class="line">    .bodyToFlux(String.class)</span><br><span class="line">    .timeout(Duration.ofSeconds(<span class="number">30</span>))</span><br><span class="line">    .onErrorResume(TimeoutException.class, e -&gt; </span><br><span class="line">        Flux.just(<span class="string">&quot;[超时] 请求超时，请重试&quot;</span>));</span><br></pre></td></tr></table></figure>
+<h3 id="3-超时处理"><a href="#3-超时处理" class="headerlink" title="3. 超时处理"></a>3. 超时处理</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// [错误] 外部 API 可能永远不返回</span><br>Flux&lt;String&gt; response = webClient.get().retrieve().bodyToFlux(String.class);<br><br><span class="hljs-comment">// [正确] 设置超时</span><br>Flux&lt;String&gt; response = webClient.get()<br>    .retrieve()<br>    .bodyToFlux(String.class)<br>    .timeout(Duration.ofSeconds(<span class="hljs-number">30</span>))<br>    .onErrorResume(TimeoutException.class, e -&gt; <br>        Flux.just(<span class="hljs-string">&quot;[超时] 请求超时，请重试&quot;</span>));<br></code></pre></td></tr></table></figure>
 
-<h3 id="4-资源清理"><a href="#4-资源清理" class="headerlink" title="4. 资源清理"></a>4. 资源清理</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// [错误] Sinks 没有正确关闭</span></span><br><span class="line">Sinks.Many&lt;String&gt; sink = Sinks.many().multicast().onBackpressureBuffer();</span><br><span class="line"><span class="comment">// 应用关闭时，sink 还在运行</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// [正确] 在适当时机关闭</span></span><br><span class="line"><span class="meta">@PreDestroy</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">cleanup</span><span class="params">()</span> &#123;</span><br><span class="line">    sink.tryEmitComplete();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4-资源清理"><a href="#4-资源清理" class="headerlink" title="4. 资源清理"></a>4. 资源清理</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// [错误] Sinks 没有正确关闭</span><br>Sinks.Many&lt;String&gt; sink = Sinks.many().multicast().onBackpressureBuffer();<br><span class="hljs-comment">// 应用关闭时，sink 还在运行</span><br><br><span class="hljs-comment">// [正确] 在适当时机关闭</span><br><span class="hljs-meta">@PreDestroy</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">cleanup</span><span class="hljs-params">()</span> &#123;<br>    sink.tryEmitComplete();<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h3 id="5-线程安全"><a href="#5-线程安全" class="headerlink" title="5. 线程安全"></a>5. 线程安全</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Sinks 默认是线程安全的</span></span><br><span class="line">Sinks.Many&lt;String&gt; sink = Sinks.many().multicast().onBackpressureBuffer();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果确定单线程，可以用 unsafe 版本提升性能</span></span><br><span class="line">Sinks.Many&lt;String&gt; unsafeSink = Sinks.unsafe().many().multicast().onBackpressureBuffer();</span><br><span class="line"><span class="comment">// [注意] 多线程下使用 unsafe 会出问题！</span></span><br></pre></td></tr></table></figure>
+<h3 id="5-线程安全"><a href="#5-线程安全" class="headerlink" title="5. 线程安全"></a>5. 线程安全</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// Sinks 默认是线程安全的</span><br>Sinks.Many&lt;String&gt; sink = Sinks.many().multicast().onBackpressureBuffer();<br><br><span class="hljs-comment">// 如果确定单线程，可以用 unsafe 版本提升性能</span><br>Sinks.Many&lt;String&gt; unsafeSink = Sinks.unsafe().many().multicast().onBackpressureBuffer();<br><span class="hljs-comment">// [注意] 多线程下使用 unsafe 会出问题！</span><br></code></pre></td></tr></table></figure>
 
-<h3 id="6-避免阻塞"><a href="#6-避免阻塞" class="headerlink" title="6. 避免阻塞"></a>6. 避免阻塞</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// [错误] 在响应式流中阻塞</span></span><br><span class="line">flux.map(data -&gt; &#123;</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);  <span class="comment">// 阻塞！</span></span><br><span class="line">    <span class="keyword">return</span> process(data);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// [正确] 使用 boundedElastic 调度器处理阻塞操作</span></span><br><span class="line">flux.flatMap(data -&gt; </span><br><span class="line">    Mono.fromCallable(() -&gt; blockingProcess(data))</span><br><span class="line">        .subscribeOn(Schedulers.boundedElastic())</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<h3 id="6-避免阻塞"><a href="#6-避免阻塞" class="headerlink" title="6. 避免阻塞"></a>6. 避免阻塞</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// [错误] 在响应式流中阻塞</span><br>flux.map(data -&gt; &#123;<br>    Thread.sleep(<span class="hljs-number">1000</span>);  <span class="hljs-comment">// 阻塞！</span><br>    <span class="hljs-keyword">return</span> process(data);<br>&#125;);<br><br><span class="hljs-comment">// [正确] 使用 boundedElastic 调度器处理阻塞操作</span><br>flux.flatMap(data -&gt; <br>    Mono.fromCallable(() -&gt; blockingProcess(data))<br>        .subscribeOn(Schedulers.boundedElastic())<br>);<br></code></pre></td></tr></table></figure>
 
 <hr>
-<h2 id="五、最佳实践"><a href="#五、最佳实践" class="headerlink" title="五、最佳实践"></a>五、最佳实践</h2><h3 id="1-操作符链设计"><a href="#1-操作符链设计" class="headerlink" title="1. 操作符链设计"></a>1. 操作符链设计</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// [推荐] 清晰的操作符链</span></span><br><span class="line"><span class="keyword">return</span> webClient.get()</span><br><span class="line">    .uri(<span class="string">&quot;/api/users&quot;</span>)</span><br><span class="line">    .retrieve()</span><br><span class="line">    .bodyToFlux(User.class)</span><br><span class="line">    .filter(user -&gt; user.isActive())           <span class="comment">// 1. 先过滤</span></span><br><span class="line">    .map(user -&gt; user.getName())               <span class="comment">// 2. 再转换</span></span><br><span class="line">    .distinct()                                 <span class="comment">// 3. 去重</span></span><br><span class="line">    .take(<span class="number">10</span>)                                   <span class="comment">// 4. 限制数量</span></span><br><span class="line">    .timeout(Duration.ofSeconds(<span class="number">5</span>))            <span class="comment">// 5. 超时控制</span></span><br><span class="line">    .onErrorResume(e -&gt; Flux.empty())          <span class="comment">// 6. 错误处理</span></span><br><span class="line">    .doOnNext(name -&gt; log.debug(<span class="string">&quot;处理: &#123;&#125;&quot;</span>, name))  <span class="comment">// 7. 日志</span></span><br><span class="line">    .subscribeOn(Schedulers.boundedElastic()); <span class="comment">// 8. 调度器</span></span><br></pre></td></tr></table></figure>
+<h2 id="五、最佳实践"><a href="#五、最佳实践" class="headerlink" title="五、最佳实践"></a>五、最佳实践</h2><h3 id="1-操作符链设计"><a href="#1-操作符链设计" class="headerlink" title="1. 操作符链设计"></a>1. 操作符链设计</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// [推荐] 清晰的操作符链</span><br><span class="hljs-keyword">return</span> webClient.get()<br>    .uri(<span class="hljs-string">&quot;/api/users&quot;</span>)<br>    .retrieve()<br>    .bodyToFlux(User.class)<br>    .filter(user -&gt; user.isActive())           <span class="hljs-comment">// 1. 先过滤</span><br>    .map(user -&gt; user.getName())               <span class="hljs-comment">// 2. 再转换</span><br>    .distinct()                                 <span class="hljs-comment">// 3. 去重</span><br>    .take(<span class="hljs-number">10</span>)                                   <span class="hljs-comment">// 4. 限制数量</span><br>    .timeout(Duration.ofSeconds(<span class="hljs-number">5</span>))            <span class="hljs-comment">// 5. 超时控制</span><br>    .onErrorResume(e -&gt; Flux.empty())          <span class="hljs-comment">// 6. 错误处理</span><br>    .doOnNext(name -&gt; log.debug(<span class="hljs-string">&quot;处理: &#123;&#125;&quot;</span>, name))  <span class="hljs-comment">// 7. 日志</span><br>    .subscribeOn(Schedulers.boundedElastic()); <span class="hljs-comment">// 8. 调度器</span><br></code></pre></td></tr></table></figure>
 
-<h3 id="2-Sinks-使用规范"><a href="#2-Sinks-使用规范" class="headerlink" title="2. Sinks 使用规范"></a>2. Sinks 使用规范</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">EventBus</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// [推荐] 使用 multicast + onBackpressureBuffer</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Sinks.Many&lt;Event&gt; eventSink = </span><br><span class="line">        Sinks.many().multicast().onBackpressureBuffer();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">publish</span><span class="params">(Event event)</span> &#123;</span><br><span class="line">        <span class="comment">// [推荐] 检查发送结果</span></span><br><span class="line">        Sinks.<span class="type">EmitResult</span> <span class="variable">result</span> <span class="operator">=</span> eventSink.tryEmitNext(event);</span><br><span class="line">        <span class="keyword">if</span> (result.isFailure()) &#123;</span><br><span class="line">            log.warn(<span class="string">&quot;事件发送失败: &#123;&#125;, 原因: &#123;&#125;&quot;</span>, event, result);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Flux&lt;Event&gt; <span class="title function_">subscribe</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> eventSink.asFlux();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-Sinks-使用规范"><a href="#2-Sinks-使用规范" class="headerlink" title="2. Sinks 使用规范"></a>2. Sinks 使用规范</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EventBus</span> &#123;<br>    <br>    <span class="hljs-comment">// [推荐] 使用 multicast + onBackpressureBuffer</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Sinks.Many&lt;Event&gt; eventSink = <br>        Sinks.many().multicast().onBackpressureBuffer();<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">publish</span><span class="hljs-params">(Event event)</span> &#123;<br>        <span class="hljs-comment">// [推荐] 检查发送结果</span><br>        Sinks.<span class="hljs-type">EmitResult</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> eventSink.tryEmitNext(event);<br>        <span class="hljs-keyword">if</span> (result.isFailure()) &#123;<br>            log.warn(<span class="hljs-string">&quot;事件发送失败: &#123;&#125;, 原因: &#123;&#125;&quot;</span>, event, result);<br>        &#125;<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> Flux&lt;Event&gt; <span class="hljs-title function_">subscribe</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> eventSink.asFlux();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h3 id="3-合并流的错误隔离"><a href="#3-合并流的错误隔离" class="headerlink" title="3. 合并流的错误隔离"></a>3. 合并流的错误隔离</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// [推荐] 每个流独立处理错误</span></span><br><span class="line"><span class="keyword">public</span> Flux&lt;Message&gt; <span class="title function_">getMergedStream</span><span class="params">()</span> &#123;</span><br><span class="line">    Flux&lt;Message&gt; stream1 = getStream1()</span><br><span class="line">        .onErrorResume(e -&gt; &#123;</span><br><span class="line">            log.error(<span class="string">&quot;stream1 错误&quot;</span>, e);</span><br><span class="line">            <span class="keyword">return</span> Flux.empty();</span><br><span class="line">        &#125;);</span><br><span class="line">    </span><br><span class="line">    Flux&lt;Message&gt; stream2 = getStream2()</span><br><span class="line">        .onErrorResume(e -&gt; &#123;</span><br><span class="line">            log.error(<span class="string">&quot;stream2 错误&quot;</span>, e);</span><br><span class="line">            <span class="keyword">return</span> Flux.empty();</span><br><span class="line">        &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> Flux.merge(stream1, stream2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-合并流的错误隔离"><a href="#3-合并流的错误隔离" class="headerlink" title="3. 合并流的错误隔离"></a>3. 合并流的错误隔离</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// [推荐] 每个流独立处理错误</span><br><span class="hljs-keyword">public</span> Flux&lt;Message&gt; <span class="hljs-title function_">getMergedStream</span><span class="hljs-params">()</span> &#123;<br>    Flux&lt;Message&gt; stream1 = getStream1()<br>        .onErrorResume(e -&gt; &#123;<br>            log.error(<span class="hljs-string">&quot;stream1 错误&quot;</span>, e);<br>            <span class="hljs-keyword">return</span> Flux.empty();<br>        &#125;);<br>    <br>    Flux&lt;Message&gt; stream2 = getStream2()<br>        .onErrorResume(e -&gt; &#123;<br>            log.error(<span class="hljs-string">&quot;stream2 错误&quot;</span>, e);<br>            <span class="hljs-keyword">return</span> Flux.empty();<br>        &#125;);<br>    <br>    <span class="hljs-keyword">return</span> Flux.merge(stream1, stream2);<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h3 id="4-日志与监控"><a href="#4-日志与监控" class="headerlink" title="4. 日志与监控"></a>4. 日志与监控</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">flux</span><br><span class="line">    .doOnSubscribe(s -&gt; log.info(<span class="string">&quot;开始订阅&quot;</span>))</span><br><span class="line">    .doOnNext(data -&gt; log.debug(<span class="string">&quot;处理数据: &#123;&#125;&quot;</span>, data))</span><br><span class="line">    .doOnError(e -&gt; log.error(<span class="string">&quot;发生错误&quot;</span>, e))</span><br><span class="line">    .doOnComplete(() -&gt; log.info(<span class="string">&quot;处理完成&quot;</span>))</span><br><span class="line">    .doOnCancel(() -&gt; log.warn(<span class="string">&quot;订阅被取消&quot;</span>))</span><br><span class="line">    .doFinally(signal -&gt; &#123;</span><br><span class="line">        <span class="comment">// 记录指标</span></span><br><span class="line">        metrics.recordStreamEnd(signal);</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="4-日志与监控"><a href="#4-日志与监控" class="headerlink" title="4. 日志与监控"></a>4. 日志与监控</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java">flux<br>    .doOnSubscribe(s -&gt; log.info(<span class="hljs-string">&quot;开始订阅&quot;</span>))<br>    .doOnNext(data -&gt; log.debug(<span class="hljs-string">&quot;处理数据: &#123;&#125;&quot;</span>, data))<br>    .doOnError(e -&gt; log.error(<span class="hljs-string">&quot;发生错误&quot;</span>, e))<br>    .doOnComplete(() -&gt; log.info(<span class="hljs-string">&quot;处理完成&quot;</span>))<br>    .doOnCancel(() -&gt; log.warn(<span class="hljs-string">&quot;订阅被取消&quot;</span>))<br>    .doFinally(signal -&gt; &#123;<br>        <span class="hljs-comment">// 记录指标</span><br>        metrics.recordStreamEnd(signal);<br>    &#125;);<br></code></pre></td></tr></table></figure>
 
-<h3 id="5-测试"><a href="#5-测试" class="headerlink" title="5. 测试"></a>5. 测试</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testMergedStream</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 使用 StepVerifier 测试</span></span><br><span class="line">    Flux&lt;String&gt; merged = Flux.merge(</span><br><span class="line">        Flux.just(<span class="string">&quot;A&quot;</span>),</span><br><span class="line">        Flux.just(<span class="string">&quot;B&quot;</span>)</span><br><span class="line">    );</span><br><span class="line">    </span><br><span class="line">    StepVerifier.create(merged)</span><br><span class="line">        .expectNextCount(<span class="number">2</span>)</span><br><span class="line">        .verifyComplete();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testWithVirtualTime</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 测试时间相关的流</span></span><br><span class="line">    StepVerifier.withVirtualTime(() -&gt; </span><br><span class="line">        Flux.interval(Duration.ofSeconds(<span class="number">1</span>)).take(<span class="number">3</span>)</span><br><span class="line">    )</span><br><span class="line">    .thenAwait(Duration.ofSeconds(<span class="number">3</span>))</span><br><span class="line">    .expectNext(<span class="number">0L</span>, <span class="number">1L</span>, <span class="number">2L</span>)</span><br><span class="line">    .verifyComplete();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="5-测试"><a href="#5-测试" class="headerlink" title="5. 测试"></a>5. 测试</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br><span class="hljs-keyword">void</span> <span class="hljs-title function_">testMergedStream</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-comment">// 使用 StepVerifier 测试</span><br>    Flux&lt;String&gt; merged = Flux.merge(<br>        Flux.just(<span class="hljs-string">&quot;A&quot;</span>),<br>        Flux.just(<span class="hljs-string">&quot;B&quot;</span>)<br>    );<br>    <br>    StepVerifier.create(merged)<br>        .expectNextCount(<span class="hljs-number">2</span>)<br>        .verifyComplete();<br>&#125;<br><br><span class="hljs-meta">@Test</span><br><span class="hljs-keyword">void</span> <span class="hljs-title function_">testWithVirtualTime</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-comment">// 测试时间相关的流</span><br>    StepVerifier.withVirtualTime(() -&gt; <br>        Flux.interval(Duration.ofSeconds(<span class="hljs-number">1</span>)).take(<span class="hljs-number">3</span>)<br>    )<br>    .thenAwait(Duration.ofSeconds(<span class="hljs-number">3</span>))<br>    .expectNext(<span class="hljs-number">0L</span>, <span class="hljs-number">1L</span>, <span class="hljs-number">2L</span>)<br>    .verifyComplete();<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <hr>
 <h2 id="六、常见问题"><a href="#六、常见问题" class="headerlink" title="六、常见问题"></a>六、常见问题</h2><h3 id="Q1-merge-和-concat-怎么选？"><a href="#Q1-merge-和-concat-怎么选？" class="headerlink" title="Q1: merge 和 concat 怎么选？"></a>Q1: merge 和 concat 怎么选？</h3><ul>
@@ -501,7 +497,7 @@
 <li>考虑使用 <code>replay()</code> 模式</li>
 </ol>
 <h3 id="Q3-流合并后，一个出错整个都停了？"><a href="#Q3-流合并后，一个出错整个都停了？" class="headerlink" title="Q3: 流合并后，一个出错整个都停了？"></a>Q3: 流合并后，一个出错整个都停了？</h3><p>每个流单独添加错误处理：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Flux.merge(</span><br><span class="line">    stream1.onErrorResume(e -&gt; Flux.empty()),</span><br><span class="line">    stream2.onErrorResume(e -&gt; Flux.empty())</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java">Flux.merge(<br>    stream1.onErrorResume(e -&gt; Flux.empty()),<br>    stream2.onErrorResume(e -&gt; Flux.empty())<br>);<br></code></pre></td></tr></table></figure>
 
 <h3 id="Q4-内存一直涨？"><a href="#Q4-内存一直涨？" class="headerlink" title="Q4: 内存一直涨？"></a>Q4: 内存一直涨？</h3><p>检查：</p>
 <ol>
@@ -517,211 +513,401 @@
 <li>WebFlux - Reactor核心API</li>
 </ul>
 
-    </div>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
 
+<span class="category-chains">
+  
+  
     
-    
-    
-
-    <footer class="post-footer">
-          
-
-<div class="post-copyright">
-<ul>
-  <li class="post-copyright-author">
-      <strong>本文作者： </strong>ZhiMy
-  </li>
-  <li class="post-copyright-link">
-      <strong>本文链接：</strong>
-      <a href="https://zmmmmy.github.io/2026/01/10/%E6%B5%81%E5%90%88%E5%B9%B6%E4%B8%8E%E6%93%8D%E4%BD%9C%E7%AC%A6%E9%93%BE/" title="流合并与操作符链">https://zmmmmy.github.io/2026/01/10/流合并与操作符链/</a>
-  </li>
-  <li class="post-copyright-license">
-      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
-  </li>
-</ul>
-</div>
-
-          <div class="post-tags">
-              <a href="/tags/Java/" rel="tag"># Java</a>
-              <a href="/tags/Spring/" rel="tag"># Spring</a>
-              <a href="/tags/ReactiveStreams/" rel="tag"># ReactiveStreams</a>
-              <a href="/tags/Reactor/" rel="tag"># Reactor</a>
-              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%AC%A6/" rel="tag"># 操作符</a>
-              <a href="/tags/merge/" rel="tag"># merge</a>
-              <a href="/tags/concat/" rel="tag"># concat</a>
-              <a href="/tags/zip/" rel="tag"># zip</a>
-              <a href="/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" rel="tag"># 最佳实践</a>
-          </div>
-
+      <span class="category-chain">
         
-
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86/" rel="prev" title="线程池原理">
-                  <i class="fa fa-angle-left"></i> 线程池原理
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2026/01/10/%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B/" rel="next" title="实战案例">
-                  实战案例 <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
-  </article>
-</div>
-
-
-
-
-
-
-</div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2026</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">ZhiMy</span>
-  </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
-  </div>
-
-    </div>
-  </footer>
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Java/Spring/" class="category-chain-item">Spring</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Java/Spring/Reactive-Streams/" class="category-chain-item">Reactive Streams</a>
+  
+  
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Java/" class="print-no-link">#Java</a>
+      
+        <a href="/tags/Spring/" class="print-no-link">#Spring</a>
+      
+        <a href="/tags/ReactiveStreams/" class="print-no-link">#ReactiveStreams</a>
+      
+        <a href="/tags/Reactor/" class="print-no-link">#Reactor</a>
+      
+        <a href="/tags/%E6%93%8D%E4%BD%9C%E7%AC%A6/" class="print-no-link">#操作符</a>
+      
+        <a href="/tags/merge/" class="print-no-link">#merge</a>
+      
+        <a href="/tags/concat/" class="print-no-link">#concat</a>
+      
+        <a href="/tags/zip/" class="print-no-link">#zip</a>
+      
+        <a href="/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" class="print-no-link">#最佳实践</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>流合并与操作符链</div>
+      <div>https://zmmmmy.github.io/2026/01/10/流合并与操作符链/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZhiMy</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年1月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
   </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/01/10/WebFlux%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/" title="WebFlux核心组件">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">WebFlux核心组件</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86/" title="线程池原理">
+                        <span class="hidden-mobile">线程池原理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
   </div>
-  <div class="reading-progress-bar"></div>
-  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+</div>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
-<style>
-.theme-toggle {
-  position: fixed;
-  right: 20px;
-  bottom: 100px;
-  z-index: 9999;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  transition: all 0.3s ease;
-  background: var(--content-bg-color);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-.theme-toggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-.theme-toggle .icon-sun,
-.theme-toggle .icon-moon {
-  position: absolute;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-[data-theme="dark"] .theme-toggle .icon-sun {
-  opacity: 1;
-  transform: rotate(0deg);
-}
-[data-theme="dark"] .theme-toggle .icon-moon {
-  opacity: 0;
-  transform: rotate(-90deg);
-}
-[data-theme="light"] .theme-toggle .icon-sun {
-  opacity: 0;
-  transform: rotate(90deg);
-}
-[data-theme="light"] .theme-toggle .icon-moon {
-  opacity: 1;
-  transform: rotate(0deg);
-}
-/* 默认状态（跟随系统） */
-.theme-toggle .icon-sun {
-  opacity: 0;
-}
-.theme-toggle .icon-moon {
-  opacity: 1;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .theme-toggle .icon-sun {
-    opacity: 1;
-    transform: rotate(0deg);
-  }
-  :root:not([data-theme="light"]) .theme-toggle .icon-moon {
-    opacity: 0;
-    transform: rotate(-90deg);
-  }
-}
-</style>
 
-<button class="theme-toggle" id="theme-toggle" aria-label="切换明暗模式">
-  <span class="icon-sun">☀️</span>
-  <span class="icon-moon">🌙</span>
-</button>
 
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <span>© 2026</span> <i class="iconfont icon-love"></i> <a href="https://github.com/Zmmmmy" target="_blank" rel="nofollow noopener"><span>Zmmmmy</span></a> <span>|</span> <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <span>&</span> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
 <script>
-(function() {
-  const toggle = document.getElementById('theme-toggle');
-  const root = document.documentElement;
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
 
-  // 获取保存的主题或系统偏好
-  function getPreferredTheme() {
-    const saved = localStorage.getItem('theme');
-    if (saved) return saved;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-
-  // 应用主题
-  function applyTheme(theme) {
-    root.setAttribute('data-theme', theme);
-    root.style.colorScheme = theme;
-  }
-
-  // 初始化
-  const currentTheme = localStorage.getItem('theme');
-  if (currentTheme) {
-    applyTheme(currentTheme);
-  }
-
-  // 切换主题
-  toggle.addEventListener('click', function() {
-    const current = root.getAttribute('data-theme') || getPreferredTheme();
-    const next = current === 'dark' ? 'light' : 'dark';
-    applyTheme(next);
-    localStorage.setItem('theme', next);
-  });
-
-  // 监听系统主题变化（仅在用户未手动设置时生效）
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
-    if (!localStorage.getItem('theme')) {
-      applyTheme(e.matches ? 'dark' : 'light');
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
     }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
   });
-})();
 </script>
 
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
 </body>
 </html>

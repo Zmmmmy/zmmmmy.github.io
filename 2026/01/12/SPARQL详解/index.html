@@ -1,25 +1,24 @@
+
+
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/favicon-32x32.png">
+  
 
-<link rel="stylesheet" href="/css/main.css">
-
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"zmmmmy.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":"auto","version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZhiMy">
+  <meta name="keywords" content="技术博客,编程">
+  
     <meta name="description" content="SPARQL 详解 ℹ️ 信息: 衍生来源本笔记衍生自 三元组详解  概述SPARQL（SPARQL Protocol and RDF Query Language） 是 W3C 标准的 RDF 查询语言，类似于关系数据库的 SQL，用于查询和操作 RDF 数据。 查询类型   类型 用途    SELECT 返回匹配的变量绑定   CONSTRUCT 构造新的 RDF 图   ASK 返回布尔值">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SPARQL详解">
@@ -35,252 +34,253 @@
 <meta property="article:tag" content="全文引用">
 <meta property="article:tag" content="图数据库">
 <meta property="article:tag" content="查询语言">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>SPARQL详解 - Zmmmmy&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
 
-<link rel="canonical" href="https://zmmmmy.github.io/2026/01/12/SPARQL%E8%AF%A6%E8%A7%A3/">
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zmmmmy.github.io/2026/01/12/SPARQL%E8%AF%A6%E8%A7%A3/","path":"2026/01/12/SPARQL详解/","title":"SPARQL详解"}</script>
 
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>SPARQL详解 | Zmmmmy's Blog</title>
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
   
 
 
 
 
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zmmmmy.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
-
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
-<script src="/js/third-party/search/local-search.js" defer></script>
-
-
-
-
-
-
-
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
   
 
 
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
 
 
+<body>
+  
 
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
+  <header>
+    
 
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">Zmmmmy's Blog</p>
-      <i class="logo-line"></i>
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Zmmmmy&#39;s Blog</strong>
     </a>
-      <p class="site-subtitle" itemprop="description">今天想和 AI 聊点什么？</p>
-  </div>
 
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="搜索" role="button">
-        <i class="fa fa-search fa-fw fa-lg"></i>
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
     </div>
   </div>
-</div>
-
-
-
-<nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
 </nav>
 
+  
 
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-      <div class="search-header">
-        <span class="search-icon">
-          <i class="fa fa-search"></i>
-        </span>
-        <div class="search-input-container">
-          <input autocomplete="off" autocapitalize="off" maxlength="80"
-                placeholder="搜索..." spellcheck="false"
-                type="search" class="search-input">
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="SPARQL详解"></span>
+          
         </div>
-        <span class="popup-btn-close" role="button">
-          <i class="fa fa-times-circle"></i>
-        </span>
-      </div>
-      <div class="search-result-container">
-        <div class="search-result-icon">
-          <i class="fa fa-spinner fa-pulse fa-5x"></i>
-        </div>
-      </div>
-    </div>
-  </div>
 
-</header>
         
-  
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SPARQL-%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">SPARQL 详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">查询类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.</span> <span class="nav-text">基本语法结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95%E8%A6%81%E7%B4%A0"><span class="nav-number">1.3.1.</span> <span class="nav-text">语法要素</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E6%9F%A5%E8%AF%A2%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.4.</span> <span class="nav-text">基础查询示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.4.1.</span> <span class="nav-text">简单查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E9%80%89%E5%8C%B9%E9%85%8D%EF%BC%88OPTIONAL%EF%BC%89"><span class="nav-number">1.4.2.</span> <span class="nav-text">可选匹配（OPTIONAL）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E6%9D%A1%E4%BB%B6%EF%BC%88FILTER%EF%BC%89"><span class="nav-number">1.4.3.</span> <span class="nav-text">过滤条件（FILTER）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E8%BF%87%E6%BB%A4%E5%87%BD%E6%95%B0"><span class="nav-number">1.5.</span> <span class="nav-text">常用过滤函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%81%9A%E5%90%88%E5%87%BD%E6%95%B0"><span class="nav-number">1.6.</span> <span class="nav-text">聚合函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%9A%E5%90%88%E5%87%BD%E6%95%B0%E5%88%97%E8%A1%A8"><span class="nav-number">1.6.1.</span> <span class="nav-text">聚合函数列表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.7.</span> <span class="nav-text">高级查询</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#UNION%EF%BC%88%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2%EF%BC%89"><span class="nav-number">1.7.1.</span> <span class="nav-text">UNION（联合查询）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MINUS%EF%BC%88%E5%B7%AE%E9%9B%86%EF%BC%89"><span class="nav-number">1.7.2.</span> <span class="nav-text">MINUS（差集）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%90%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.7.3.</span> <span class="nav-text">子查询</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E8%B7%AF%E5%BE%84"><span class="nav-number">1.8.</span> <span class="nav-text">属性路径</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E8%B7%AF%E5%BE%84%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.8.1.</span> <span class="nav-text">属性路径示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CONSTRUCT-%E6%9E%84%E9%80%A0%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.9.</span> <span class="nav-text">CONSTRUCT 构造查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E6%93%8D%E4%BD%9C%EF%BC%88SPARQL-Update%EF%BC%89"><span class="nav-number">1.10.</span> <span class="nav-text">更新操作（SPARQL Update）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#INSERT-DATA"><span class="nav-number">1.10.1.</span> <span class="nav-text">INSERT DATA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DELETE-DATA"><span class="nav-number">1.10.2.</span> <span class="nav-text">DELETE DATA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DELETE-INSERT"><span class="nav-number">1.10.3.</span> <span class="nav-text">DELETE&#x2F;INSERT</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8-SPARQL-%E7%AB%AF%E7%82%B9"><span class="nav-number">1.11.</span> <span class="nav-text">常用 SPARQL 端点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E7%A4%BA%E4%BE%8B%EF%BC%9AWikidata"><span class="nav-number">1.12.</span> <span class="nav-text">查询示例：Wikidata</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%93%BE%E6%8E%A5"><span class="nav-number">1.13.</span> <span class="nav-text">相关链接</span></a></li></ol></li></ol></div>
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="ZhiMy"
-      src="/images/avatar.png">
-  <p class="site-author-name" itemprop="name">ZhiMy</p>
-  <div class="site-description" itemprop="description">一个来自于 AI+Obsidian 的知识库</div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">43</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">18</span>
-        <span class="site-state-item-name">分类</span>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">100</span>
-        <span class="site-state-item-name">标签</span>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author animated">
-      <span class="links-of-author-item">
-        <a href="https://github.com/Zmmmmy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Zmmmmy" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-12 00:00" pubdate>
+          2026年1月12日 凌晨
+        </time>
       </span>
+    
   </div>
 
-        </div>
-      </div>
-    </div>
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          812 字
+        
+      </span>
+    
 
     
-  </aside>
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          7 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
 
 
+        
+      </div>
+
+      
     </div>
-
-    <div class="main-inner post posts-expand">
-
-
-  
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/12/SPARQL%E8%AF%A6%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="ZhiMy">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zmmmmy's Blog">
-      <meta itemprop="description" content="一个来自于 AI+Obsidian 的知识库">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="SPARQL详解 | Zmmmmy's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          SPARQL详解
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2026-01-12 00:00:00" itemprop="dateCreated datePublished" datetime="2026-01-12T00:00:00+08:00">2026-01-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-22 15:44:14" itemprop="dateModified" datetime="2026-01-22T15:44:14+08:00">2026-01-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">图数据库</span></a>
-        </span>
-    </span>
-
-  
+  </div>
 </div>
 
-        </div>
-      </header>
+</div>
 
+  </header>
+
+  <main>
     
-    
-    
-    <div class="post-body" itemprop="articleBody"><h1 id="SPARQL-详解"><a href="#SPARQL-详解" class="headerlink" title="SPARQL 详解"></a>SPARQL 详解</h1><blockquote>
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">SPARQL详解</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="SPARQL-详解"><a href="#SPARQL-详解" class="headerlink" title="SPARQL 详解"></a>SPARQL 详解</h1><blockquote>
 <p><strong>ℹ️ 信息: 衍生来源</strong><br>本笔记衍生自 三元组详解</p>
 </blockquote>
 <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><strong>SPARQL（SPARQL Protocol and RDF Query Language）</strong> 是 W3C 标准的 RDF 查询语言，类似于关系数据库的 SQL，用于查询和操作 RDF 数据。</p>
@@ -308,7 +308,7 @@
 <td>返回资源的描述信息</td>
 </tr>
 </tbody></table>
-<h2 id="基本语法结构"><a href="#基本语法结构" class="headerlink" title="基本语法结构"></a>基本语法结构</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">PREFIX ex: &lt;http://example.org/&gt;</span><br><span class="line">PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;</span><br><span class="line"></span><br><span class="line">SELECT ?name ?age</span><br><span class="line">WHERE &#123;</span><br><span class="line">    ?person foaf:name ?name .</span><br><span class="line">    ?person ex:年龄 ?age .</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="基本语法结构"><a href="#基本语法结构" class="headerlink" title="基本语法结构"></a>基本语法结构</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs sparql">PREFIX ex: &lt;http://example.org/&gt;<br>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;<br><br>SELECT ?name ?age<br>WHERE &#123;<br>    ?person foaf:name ?name .<br>    ?person ex:年龄 ?age .<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <h3 id="语法要素"><a href="#语法要素" class="headerlink" title="语法要素"></a>语法要素</h3><table>
 <thead>
@@ -338,11 +338,11 @@
 <td>三元组模式分隔符</td>
 </tr>
 </tbody></table>
-<h2 id="基础查询示例"><a href="#基础查询示例" class="headerlink" title="基础查询示例"></a>基础查询示例</h2><h3 id="简单查询"><a href="#简单查询" class="headerlink" title="简单查询"></a>简单查询</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 查询所有人的名字</span><br><span class="line">SELECT ?name</span><br><span class="line">WHERE &#123;</span><br><span class="line">    ?person a ex:Person .</span><br><span class="line">    ?person foaf:name ?name .</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="基础查询示例"><a href="#基础查询示例" class="headerlink" title="基础查询示例"></a>基础查询示例</h2><h3 id="简单查询"><a href="#简单查询" class="headerlink" title="简单查询"></a>简单查询</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sparql"># 查询所有人的名字<br>SELECT ?name<br>WHERE &#123;<br>    ?person a ex:Person .<br>    ?person foaf:name ?name .<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h3 id="可选匹配（OPTIONAL）"><a href="#可选匹配（OPTIONAL）" class="headerlink" title="可选匹配（OPTIONAL）"></a>可选匹配（OPTIONAL）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 查询人名，年龄可选</span><br><span class="line">SELECT ?name ?age</span><br><span class="line">WHERE &#123;</span><br><span class="line">    ?person foaf:name ?name .</span><br><span class="line">    OPTIONAL &#123; ?person ex:年龄 ?age &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="可选匹配（OPTIONAL）"><a href="#可选匹配（OPTIONAL）" class="headerlink" title="可选匹配（OPTIONAL）"></a>可选匹配（OPTIONAL）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sparql"># 查询人名，年龄可选<br>SELECT ?name ?age<br>WHERE &#123;<br>    ?person foaf:name ?name .<br>    OPTIONAL &#123; ?person ex:年龄 ?age &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h3 id="过滤条件（FILTER）"><a href="#过滤条件（FILTER）" class="headerlink" title="过滤条件（FILTER）"></a>过滤条件（FILTER）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 查询年龄大于 20 的人</span><br><span class="line">SELECT ?name ?age</span><br><span class="line">WHERE &#123;</span><br><span class="line">    ?person foaf:name ?name .</span><br><span class="line">    ?person ex:年龄 ?age .</span><br><span class="line">    FILTER (?age &gt; 20)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="过滤条件（FILTER）"><a href="#过滤条件（FILTER）" class="headerlink" title="过滤条件（FILTER）"></a>过滤条件（FILTER）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sparql"># 查询年龄大于 20 的人<br>SELECT ?name ?age<br>WHERE &#123;<br>    ?person foaf:name ?name .<br>    ?person ex:年龄 ?age .<br>    FILTER (?age &gt; 20)<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <h2 id="常用过滤函数"><a href="#常用过滤函数" class="headerlink" title="常用过滤函数"></a>常用过滤函数</h2><table>
 <thead>
@@ -378,7 +378,7 @@
 <td><code>STR(?uri)</code></td>
 </tr>
 </tbody></table>
-<h2 id="聚合函数"><a href="#聚合函数" class="headerlink" title="聚合函数"></a>聚合函数</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 统计每个城市的人数</span><br><span class="line">SELECT ?city (COUNT(?person) AS ?count)</span><br><span class="line">WHERE &#123;</span><br><span class="line">    ?person ex:居住于 ?city .</span><br><span class="line">&#125;</span><br><span class="line">GROUP BY ?city</span><br><span class="line">HAVING (COUNT(?person) &gt; 10)</span><br><span class="line">ORDER BY DESC(?count)</span><br><span class="line">LIMIT 10</span><br></pre></td></tr></table></figure>
+<h2 id="聚合函数"><a href="#聚合函数" class="headerlink" title="聚合函数"></a>聚合函数</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs sparql"># 统计每个城市的人数<br>SELECT ?city (COUNT(?person) AS ?count)<br>WHERE &#123;<br>    ?person ex:居住于 ?city .<br>&#125;<br>GROUP BY ?city<br>HAVING (COUNT(?person) &gt; 10)<br>ORDER BY DESC(?count)<br>LIMIT 10<br></code></pre></td></tr></table></figure>
 
 <h3 id="聚合函数列表"><a href="#聚合函数列表" class="headerlink" title="聚合函数列表"></a>聚合函数列表</h3><table>
 <thead>
@@ -412,11 +412,11 @@
 <td>随机取样</td>
 </tr>
 </tbody></table>
-<h2 id="高级查询"><a href="#高级查询" class="headerlink" title="高级查询"></a>高级查询</h2><h3 id="UNION（联合查询）"><a href="#UNION（联合查询）" class="headerlink" title="UNION（联合查询）"></a>UNION（联合查询）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 查询认识或喜欢李四的人</span><br><span class="line">SELECT ?person</span><br><span class="line">WHERE &#123;</span><br><span class="line">    &#123; ?person ex:认识 ex:李四 &#125;</span><br><span class="line">    UNION</span><br><span class="line">    &#123; ?person ex:喜欢 ex:李四 &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="高级查询"><a href="#高级查询" class="headerlink" title="高级查询"></a>高级查询</h2><h3 id="UNION（联合查询）"><a href="#UNION（联合查询）" class="headerlink" title="UNION（联合查询）"></a>UNION（联合查询）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sparql"># 查询认识或喜欢李四的人<br>SELECT ?person<br>WHERE &#123;<br>    &#123; ?person ex:认识 ex:李四 &#125;<br>    UNION<br>    &#123; ?person ex:喜欢 ex:李四 &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h3 id="MINUS（差集）"><a href="#MINUS（差集）" class="headerlink" title="MINUS（差集）"></a>MINUS（差集）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 查询没有年龄信息的人</span><br><span class="line">SELECT ?person</span><br><span class="line">WHERE &#123;</span><br><span class="line">    ?person a ex:Person .</span><br><span class="line">    MINUS &#123; ?person ex:年龄 ?age &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="MINUS（差集）"><a href="#MINUS（差集）" class="headerlink" title="MINUS（差集）"></a>MINUS（差集）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sparql"># 查询没有年龄信息的人<br>SELECT ?person<br>WHERE &#123;<br>    ?person a ex:Person .<br>    MINUS &#123; ?person ex:年龄 ?age &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h3 id="子查询"><a href="#子查询" class="headerlink" title="子查询"></a>子查询</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 查询好友数最多的人</span><br><span class="line">SELECT ?person ?friendCount</span><br><span class="line">WHERE &#123;</span><br><span class="line">    &#123;</span><br><span class="line">        SELECT ?person (COUNT(?friend) AS ?friendCount)</span><br><span class="line">        WHERE &#123;</span><br><span class="line">            ?person ex:认识 ?friend .</span><br><span class="line">        &#125;</span><br><span class="line">        GROUP BY ?person</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">ORDER BY DESC(?friendCount)</span><br><span class="line">LIMIT 1</span><br></pre></td></tr></table></figure>
+<h3 id="子查询"><a href="#子查询" class="headerlink" title="子查询"></a>子查询</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs sparql"># 查询好友数最多的人<br>SELECT ?person ?friendCount<br>WHERE &#123;<br>    &#123;<br>        SELECT ?person (COUNT(?friend) AS ?friendCount)<br>        WHERE &#123;<br>            ?person ex:认识 ?friend .<br>        &#125;<br>        GROUP BY ?person<br>    &#125;<br>&#125;<br>ORDER BY DESC(?friendCount)<br>LIMIT 1<br></code></pre></td></tr></table></figure>
 
 <h2 id="属性路径"><a href="#属性路径" class="headerlink" title="属性路径"></a>属性路径</h2><p>SPARQL 1.1 支持属性路径表达式：</p>
 <table>
@@ -451,15 +451,15 @@
 <td>反向路径</td>
 </tr>
 </tbody></table>
-<h3 id="属性路径示例"><a href="#属性路径示例" class="headerlink" title="属性路径示例"></a>属性路径示例</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 查询张三直接或间接认识的人（传递闭包）</span><br><span class="line">SELECT ?person</span><br><span class="line">WHERE &#123;</span><br><span class="line">    ex:张三 ex:认识+ ?person .</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 查询张三的朋友的朋友</span><br><span class="line">SELECT ?fof</span><br><span class="line">WHERE &#123;</span><br><span class="line">    ex:张三 ex:认识/ex:认识 ?fof .</span><br><span class="line">    FILTER (?fof != ex:张三)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="属性路径示例"><a href="#属性路径示例" class="headerlink" title="属性路径示例"></a>属性路径示例</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs sparql"># 查询张三直接或间接认识的人（传递闭包）<br>SELECT ?person<br>WHERE &#123;<br>    ex:张三 ex:认识+ ?person .<br>&#125;<br><br># 查询张三的朋友的朋友<br>SELECT ?fof<br>WHERE &#123;<br>    ex:张三 ex:认识/ex:认识 ?fof .<br>    FILTER (?fof != ex:张三)<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h2 id="CONSTRUCT-构造查询"><a href="#CONSTRUCT-构造查询" class="headerlink" title="CONSTRUCT 构造查询"></a>CONSTRUCT 构造查询</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 构造新的 RDF 图</span><br><span class="line">CONSTRUCT &#123;</span><br><span class="line">    ?person ex:is_adult true .</span><br><span class="line">&#125;</span><br><span class="line">WHERE &#123;</span><br><span class="line">    ?person ex:年龄 ?age .</span><br><span class="line">    FILTER (?age &gt;= 18)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="CONSTRUCT-构造查询"><a href="#CONSTRUCT-构造查询" class="headerlink" title="CONSTRUCT 构造查询"></a>CONSTRUCT 构造查询</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs sparql"># 构造新的 RDF 图<br>CONSTRUCT &#123;<br>    ?person ex:is_adult true .<br>&#125;<br>WHERE &#123;<br>    ?person ex:年龄 ?age .<br>    FILTER (?age &gt;= 18)<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h2 id="更新操作（SPARQL-Update）"><a href="#更新操作（SPARQL-Update）" class="headerlink" title="更新操作（SPARQL Update）"></a>更新操作（SPARQL Update）</h2><h3 id="INSERT-DATA"><a href="#INSERT-DATA" class="headerlink" title="INSERT DATA"></a>INSERT DATA</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">INSERT DATA &#123;</span><br><span class="line">    ex:王五 a ex:Person ;</span><br><span class="line">           foaf:name &quot;王五&quot; ;</span><br><span class="line">           ex:年龄 30 .</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="更新操作（SPARQL-Update）"><a href="#更新操作（SPARQL-Update）" class="headerlink" title="更新操作（SPARQL Update）"></a>更新操作（SPARQL Update）</h2><h3 id="INSERT-DATA"><a href="#INSERT-DATA" class="headerlink" title="INSERT DATA"></a>INSERT DATA</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs sparql">INSERT DATA &#123;<br>    ex:王五 a ex:Person ;<br>           foaf:name &quot;王五&quot; ;<br>           ex:年龄 30 .<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h3 id="DELETE-DATA"><a href="#DELETE-DATA" class="headerlink" title="DELETE DATA"></a>DELETE DATA</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DELETE DATA &#123;</span><br><span class="line">    ex:张三 ex:年龄 25 .</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="DELETE-DATA"><a href="#DELETE-DATA" class="headerlink" title="DELETE DATA"></a>DELETE DATA</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sparql">DELETE DATA &#123;<br>    ex:张三 ex:年龄 25 .<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h3 id="DELETE-INSERT"><a href="#DELETE-INSERT" class="headerlink" title="DELETE&#x2F;INSERT"></a>DELETE&#x2F;INSERT</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">DELETE &#123; ?person ex:年龄 ?oldAge &#125;</span><br><span class="line">INSERT &#123; ?person ex:年龄 ?newAge &#125;</span><br><span class="line">WHERE &#123;</span><br><span class="line">    ?person ex:年龄 ?oldAge .</span><br><span class="line">    BIND (?oldAge + 1 AS ?newAge)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="DELETE-INSERT"><a href="#DELETE-INSERT" class="headerlink" title="DELETE&#x2F;INSERT"></a>DELETE&#x2F;INSERT</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sparql">DELETE &#123; ?person ex:年龄 ?oldAge &#125;<br>INSERT &#123; ?person ex:年龄 ?newAge &#125;<br>WHERE &#123;<br>    ?person ex:年龄 ?oldAge .<br>    BIND (?oldAge + 1 AS ?newAge)<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <h2 id="常用-SPARQL-端点"><a href="#常用-SPARQL-端点" class="headerlink" title="常用 SPARQL 端点"></a>常用 SPARQL 端点</h2><table>
 <thead>
@@ -481,214 +481,393 @@
 <td><code>https://sparql.uniprot.org/sparql</code></td>
 </tr>
 </tbody></table>
-<h2 id="查询示例：Wikidata"><a href="#查询示例：Wikidata" class="headerlink" title="查询示例：Wikidata"></a>查询示例：Wikidata</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 查询所有中国城市</span><br><span class="line">SELECT ?city ?cityLabel ?population</span><br><span class="line">WHERE &#123;</span><br><span class="line">    ?city wdt:P31 wd:Q515 .        # 实例类型：城市</span><br><span class="line">    ?city wdt:P17 wd:Q148 .        # 所属国家：中国</span><br><span class="line">    OPTIONAL &#123; ?city wdt:P1082 ?population &#125;</span><br><span class="line">    SERVICE wikibase:label &#123; bd:serviceParam wikibase:language &quot;zh,en&quot; &#125;</span><br><span class="line">&#125;</span><br><span class="line">ORDER BY DESC(?population)</span><br><span class="line">LIMIT 20</span><br></pre></td></tr></table></figure>
+<h2 id="查询示例：Wikidata"><a href="#查询示例：Wikidata" class="headerlink" title="查询示例：Wikidata"></a>查询示例：Wikidata</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs sparql"># 查询所有中国城市<br>SELECT ?city ?cityLabel ?population<br>WHERE &#123;<br>    ?city wdt:P31 wd:Q515 .        # 实例类型：城市<br>    ?city wdt:P17 wd:Q148 .        # 所属国家：中国<br>    OPTIONAL &#123; ?city wdt:P1082 ?population &#125;<br>    SERVICE wikibase:label &#123; bd:serviceParam wikibase:language &quot;zh,en&quot; &#125;<br>&#125;<br>ORDER BY DESC(?population)<br>LIMIT 20<br></code></pre></td></tr></table></figure>
 
 <h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
 <li>三元组详解 - 衍生来源</li>
 <li>RDF规范 - SPARQL 查询的数据格式</li>
 </ul>
 
-    </div>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
 
+<span class="category-chains">
+  
+  
     
-    
-    
-
-    <footer class="post-footer">
-          
-
-<div class="post-copyright">
-<ul>
-  <li class="post-copyright-author">
-      <strong>本文作者： </strong>ZhiMy
-  </li>
-  <li class="post-copyright-link">
-      <strong>本文链接：</strong>
-      <a href="https://zmmmmy.github.io/2026/01/12/SPARQL%E8%AF%A6%E8%A7%A3/" title="SPARQL详解">https://zmmmmy.github.io/2026/01/12/SPARQL详解/</a>
-  </li>
-  <li class="post-copyright-license">
-      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
-  </li>
-</ul>
-</div>
-
-          <div class="post-tags">
-              <a href="/tags/%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 图数据库</a>
-              <a href="/tags/RDF/" rel="tag"># RDF</a>
-              <a href="/tags/%E5%85%A8%E6%96%87%E5%BC%95%E7%94%A8/" rel="tag"># 全文引用</a>
-              <a href="/tags/SPARQL/" rel="tag"># SPARQL</a>
-              <a href="/tags/%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80/" rel="tag"># 查询语言</a>
-          </div>
-
+      <span class="category-chain">
         
-
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2026/01/12/%E4%B8%89%E5%85%83%E7%BB%84%E8%AF%A6%E8%A7%A3/" rel="prev" title="三元组详解">
-                  <i class="fa fa-angle-left"></i> 三元组详解
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2026/01/12/Reflexion%E8%87%AA%E5%8F%8D%E6%80%9DAgent%E8%AF%A6%E8%A7%A3/" rel="next" title="Reflexion自反思Agent详解">
-                  Reflexion自反思Agent详解 <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
-  </article>
-</div>
-
-
-
-
-
-
-</div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2026</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">ZhiMy</span>
-  </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
-  </div>
-
-    </div>
-  </footer>
+  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="category-chain-item">数据库</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93/" class="category-chain-item">图数据库</a>
+  
+  
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93/" class="print-no-link">#图数据库</a>
+      
+        <a href="/tags/RDF/" class="print-no-link">#RDF</a>
+      
+        <a href="/tags/%E5%85%A8%E6%96%87%E5%BC%95%E7%94%A8/" class="print-no-link">#全文引用</a>
+      
+        <a href="/tags/SPARQL/" class="print-no-link">#SPARQL</a>
+      
+        <a href="/tags/%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80/" class="print-no-link">#查询语言</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>SPARQL详解</div>
+      <div>https://zmmmmy.github.io/2026/01/12/SPARQL详解/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZhiMy</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年1月12日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
   </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/01/12/Reflexion%E8%87%AA%E5%8F%8D%E6%80%9DAgent%E8%AF%A6%E8%A7%A3/" title="Reflexion自反思Agent详解">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Reflexion自反思Agent详解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/01/12/%E5%88%86%E6%A8%A1%E5%9D%97%E6%89%93%E5%8C%85%E5%AE%9E%E6%88%98/" title="分模块打包实战">
+                        <span class="hidden-mobile">分模块打包实战</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
   </div>
-  <div class="reading-progress-bar"></div>
-  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+</div>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
-<style>
-.theme-toggle {
-  position: fixed;
-  right: 20px;
-  bottom: 100px;
-  z-index: 9999;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  transition: all 0.3s ease;
-  background: var(--content-bg-color);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-.theme-toggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-.theme-toggle .icon-sun,
-.theme-toggle .icon-moon {
-  position: absolute;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-[data-theme="dark"] .theme-toggle .icon-sun {
-  opacity: 1;
-  transform: rotate(0deg);
-}
-[data-theme="dark"] .theme-toggle .icon-moon {
-  opacity: 0;
-  transform: rotate(-90deg);
-}
-[data-theme="light"] .theme-toggle .icon-sun {
-  opacity: 0;
-  transform: rotate(90deg);
-}
-[data-theme="light"] .theme-toggle .icon-moon {
-  opacity: 1;
-  transform: rotate(0deg);
-}
-/* 默认状态（跟随系统） */
-.theme-toggle .icon-sun {
-  opacity: 0;
-}
-.theme-toggle .icon-moon {
-  opacity: 1;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .theme-toggle .icon-sun {
-    opacity: 1;
-    transform: rotate(0deg);
-  }
-  :root:not([data-theme="light"]) .theme-toggle .icon-moon {
-    opacity: 0;
-    transform: rotate(-90deg);
-  }
-}
-</style>
 
-<button class="theme-toggle" id="theme-toggle" aria-label="切换明暗模式">
-  <span class="icon-sun">☀️</span>
-  <span class="icon-moon">🌙</span>
-</button>
 
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <span>© 2026</span> <i class="iconfont icon-love"></i> <a href="https://github.com/Zmmmmy" target="_blank" rel="nofollow noopener"><span>Zmmmmy</span></a> <span>|</span> <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <span>&</span> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
 <script>
-(function() {
-  const toggle = document.getElementById('theme-toggle');
-  const root = document.documentElement;
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
 
-  // 获取保存的主题或系统偏好
-  function getPreferredTheme() {
-    const saved = localStorage.getItem('theme');
-    if (saved) return saved;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-
-  // 应用主题
-  function applyTheme(theme) {
-    root.setAttribute('data-theme', theme);
-    root.style.colorScheme = theme;
-  }
-
-  // 初始化
-  const currentTheme = localStorage.getItem('theme');
-  if (currentTheme) {
-    applyTheme(currentTheme);
-  }
-
-  // 切换主题
-  toggle.addEventListener('click', function() {
-    const current = root.getAttribute('data-theme') || getPreferredTheme();
-    const next = current === 'dark' ? 'light' : 'dark';
-    applyTheme(next);
-    localStorage.setItem('theme', next);
-  });
-
-  // 监听系统主题变化（仅在用户未手动设置时生效）
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
-    if (!localStorage.getItem('theme')) {
-      applyTheme(e.matches ? 'dark' : 'light');
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
     }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
   });
-})();
 </script>
 
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
 </body>
 </html>

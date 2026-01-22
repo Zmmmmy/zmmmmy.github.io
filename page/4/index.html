@@ -519,6 +519,165 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/10/Webflux%E7%AE%80%E4%BB%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="ZhiMy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zmmmmy's Blog">
+      <meta itemprop="description" content="一个来自于 AI+Obsidian 的知识库">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Zmmmmy's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/01/10/Webflux%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">Webflux简介</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-10 00:00:00" itemprop="dateCreated datePublished" datetime="2026-01-10T00:00:00+08:00">2026-01-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-22 15:44:14" itemprop="dateModified" datetime="2026-01-22T15:44:14+08:00">2026-01-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/Spring/Webflux/" itemprop="url" rel="index"><span itemprop="name">Webflux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Webflux-简介"><a href="#Webflux-简介" class="headerlink" title="Webflux 简介"></a>Webflux 简介</h1><h2 id="什么是-Spring-WebFlux"><a href="#什么是-Spring-WebFlux" class="headerlink" title="什么是 Spring WebFlux"></a>什么是 Spring WebFlux</h2><p>Spring WebFlux 是 Spring Framework 5.0 引入的<strong>响应式 Web 框架</strong>，它是 Spring MVC 的替代方案，专为构建<strong>非阻塞、异步</strong>的 Web 应用程序而设计。</p>
+<h3 id="核心特点"><a href="#核心特点" class="headerlink" title="核心特点"></a>核心特点</h3><ul>
+<li><strong>非阻塞 I&#x2F;O</strong>：基于事件驱动模型，不会阻塞线程等待 I&#x2F;O 操作完成</li>
+<li><strong>响应式编程</strong>：基于 Reactive Streams 规范，使用 Project Reactor 作为默认实现</li>
+<li><strong>背压支持</strong>：支持背压（Backpressure）机制，防止生产者压垮消费者</li>
+<li><strong>函数式编程</strong>：支持函数式端点定义，提供更灵活的路由方式</li>
+</ul>
+<h2 id="WebFlux-vs-Spring-MVC"><a href="#WebFlux-vs-Spring-MVC" class="headerlink" title="WebFlux vs Spring MVC"></a>WebFlux vs Spring MVC</h2><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Spring MVC</th>
+<th>Spring WebFlux</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>编程模型</td>
+<td>命令式（Imperative）</td>
+<td>响应式（Reactive）</td>
+</tr>
+<tr>
+<td>线程模型</td>
+<td>每请求一线程</td>
+<td>事件循环（Event Loop）</td>
+</tr>
+<tr>
+<td>I&#x2F;O 模型</td>
+<td>阻塞 I&#x2F;O</td>
+<td>非阻塞 I&#x2F;O</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>传统 Web 应用</td>
+<td>高并发、流式数据</td>
+</tr>
+<tr>
+<td>Servlet 依赖</td>
+<td>依赖 Servlet API</td>
+<td>可选（支持 Netty）</td>
+</tr>
+<tr>
+<td>数据库支持</td>
+<td>JDBC（阻塞）</td>
+<td>R2DBC（响应式）</td>
+</tr>
+</tbody></table>
+<h2 id="何时使用-WebFlux"><a href="#何时使用-WebFlux" class="headerlink" title="何时使用 WebFlux"></a>何时使用 WebFlux</h2><h3 id="适合使用的场景"><a href="#适合使用的场景" class="headerlink" title="适合使用的场景"></a>适合使用的场景</h3><ol>
+<li><strong>高并发应用</strong>：需要处理大量并发连接（如聊天应用、实时推送）</li>
+<li><strong>流式数据处理</strong>：处理实时数据流（如股票行情、IoT 数据）</li>
+<li><strong>微服务网关</strong>：作为 API 网关处理大量请求转发</li>
+<li><strong>服务间调用密集</strong>：需要大量调用外部服务的应用</li>
+</ol>
+<h3 id="不适合的场景"><a href="#不适合的场景" class="headerlink" title="不适合的场景"></a>不适合的场景</h3><ol>
+<li><strong>CPU 密集型任务</strong>：响应式编程对 CPU 密集型任务没有优势</li>
+<li><strong>阻塞依赖</strong>：如果依赖的库是阻塞的（如传统 JDBC），则无法发挥优势</li>
+<li><strong>团队不熟悉响应式编程</strong>：学习曲线较陡</li>
+</ol>
+<h2 id="技术栈对比"><a href="#技术栈对比" class="headerlink" title="技术栈对比"></a>技术栈对比</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│                    Spring Boot                          │</span><br><span class="line">├────────────────────────┬────────────────────────────────┤</span><br><span class="line">│     Spring MVC         │        Spring WebFlux          │</span><br><span class="line">├────────────────────────┼────────────────────────────────┤</span><br><span class="line">│     Servlet API        │     Reactive Streams API       │</span><br><span class="line">├────────────────────────┼────────────────────────────────┤</span><br><span class="line">│  Tomcat/Jetty/Undertow │      Netty/Undertow/Servlet    │</span><br><span class="line">└────────────────────────┴────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h2 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h2><h3 id="Maven-依赖"><a href="#Maven-依赖" class="headerlink" title="Maven 依赖"></a>Maven 依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-webflux<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="简单示例"><a href="#简单示例" class="headerlink" title="简单示例"></a>简单示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloController</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@GetMapping(&quot;/hello&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;String&gt; <span class="title function_">hello</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Mono.just(<span class="string">&quot;Hello, WebFlux!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@GetMapping(&quot;/users&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Flux&lt;User&gt; <span class="title function_">getUsers</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userService.findAll();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
+<li>下一篇：响应式编程基础</li>
+<li>Reactor核心API</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/10/ThreadLocal%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -845,165 +1004,6 @@
 <h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
 <li>上一篇：Reactor核心API</li>
 <li>下一篇：函数式端点</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/10/Webflux%E7%AE%80%E4%BB%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="ZhiMy">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zmmmmy's Blog">
-      <meta itemprop="description" content="一个来自于 AI+Obsidian 的知识库">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Zmmmmy's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2026/01/10/Webflux%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">Webflux简介</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2026-01-10 00:00:00" itemprop="dateCreated datePublished" datetime="2026-01-10T00:00:00+08:00">2026-01-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-22 15:44:14" itemprop="dateModified" datetime="2026-01-22T15:44:14+08:00">2026-01-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/Spring/Webflux/" itemprop="url" rel="index"><span itemprop="name">Webflux</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Webflux-简介"><a href="#Webflux-简介" class="headerlink" title="Webflux 简介"></a>Webflux 简介</h1><h2 id="什么是-Spring-WebFlux"><a href="#什么是-Spring-WebFlux" class="headerlink" title="什么是 Spring WebFlux"></a>什么是 Spring WebFlux</h2><p>Spring WebFlux 是 Spring Framework 5.0 引入的<strong>响应式 Web 框架</strong>，它是 Spring MVC 的替代方案，专为构建<strong>非阻塞、异步</strong>的 Web 应用程序而设计。</p>
-<h3 id="核心特点"><a href="#核心特点" class="headerlink" title="核心特点"></a>核心特点</h3><ul>
-<li><strong>非阻塞 I&#x2F;O</strong>：基于事件驱动模型，不会阻塞线程等待 I&#x2F;O 操作完成</li>
-<li><strong>响应式编程</strong>：基于 Reactive Streams 规范，使用 Project Reactor 作为默认实现</li>
-<li><strong>背压支持</strong>：支持背压（Backpressure）机制，防止生产者压垮消费者</li>
-<li><strong>函数式编程</strong>：支持函数式端点定义，提供更灵活的路由方式</li>
-</ul>
-<h2 id="WebFlux-vs-Spring-MVC"><a href="#WebFlux-vs-Spring-MVC" class="headerlink" title="WebFlux vs Spring MVC"></a>WebFlux vs Spring MVC</h2><table>
-<thead>
-<tr>
-<th>特性</th>
-<th>Spring MVC</th>
-<th>Spring WebFlux</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>编程模型</td>
-<td>命令式（Imperative）</td>
-<td>响应式（Reactive）</td>
-</tr>
-<tr>
-<td>线程模型</td>
-<td>每请求一线程</td>
-<td>事件循环（Event Loop）</td>
-</tr>
-<tr>
-<td>I&#x2F;O 模型</td>
-<td>阻塞 I&#x2F;O</td>
-<td>非阻塞 I&#x2F;O</td>
-</tr>
-<tr>
-<td>适用场景</td>
-<td>传统 Web 应用</td>
-<td>高并发、流式数据</td>
-</tr>
-<tr>
-<td>Servlet 依赖</td>
-<td>依赖 Servlet API</td>
-<td>可选（支持 Netty）</td>
-</tr>
-<tr>
-<td>数据库支持</td>
-<td>JDBC（阻塞）</td>
-<td>R2DBC（响应式）</td>
-</tr>
-</tbody></table>
-<h2 id="何时使用-WebFlux"><a href="#何时使用-WebFlux" class="headerlink" title="何时使用 WebFlux"></a>何时使用 WebFlux</h2><h3 id="适合使用的场景"><a href="#适合使用的场景" class="headerlink" title="适合使用的场景"></a>适合使用的场景</h3><ol>
-<li><strong>高并发应用</strong>：需要处理大量并发连接（如聊天应用、实时推送）</li>
-<li><strong>流式数据处理</strong>：处理实时数据流（如股票行情、IoT 数据）</li>
-<li><strong>微服务网关</strong>：作为 API 网关处理大量请求转发</li>
-<li><strong>服务间调用密集</strong>：需要大量调用外部服务的应用</li>
-</ol>
-<h3 id="不适合的场景"><a href="#不适合的场景" class="headerlink" title="不适合的场景"></a>不适合的场景</h3><ol>
-<li><strong>CPU 密集型任务</strong>：响应式编程对 CPU 密集型任务没有优势</li>
-<li><strong>阻塞依赖</strong>：如果依赖的库是阻塞的（如传统 JDBC），则无法发挥优势</li>
-<li><strong>团队不熟悉响应式编程</strong>：学习曲线较陡</li>
-</ol>
-<h2 id="技术栈对比"><a href="#技术栈对比" class="headerlink" title="技术栈对比"></a>技术栈对比</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│                    Spring Boot                          │</span><br><span class="line">├────────────────────────┬────────────────────────────────┤</span><br><span class="line">│     Spring MVC         │        Spring WebFlux          │</span><br><span class="line">├────────────────────────┼────────────────────────────────┤</span><br><span class="line">│     Servlet API        │     Reactive Streams API       │</span><br><span class="line">├────────────────────────┼────────────────────────────────┤</span><br><span class="line">│  Tomcat/Jetty/Undertow │      Netty/Undertow/Servlet    │</span><br><span class="line">└────────────────────────┴────────────────────────────────┘</span><br></pre></td></tr></table></figure>
-
-<h2 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h2><h3 id="Maven-依赖"><a href="#Maven-依赖" class="headerlink" title="Maven 依赖"></a>Maven 依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-webflux<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="简单示例"><a href="#简单示例" class="headerlink" title="简单示例"></a>简单示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloController</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@GetMapping(&quot;/hello&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;String&gt; <span class="title function_">hello</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Mono.just(<span class="string">&quot;Hello, WebFlux!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@GetMapping(&quot;/users&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Flux&lt;User&gt; <span class="title function_">getUsers</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userService.findAll();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
-<li>下一篇：响应式编程基础</li>
-<li>Reactor核心API</li>
 </ul>
 
       
@@ -1485,427 +1485,6 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E4%B8%8ENetty/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="ZhiMy">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zmmmmy's Blog">
-      <meta itemprop="description" content="一个来自于 AI+Obsidian 的知识库">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Zmmmmy's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E4%B8%8ENetty/" class="post-title-link" itemprop="url">线程模型与Netty</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2026-01-10 00:00:00" itemprop="dateCreated datePublished" datetime="2026-01-10T00:00:00+08:00">2026-01-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-22 15:44:14" itemprop="dateModified" datetime="2026-01-22T15:44:14+08:00">2026-01-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/Spring/Webflux/" itemprop="url" rel="index"><span itemprop="name">Webflux</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="线程模型与-Netty"><a href="#线程模型与-Netty" class="headerlink" title="线程模型与 Netty"></a>线程模型与 Netty</h1><h2 id="传统-Servlet-线程模型"><a href="#传统-Servlet-线程模型" class="headerlink" title="传统 Servlet 线程模型"></a>传统 Servlet 线程模型</h2><p>传统 Spring MVC 基于 Servlet 容器，采用<strong>每请求一线程</strong>模型：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">请求1 ──→ 线程1 ──→ [接收请求 → 处理业务 → 等待DB → 返回响应] ──→ 释放</span><br><span class="line">请求2 ──→ 线程2 ──→ [接收请求 → 处理业务 → 等待DB → 返回响应] ──→ 释放</span><br><span class="line">请求3 ──→ 线程3 ──→ [接收请求 → 处理业务 → 等待DB → 返回响应] ──→ 释放</span><br></pre></td></tr></table></figure>
-
-<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul>
-<li>一个请求<strong>独占</strong>一个线程，从头到尾</li>
-<li>线程在等待 I&#x2F;O（数据库、网络调用）时<strong>阻塞</strong>，什么都不做</li>
-<li>高并发时需要大量线程（Tomcat 默认 200 个）</li>
-<li>线程切换开销大，内存占用高（每线程约 1MB 栈空间）</li>
-</ul>
-<h2 id="WebFlux-事件循环模型"><a href="#WebFlux-事件循环模型" class="headerlink" title="WebFlux 事件循环模型"></a>WebFlux 事件循环模型</h2><p>WebFlux 基于 Netty，采用<strong>事件循环（Event Loop）</strong> 模型：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">                 ┌─────────────────────────────────────┐</span><br><span class="line">                 │         Event Loop 线程池           │</span><br><span class="line">                 │     (少量线程，如 CPU 核心数)        │</span><br><span class="line">                 └─────────────────────────────────────┘</span><br><span class="line">                                 │</span><br><span class="line">     ┌───────────────────────────┼───────────────────────────┐</span><br><span class="line">     ↓                           ↓                           ↓</span><br><span class="line">接收请求1                    接收请求2                    接收请求3</span><br><span class="line">     │                           │                           │</span><br><span class="line">     ↓                           ↓                           ↓</span><br><span class="line">提交I/O任务                 提交I/O任务                 提交I/O任务</span><br><span class="line">(非阻塞返回)                (非阻塞返回)                (非阻塞返回)</span><br><span class="line">     │                           │                           │</span><br><span class="line">     └───────────────────────────┼───────────────────────────┘</span><br><span class="line">                                 ↓</span><br><span class="line">                 ┌─────────────────────────────────────┐</span><br><span class="line">                 │      I/O 完成后触发回调              │</span><br><span class="line">                 │      Event Loop 继续处理            │</span><br><span class="line">                 └─────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
-
-<h3 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h3><ul>
-<li>线程<strong>不等待</strong> I&#x2F;O 完成，立即去处理其他请求</li>
-<li>I&#x2F;O 完成后通过<strong>回调&#x2F;事件</strong>通知</li>
-<li>少量线程就能处理大量并发连接</li>
-</ul>
-<h2 id="WebFlux-中的线程池"><a href="#WebFlux-中的线程池" class="headerlink" title="WebFlux 中的线程池"></a>WebFlux 中的线程池</h2><p>WebFlux 使用多个线程池，各司其职：</p>
-<h3 id="1-Event-Loop-线程池"><a href="#1-Event-Loop-线程池" class="headerlink" title="1. Event Loop 线程池"></a>1. Event Loop 线程池</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Netty 的 NioEventLoopGroup</span></span><br><span class="line"><span class="comment">// 线程数 = CPU 核心数</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>处理连接建立、读写事件</li>
-<li><strong>绝对不能阻塞</strong>，否则影响所有请求</li>
-</ul>
-<h3 id="2-boundedElastic-线程池"><a href="#2-boundedElastic-线程池" class="headerlink" title="2. boundedElastic 线程池"></a>2. boundedElastic 线程池</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Mono.fromCallable(() -&gt; blockingCall())</span><br><span class="line">    .subscribeOn(Schedulers.boundedElastic())</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>处理<strong>必须阻塞</strong>的操作（如调用阻塞 API）</li>
-<li>弹性伸缩，有上限保护</li>
-<li>适合 I&#x2F;O 密集型阻塞操作</li>
-</ul>
-<h3 id="3-parallel-线程池"><a href="#3-parallel-线程池" class="headerlink" title="3. parallel 线程池"></a>3. parallel 线程池</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Flux.range(<span class="number">1</span>, <span class="number">100</span>)</span><br><span class="line">    .parallel()</span><br><span class="line">    .runOn(Schedulers.parallel())</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>线程数 &#x3D; CPU 核心数</li>
-<li>适合 <strong>CPU 密集型</strong>任务</li>
-</ul>
-<h2 id="线程模型对比"><a href="#线程模型对比" class="headerlink" title="线程模型对比"></a>线程模型对比</h2><table>
-<thead>
-<tr>
-<th>方面</th>
-<th>传统 MVC</th>
-<th>WebFlux</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>线程数量</td>
-<td>大量（默认 200+）</td>
-<td>少量（CPU 核心数）</td>
-</tr>
-<tr>
-<td>等待 I&#x2F;O 时</td>
-<td>线程阻塞等待</td>
-<td>线程去处理其他请求</td>
-</tr>
-<tr>
-<td>线程利用率</td>
-<td>低（大量时间在等待）</td>
-<td>高（几乎不等待）</td>
-</tr>
-<tr>
-<td>内存占用</td>
-<td>高（每线程 ~1MB）</td>
-<td>低</td>
-</tr>
-<tr>
-<td>上下文切换</td>
-<td>频繁</td>
-<td>很少</td>
-</tr>
-<tr>
-<td>编程模型</td>
-<td>同步阻塞</td>
-<td>异步非阻塞</td>
-</tr>
-</tbody></table>
-<h2 id="WebFlux-与-Netty-的关系"><a href="#WebFlux-与-Netty-的关系" class="headerlink" title="WebFlux 与 Netty 的关系"></a>WebFlux 与 Netty 的关系</h2><h3 id="Netty-是什么"><a href="#Netty-是什么" class="headerlink" title="Netty 是什么"></a>Netty 是什么</h3><p>Netty 是一个<strong>高性能网络通信框架</strong>，提供：</p>
-<ul>
-<li>非阻塞 I&#x2F;O（NIO）</li>
-<li>事件驱动模型</li>
-<li>高效的内存管理</li>
-<li>协议编解码支持</li>
-</ul>
-<h3 id="直接用-Netty"><a href="#直接用-Netty" class="headerlink" title="直接用 Netty"></a>直接用 Netty</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Netty 原生代码 - 处理一个简单的 HTTP 请求</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HttpServerHandler</span> <span class="keyword">extends</span> <span class="title class_">ChannelInboundHandlerAdapter</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (msg <span class="keyword">instanceof</span> HttpRequest) &#123;</span><br><span class="line">            <span class="type">HttpRequest</span> <span class="variable">request</span> <span class="operator">=</span> (HttpRequest) msg;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 手动解析路径</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">uri</span> <span class="operator">=</span> request.uri();</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 手动构建响应</span></span><br><span class="line">            <span class="type">FullHttpResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(</span><br><span class="line">                HttpVersion.HTTP_1_1, </span><br><span class="line">                HttpResponseStatus.OK,</span><br><span class="line">                Unpooled.copiedBuffer(<span class="string">&quot;Hello&quot;</span>, CharsetUtil.UTF_8)</span><br><span class="line">            );</span><br><span class="line">            response.headers().set(HttpHeaderNames.CONTENT_TYPE, <span class="string">&quot;text/plain&quot;</span>);</span><br><span class="line">            response.headers().set(HttpHeaderNames.CONTENT_LENGTH, </span><br><span class="line">                response.content().readableBytes());</span><br><span class="line">            </span><br><span class="line">            ctx.writeAndFlush(response);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>需要自己处理：路由、参数解析、JSON 序列化、异常处理、连接管理…</p>
-<h3 id="用-WebFlux"><a href="#用-WebFlux" class="headerlink" title="用 WebFlux"></a>用 WebFlux</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloController</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@GetMapping(&quot;/hello/&#123;name&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">hello</span><span class="params">(<span class="meta">@PathVariable</span> String name)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userService.findByName(name);  <span class="comment">// 自动 JSON 序列化</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="WebFlux-在-Netty-之上提供了什么"><a href="#WebFlux-在-Netty-之上提供了什么" class="headerlink" title="WebFlux 在 Netty 之上提供了什么"></a>WebFlux 在 Netty 之上提供了什么</h3><table>
-<thead>
-<tr>
-<th>功能</th>
-<th>Netty</th>
-<th>WebFlux</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>路由</td>
-<td>手动解析 URI</td>
-<td><code>@GetMapping</code>、<code>RouterFunction</code></td>
-</tr>
-<tr>
-<td>参数绑定</td>
-<td>手动解析</td>
-<td><code>@PathVariable</code>、<code>@RequestBody</code></td>
-</tr>
-<tr>
-<td>JSON 序列化</td>
-<td>手动处理</td>
-<td>自动（Jackson）</td>
-</tr>
-<tr>
-<td>异常处理</td>
-<td>手动 try-catch</td>
-<td><code>@ExceptionHandler</code></td>
-</tr>
-<tr>
-<td>依赖注入</td>
-<td>无</td>
-<td>Spring IoC</td>
-</tr>
-<tr>
-<td>配置管理</td>
-<td>无</td>
-<td><code>application.yml</code></td>
-</tr>
-<tr>
-<td>安全认证</td>
-<td>手动实现</td>
-<td>Spring Security</td>
-</tr>
-<tr>
-<td>数据访问</td>
-<td>手动实现</td>
-<td>Spring Data R2DBC</td>
-</tr>
-<tr>
-<td>测试支持</td>
-<td>手动</td>
-<td><code>WebTestClient</code></td>
-</tr>
-</tbody></table>
-<h3 id="类比理解"><a href="#类比理解" class="headerlink" title="类比理解"></a>类比理解</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Netty      ≈  TCP/HTTP 协议引擎（底层）</span><br><span class="line">WebFlux    ≈  Web 开发框架（上层）</span><br><span class="line"></span><br><span class="line">就像：</span><br><span class="line">JDBC       ≈  数据库连接（底层）</span><br><span class="line">MyBatis    ≈  ORM 框架（上层）</span><br></pre></td></tr></table></figure>
-
-<p><strong>Netty 是引擎，WebFlux 是汽车。</strong> 你可以直接用引擎，但大多数人更愿意开汽车。</p>
-<h2 id="什么时候直接用-Netty"><a href="#什么时候直接用-Netty" class="headerlink" title="什么时候直接用 Netty"></a>什么时候直接用 Netty</h2><ul>
-<li>自定义协议（非 HTTP）</li>
-<li>极致性能优化</li>
-<li>不需要 Spring 生态</li>
-<li>构建基础设施（如网关、代理服务器）</li>
-</ul>
-<h2 id="为什么-WebFlux-适合高并发"><a href="#为什么-WebFlux-适合高并发" class="headerlink" title="为什么 WebFlux 适合高并发"></a>为什么 WebFlux 适合高并发</h2><ol>
-<li><strong>少量线程处理大量连接</strong>：不需要为每个连接分配线程</li>
-<li><strong>线程不阻塞</strong>：I&#x2F;O 等待时去处理其他请求</li>
-<li><strong>内存效率高</strong>：线程少，内存占用低</li>
-<li><strong>无线程切换开销</strong>：事件驱动，不需要频繁切换</li>
-</ol>
-<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
-<li>Webflux简介</li>
-<li>响应式编程基础</li>
-<li>Reactor核心API</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%AE%80%E4%BB%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="ZhiMy">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zmmmmy's Blog">
-      <meta itemprop="description" content="一个来自于 AI+Obsidian 的知识库">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Zmmmmy's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">线程池简介</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2026-01-10 00:00:00" itemprop="dateCreated datePublished" datetime="2026-01-10T00:00:00+08:00">2026-01-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-22 15:44:14" itemprop="dateModified" datetime="2026-01-22T15:44:14+08:00">2026-01-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" itemprop="url" rel="index"><span itemprop="name">线程池</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="线程池简介"><a href="#线程池简介" class="headerlink" title="线程池简介"></a>线程池简介</h1><h2 id="什么是线程池"><a href="#什么是线程池" class="headerlink" title="什么是线程池"></a>什么是线程池</h2><p>线程池（Thread Pool）是一种<strong>线程复用</strong>的技术，预先创建一定数量的线程放入池中，当有任务需要执行时，从池中获取空闲线程来执行任务，任务完成后线程不销毁，而是返回池中等待下一个任务。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 最简单的线程池使用示例</span></span><br><span class="line"><span class="type">ExecutorService</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">5</span>);</span><br><span class="line">executor.submit(() -&gt; &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;任务执行中...&quot;</span>);</span><br><span class="line">&#125;);</span><br><span class="line">executor.shutdown();</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="为什么需要线程池"><a href="#为什么需要线程池" class="headerlink" title="为什么需要线程池"></a>为什么需要线程池</h2><h3 id="问题：直接创建线程的弊端"><a href="#问题：直接创建线程的弊端" class="headerlink" title="问题：直接创建线程的弊端"></a>问题：直接创建线程的弊端</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不推荐：每次任务都创建新线程</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; doTask()).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<table>
-<thead>
-<tr>
-<th>问题</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>创建开销大</td>
-<td>线程创建需要分配栈内存（默认1MB）、初始化 TCB 等</td>
-</tr>
-<tr>
-<td>销毁开销大</td>
-<td>线程销毁需要回收资源、GC 处理</td>
-</tr>
-<tr>
-<td>资源耗尽</td>
-<td>无限制创建线程可能导致 OOM 或系统崩溃</td>
-</tr>
-<tr>
-<td>上下文切换</td>
-<td>线程过多导致 CPU 频繁切换，性能下降</td>
-</tr>
-<tr>
-<td>难以管理</td>
-<td>无法统一监控、调度、限流</td>
-</tr>
-</tbody></table>
-<h3 id="解决：线程池的优势"><a href="#解决：线程池的优势" class="headerlink" title="解决：线程池的优势"></a>解决：线程池的优势</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 推荐：使用线程池复用线程</span></span><br><span class="line"><span class="type">ExecutorService</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">    executor.submit(() -&gt; doTask());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="线程池的核心优势"><a href="#线程池的核心优势" class="headerlink" title="线程池的核心优势"></a>线程池的核心优势</h2><table>
-<thead>
-<tr>
-<th>优势</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>降低资源消耗</strong></td>
-<td>复用线程，避免频繁创建销毁的开销</td>
-</tr>
-<tr>
-<td><strong>提高响应速度</strong></td>
-<td>任务到达时无需等待线程创建，直接执行</td>
-</tr>
-<tr>
-<td><strong>提高可管理性</strong></td>
-<td>统一分配、调优、监控线程资源</td>
-</tr>
-<tr>
-<td><strong>提供更多功能</strong></td>
-<td>定时执行、周期执行、任务队列、拒绝策略等</td>
-</tr>
-</tbody></table>
-<hr>
-<h2 id="线程池核心接口"><a href="#线程池核心接口" class="headerlink" title="线程池核心接口"></a>线程池核心接口</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│                      Executor                           │</span><br><span class="line">│                   (顶层接口)                             │</span><br><span class="line">│              void execute(Runnable)                     │</span><br><span class="line">└─────────────────────┬───────────────────────────────────┘</span><br><span class="line">                      │</span><br><span class="line">                      ▼</span><br><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│                  ExecutorService                        │</span><br><span class="line">│                 (扩展生命周期管理)                        │</span><br><span class="line">│     submit() / shutdown() / invokeAll() / ...          │</span><br><span class="line">└─────────────────────┬───────────────────────────────────┘</span><br><span class="line">                      │</span><br><span class="line">                      ▼</span><br><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│              ThreadPoolExecutor                         │</span><br><span class="line">│                (核心实现类)                              │</span><br><span class="line">│         7大参数 / 4种拒绝策略 / 5种状态                   │</span><br><span class="line">└─────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="快速入门示例"><a href="#快速入门示例" class="headerlink" title="快速入门示例"></a>快速入门示例</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadPoolDemo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 1. 创建线程池</span></span><br><span class="line">        <span class="type">ExecutorService</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">3</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 2. 提交任务</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">final</span> <span class="type">int</span> <span class="variable">taskId</span> <span class="operator">=</span> i;</span><br><span class="line">            executor.submit(() -&gt; &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;任务&quot;</span> + taskId + <span class="string">&quot; 由 &quot;</span> + </span><br><span class="line">                    Thread.currentThread().getName() + <span class="string">&quot; 执行&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    Thread.currentThread().interrupt();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 3. 关闭线程池</span></span><br><span class="line">        executor.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>输出示例：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">任务1 由 pool-1-thread-1 执行</span><br><span class="line">任务2 由 pool-1-thread-2 执行</span><br><span class="line">任务3 由 pool-1-thread-3 执行</span><br><span class="line">任务4 由 pool-1-thread-1 执行  ← 线程复用</span><br><span class="line">任务5 由 pool-1-thread-2 执行  ← 线程复用</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
-<li><strong>下一篇</strong>：02-线程池原理</li>
-<li><strong>线程池类型</strong>：03-线程池类型</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/10/%E6%B5%81%E5%90%88%E5%B9%B6%E4%B8%8E%E6%93%8D%E4%BD%9C%E7%AC%A6%E9%93%BE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2199,6 +1778,427 @@
 <li>Sinks 详解</li>
 <li>Reactor API 参考</li>
 <li>WebFlux - Reactor核心API</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="ZhiMy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zmmmmy's Blog">
+      <meta itemprop="description" content="一个来自于 AI+Obsidian 的知识库">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Zmmmmy's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">线程池原理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-10 00:00:00" itemprop="dateCreated datePublished" datetime="2026-01-10T00:00:00+08:00">2026-01-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-22 15:44:14" itemprop="dateModified" datetime="2026-01-22T15:44:14+08:00">2026-01-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" itemprop="url" rel="index"><span itemprop="name">线程池</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="线程池原理"><a href="#线程池原理" class="headerlink" title="线程池原理"></a>线程池原理</h1><h2 id="核心参数（7大参数）"><a href="#核心参数（7大参数）" class="headerlink" title="核心参数（7大参数）"></a>核心参数（7大参数）</h2><p><code>ThreadPoolExecutor</code> 是线程池的核心实现类，其构造函数包含 7 个关键参数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">ThreadPoolExecutor</span><span class="params">(</span></span><br><span class="line"><span class="params">    <span class="type">int</span> corePoolSize,           // 核心线程数</span></span><br><span class="line"><span class="params">    <span class="type">int</span> maximumPoolSize,        // 最大线程数</span></span><br><span class="line"><span class="params">    <span class="type">long</span> keepAliveTime,         // 空闲线程存活时间</span></span><br><span class="line"><span class="params">    TimeUnit unit,              // 时间单位</span></span><br><span class="line"><span class="params">    BlockingQueue&lt;Runnable&gt; workQueue,  // 任务队列</span></span><br><span class="line"><span class="params">    ThreadFactory threadFactory,        // 线程工厂</span></span><br><span class="line"><span class="params">    RejectedExecutionHandler handler    // 拒绝策略</span></span><br><span class="line"><span class="params">)</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="参数详解"><a href="#参数详解" class="headerlink" title="参数详解"></a>参数详解</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>建议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>corePoolSize</strong></td>
+<td>核心线程数，即使空闲也不会被回收</td>
+<td>CPU密集型：N+1，IO密集型：2N 👉详解</td>
+</tr>
+<tr>
+<td><strong>maximumPoolSize</strong></td>
+<td>线程池最大线程数</td>
+<td>根据业务峰值设置</td>
+</tr>
+<tr>
+<td><strong>keepAliveTime</strong></td>
+<td>非核心线程空闲存活时间</td>
+<td>一般 60s</td>
+</tr>
+<tr>
+<td><strong>unit</strong></td>
+<td>keepAliveTime 的时间单位</td>
+<td>TimeUnit.SECONDS</td>
+</tr>
+<tr>
+<td><strong>workQueue</strong></td>
+<td>任务等待队列</td>
+<td>有界队列更安全</td>
+</tr>
+<tr>
+<td><strong>threadFactory</strong></td>
+<td>创建线程的工厂，可自定义线程名</td>
+<td>建议自定义便于排查</td>
+</tr>
+<tr>
+<td><strong>handler</strong></td>
+<td>队列满且线程数达到最大时的拒绝策略</td>
+<td>根据业务选择</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">      ┌─────────────────┐</span><br><span class="line">      │   提交任务       │</span><br><span class="line">      └────────┬────────┘</span><br><span class="line">               │</span><br><span class="line">               ▼</span><br><span class="line">┌──────────────────────────────┐</span><br><span class="line">│  核心线程数 &lt; corePoolSize?   │</span><br><span class="line">└──────────────┬───────────────┘</span><br><span class="line">      YES │          │ NO</span><br><span class="line">          ▼          ▼</span><br><span class="line">┌─────────────┐  ┌─────────────────┐</span><br><span class="line">│ 创建核心线程 │  │ 任务队列未满?    │</span><br><span class="line">│ 执行任务     │  └────────┬────────┘</span><br><span class="line">└─────────────┘      YES │     │ NO</span><br><span class="line">                        ▼     ▼</span><br><span class="line">                ┌─────────┐ ┌──────────────────┐</span><br><span class="line">                │ 入队等待 │ │ 线程数 &lt; maxSize? │</span><br><span class="line">                └─────────┘ └────────┬─────────┘</span><br><span class="line">                              YES │      │ NO</span><br><span class="line">                                  ▼      ▼</span><br><span class="line">                          ┌─────────┐ ┌─────────┐</span><br><span class="line">                          │创建非核心│ │ 拒绝策略 │</span><br><span class="line">                          │线程执行  │ └─────────┘</span><br><span class="line">                          └─────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="流程总结"><a href="#流程总结" class="headerlink" title="流程总结"></a>流程总结</h3><ol>
+<li><strong>核心线程优先</strong>：任务来了先看核心线程是否已满</li>
+<li><strong>队列缓冲</strong>：核心线程满了，任务进入队列等待</li>
+<li><strong>扩容线程</strong>：队列满了，创建非核心线程处理 👉详解 ^expand-thread</li>
+<li><strong>拒绝任务</strong>：线程数达到最大且队列满，执行拒绝策略</li>
+</ol>
+<blockquote>
+<p><strong>注意</strong>：不是先扩容线程再入队，而是<strong>先入队再扩容</strong>！</p>
+</blockquote>
+<hr>
+<h2 id="任务队列类型"><a href="#任务队列类型" class="headerlink" title="任务队列类型"></a>任务队列类型</h2><table>
+<thead>
+<tr>
+<th>队列类型</th>
+<th>特点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>ArrayBlockingQueue</strong></td>
+<td>有界数组队列，FIFO</td>
+<td>控制资源消耗，推荐使用</td>
+</tr>
+<tr>
+<td><strong>LinkedBlockingQueue</strong></td>
+<td>可选有界链表队列，默认无界</td>
+<td>任务量可控时使用</td>
+</tr>
+<tr>
+<td><strong>SynchronousQueue</strong></td>
+<td>不存储元素，直接传递</td>
+<td>CachedThreadPool 使用</td>
+</tr>
+<tr>
+<td><strong>PriorityBlockingQueue</strong></td>
+<td>优先级队列，无界</td>
+<td>需要任务优先级时</td>
+</tr>
+<tr>
+<td><strong>DelayQueue</strong></td>
+<td>延迟队列</td>
+<td>定时任务场景</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 推荐：使用有界队列</span></span><br><span class="line">BlockingQueue&lt;Runnable&gt; queue = <span class="keyword">new</span> <span class="title class_">ArrayBlockingQueue</span>&lt;&gt;(<span class="number">100</span>);</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="四种拒绝策略"><a href="#四种拒绝策略" class="headerlink" title="四种拒绝策略"></a>四种拒绝策略</h2><p>当任务无法被执行时（队列满 + 线程数达到最大），触发拒绝策略：</p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>行为</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>AbortPolicy</strong></td>
+<td>抛出 RejectedExecutionException</td>
+<td>默认策略，快速失败</td>
+</tr>
+<tr>
+<td><strong>CallerRunsPolicy</strong></td>
+<td>由提交任务的线程执行</td>
+<td>不丢弃任务，降级处理</td>
+</tr>
+<tr>
+<td><strong>DiscardPolicy</strong></td>
+<td>静默丢弃任务</td>
+<td>允许丢失的场景</td>
+</tr>
+<tr>
+<td><strong>DiscardOldestPolicy</strong></td>
+<td>丢弃队列最老的任务，重新提交</td>
+<td>新任务优先级更高</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 自定义拒绝策略示例</span></span><br><span class="line"><span class="type">RejectedExecutionHandler</span> <span class="variable">customHandler</span> <span class="operator">=</span> (r, executor) -&gt; &#123;</span><br><span class="line">    <span class="comment">// 记录日志</span></span><br><span class="line">    log.warn(<span class="string">&quot;任务被拒绝: &#123;&#125;&quot;</span>, r.toString());</span><br><span class="line">    <span class="comment">// 可选：持久化到数据库/MQ，后续重试</span></span><br><span class="line">    saveToDatabase(r);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="线程池状态（5种状态）"><a href="#线程池状态（5种状态）" class="headerlink" title="线程池状态（5种状态）"></a>线程池状态（5种状态）</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">┌──────────┐</span><br><span class="line">│ RUNNING  │ ← 初始状态，接收新任务，处理队列任务</span><br><span class="line">└────┬─────┘</span><br><span class="line">     │ shutdown()</span><br><span class="line">     ▼</span><br><span class="line">┌──────────┐</span><br><span class="line">│ SHUTDOWN │ ← 不接收新任务，继续处理队列任务</span><br><span class="line">└────┬─────┘</span><br><span class="line">     │ 队列为空 &amp;&amp; 工作线程为0</span><br><span class="line">     ▼</span><br><span class="line">┌──────────┐</span><br><span class="line">│ TIDYING  │ ← 所有任务终止，工作线程为0</span><br><span class="line">└────┬─────┘</span><br><span class="line">     │ terminated() 执行完成</span><br><span class="line">     ▼</span><br><span class="line">┌──────────────┐</span><br><span class="line">│ TERMINATED   │ ← 线程池彻底终止</span><br><span class="line">└──────────────┘</span><br><span class="line"></span><br><span class="line">┌──────────┐</span><br><span class="line">│ RUNNING  │</span><br><span class="line">└────┬─────┘</span><br><span class="line">     │ shutdownNow()</span><br><span class="line">     ▼</span><br><span class="line">┌──────────┐</span><br><span class="line">│   STOP   │ ← 不接收新任务，中断正在执行的任务，清空队列</span><br><span class="line">└────┬─────┘</span><br><span class="line">     │ 工作线程为0</span><br><span class="line">     ▼</span><br><span class="line">┌──────────┐</span><br><span class="line">│ TIDYING  │</span><br><span class="line">└──────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="状态转换方法"><a href="#状态转换方法" class="headerlink" title="状态转换方法"></a>状态转换方法</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>shutdown()</code></td>
+<td>温和关闭，等待已提交任务完成</td>
+</tr>
+<tr>
+<td><code>shutdownNow()</code></td>
+<td>立即关闭，尝试中断执行中的任务，返回未执行的任务列表</td>
+</tr>
+<tr>
+<td><code>awaitTermination()</code></td>
+<td>阻塞等待线程池终止</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 优雅关闭线程池</span></span><br><span class="line">executor.shutdown();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!executor.awaitTermination(<span class="number">60</span>, TimeUnit.SECONDS)) &#123;</span><br><span class="line">        executor.shutdownNow();</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">    executor.shutdownNow();</span><br><span class="line">    Thread.currentThread().interrupt();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="线程池监控"><a href="#线程池监控" class="headerlink" title="线程池监控"></a>线程池监控</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ThreadPoolExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> (ThreadPoolExecutor) Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 监控指标</span></span><br><span class="line">System.out.println(<span class="string">&quot;核心线程数: &quot;</span> + executor.getCorePoolSize());</span><br><span class="line">System.out.println(<span class="string">&quot;最大线程数: &quot;</span> + executor.getMaximumPoolSize());</span><br><span class="line">System.out.println(<span class="string">&quot;当前线程数: &quot;</span> + executor.getPoolSize());</span><br><span class="line">System.out.println(<span class="string">&quot;活跃线程数: &quot;</span> + executor.getActiveCount());</span><br><span class="line">System.out.println(<span class="string">&quot;队列任务数: &quot;</span> + executor.getQueue().size());</span><br><span class="line">System.out.println(<span class="string">&quot;已完成任务: &quot;</span> + executor.getCompletedTaskCount());</span><br><span class="line">System.out.println(<span class="string">&quot;总任务数: &quot;</span> + executor.getTaskCount());</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
+<li><strong>上一篇</strong>：01-线程池简介</li>
+<li><strong>下一篇</strong>：03-线程池类型</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%AE%80%E4%BB%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="ZhiMy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zmmmmy's Blog">
+      <meta itemprop="description" content="一个来自于 AI+Obsidian 的知识库">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Zmmmmy's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">线程池简介</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-10 00:00:00" itemprop="dateCreated datePublished" datetime="2026-01-10T00:00:00+08:00">2026-01-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-22 15:44:14" itemprop="dateModified" datetime="2026-01-22T15:44:14+08:00">2026-01-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" itemprop="url" rel="index"><span itemprop="name">线程池</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="线程池简介"><a href="#线程池简介" class="headerlink" title="线程池简介"></a>线程池简介</h1><h2 id="什么是线程池"><a href="#什么是线程池" class="headerlink" title="什么是线程池"></a>什么是线程池</h2><p>线程池（Thread Pool）是一种<strong>线程复用</strong>的技术，预先创建一定数量的线程放入池中，当有任务需要执行时，从池中获取空闲线程来执行任务，任务完成后线程不销毁，而是返回池中等待下一个任务。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 最简单的线程池使用示例</span></span><br><span class="line"><span class="type">ExecutorService</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">5</span>);</span><br><span class="line">executor.submit(() -&gt; &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;任务执行中...&quot;</span>);</span><br><span class="line">&#125;);</span><br><span class="line">executor.shutdown();</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="为什么需要线程池"><a href="#为什么需要线程池" class="headerlink" title="为什么需要线程池"></a>为什么需要线程池</h2><h3 id="问题：直接创建线程的弊端"><a href="#问题：直接创建线程的弊端" class="headerlink" title="问题：直接创建线程的弊端"></a>问题：直接创建线程的弊端</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不推荐：每次任务都创建新线程</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; doTask()).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>创建开销大</td>
+<td>线程创建需要分配栈内存（默认1MB）、初始化 TCB 等</td>
+</tr>
+<tr>
+<td>销毁开销大</td>
+<td>线程销毁需要回收资源、GC 处理</td>
+</tr>
+<tr>
+<td>资源耗尽</td>
+<td>无限制创建线程可能导致 OOM 或系统崩溃</td>
+</tr>
+<tr>
+<td>上下文切换</td>
+<td>线程过多导致 CPU 频繁切换，性能下降</td>
+</tr>
+<tr>
+<td>难以管理</td>
+<td>无法统一监控、调度、限流</td>
+</tr>
+</tbody></table>
+<h3 id="解决：线程池的优势"><a href="#解决：线程池的优势" class="headerlink" title="解决：线程池的优势"></a>解决：线程池的优势</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 推荐：使用线程池复用线程</span></span><br><span class="line"><span class="type">ExecutorService</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">    executor.submit(() -&gt; doTask());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="线程池的核心优势"><a href="#线程池的核心优势" class="headerlink" title="线程池的核心优势"></a>线程池的核心优势</h2><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>降低资源消耗</strong></td>
+<td>复用线程，避免频繁创建销毁的开销</td>
+</tr>
+<tr>
+<td><strong>提高响应速度</strong></td>
+<td>任务到达时无需等待线程创建，直接执行</td>
+</tr>
+<tr>
+<td><strong>提高可管理性</strong></td>
+<td>统一分配、调优、监控线程资源</td>
+</tr>
+<tr>
+<td><strong>提供更多功能</strong></td>
+<td>定时执行、周期执行、任务队列、拒绝策略等</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="线程池核心接口"><a href="#线程池核心接口" class="headerlink" title="线程池核心接口"></a>线程池核心接口</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│                      Executor                           │</span><br><span class="line">│                   (顶层接口)                             │</span><br><span class="line">│              void execute(Runnable)                     │</span><br><span class="line">└─────────────────────┬───────────────────────────────────┘</span><br><span class="line">                      │</span><br><span class="line">                      ▼</span><br><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│                  ExecutorService                        │</span><br><span class="line">│                 (扩展生命周期管理)                        │</span><br><span class="line">│     submit() / shutdown() / invokeAll() / ...          │</span><br><span class="line">└─────────────────────┬───────────────────────────────────┘</span><br><span class="line">                      │</span><br><span class="line">                      ▼</span><br><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│              ThreadPoolExecutor                         │</span><br><span class="line">│                (核心实现类)                              │</span><br><span class="line">│         7大参数 / 4种拒绝策略 / 5种状态                   │</span><br><span class="line">└─────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="快速入门示例"><a href="#快速入门示例" class="headerlink" title="快速入门示例"></a>快速入门示例</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadPoolDemo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 1. 创建线程池</span></span><br><span class="line">        <span class="type">ExecutorService</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">3</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 2. 提交任务</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">final</span> <span class="type">int</span> <span class="variable">taskId</span> <span class="operator">=</span> i;</span><br><span class="line">            executor.submit(() -&gt; &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;任务&quot;</span> + taskId + <span class="string">&quot; 由 &quot;</span> + </span><br><span class="line">                    Thread.currentThread().getName() + <span class="string">&quot; 执行&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    Thread.currentThread().interrupt();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 3. 关闭线程池</span></span><br><span class="line">        executor.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>输出示例：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">任务1 由 pool-1-thread-1 执行</span><br><span class="line">任务2 由 pool-1-thread-2 执行</span><br><span class="line">任务3 由 pool-1-thread-3 执行</span><br><span class="line">任务4 由 pool-1-thread-1 执行  ← 线程复用</span><br><span class="line">任务5 由 pool-1-thread-2 执行  ← 线程复用</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
+<li><strong>下一篇</strong>：02-线程池原理</li>
+<li><strong>线程池类型</strong>：03-线程池类型</li>
 </ul>
 
       

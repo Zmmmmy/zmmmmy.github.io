@@ -212,7 +212,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/10/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">
+    <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E4%B8%8ENetty/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -230,7 +230,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2026/01/10/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="post-title-link" itemprop="url">源码解析</a>
+          <a href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E4%B8%8ENetty/" class="post-title-link" itemprop="url">线程模型与Netty</a>
         </h2>
 
         <div class="post-meta-container">
@@ -264,7 +264,7 @@
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/Spring/Reactive-Streams/" itemprop="url" rel="index"><span itemprop="name">Reactive Streams</span></a>
+          <a href="/categories/Java/Spring/Webflux/" itemprop="url" rel="index"><span itemprop="name">Webflux</span></a>
         </span>
     </span>
 
@@ -278,310 +278,167 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h1><h2 id="Mono-just-源码分析"><a href="#Mono-just-源码分析" class="headerlink" title="Mono.just() 源码分析"></a>Mono.just() 源码分析</h2><p>从最简单的 <code>Mono.just()</code> 开始：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Mono.just(<span class="string">&quot;Hello&quot;</span>)</span><br><span class="line">    .subscribe(System.out::println);</span><br></pre></td></tr></table></figure>
+          <h1 id="线程模型与-Netty"><a href="#线程模型与-Netty" class="headerlink" title="线程模型与 Netty"></a>线程模型与 Netty</h1><h2 id="传统-Servlet-线程模型"><a href="#传统-Servlet-线程模型" class="headerlink" title="传统 Servlet 线程模型"></a>传统 Servlet 线程模型</h2><p>传统 Spring MVC 基于 Servlet 容器，采用<strong>每请求一线程</strong>模型：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">请求1 ──→ 线程1 ──→ [接收请求 → 处理业务 → 等待DB → 返回响应] ──→ 释放</span><br><span class="line">请求2 ──→ 线程2 ──→ [接收请求 → 处理业务 → 等待DB → 返回响应] ──→ 释放</span><br><span class="line">请求3 ──→ 线程3 ──→ [接收请求 → 处理业务 → 等待DB → 返回响应] ──→ 释放</span><br></pre></td></tr></table></figure>
 
-<h3 id="1-创建-Mono"><a href="#1-创建-Mono" class="headerlink" title="1. 创建 Mono"></a>1. 创建 Mono</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Mono.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Mono&lt;T&gt; <span class="title function_">just</span><span class="params">(T data)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> onAssembly(<span class="keyword">new</span> <span class="title class_">MonoJust</span>&lt;&gt;(data));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// MonoJust.java - 持有数据的 Mono</span></span><br><span class="line"><span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">MonoJust</span>&lt;T&gt; <span class="keyword">extends</span> <span class="title class_">Mono</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">final</span> T value;</span><br><span class="line">    </span><br><span class="line">    MonoJust(T value) &#123;</span><br><span class="line">        <span class="built_in">this</span>.value = Objects.requireNonNull(value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-订阅时发生了什么"><a href="#2-订阅时发生了什么" class="headerlink" title="2. 订阅时发生了什么"></a>2. 订阅时发生了什么</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Mono.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">subscribe</span><span class="params">(Consumer&lt;? <span class="built_in">super</span> T&gt; consumer)</span> &#123;</span><br><span class="line">    <span class="comment">// 创建 LambdaMonoSubscriber 包装 consumer</span></span><br><span class="line">    subscribe(<span class="keyword">new</span> <span class="title class_">LambdaMonoSubscriber</span>&lt;&gt;(consumer, ...));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// MonoJust.java</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">subscribe</span><span class="params">(CoreSubscriber&lt;? <span class="built_in">super</span> T&gt; actual)</span> &#123;</span><br><span class="line">    <span class="comment">// 直接调用 onSubscribe 和 onNext</span></span><br><span class="line">    actual.onSubscribe(Operators.scalarSubscription(actual, value));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-数据传递"><a href="#3-数据传递" class="headerlink" title="3. 数据传递"></a>3. 数据传递</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Operators.java - ScalarSubscription</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">ScalarSubscription</span>&lt;T&gt; <span class="keyword">implements</span> <span class="title class_">Subscription</span> &#123;</span><br><span class="line">    <span class="keyword">final</span> CoreSubscriber&lt;? <span class="built_in">super</span> T&gt; actual;</span><br><span class="line">    <span class="keyword">final</span> T value;</span><br><span class="line">    <span class="keyword">volatile</span> <span class="type">int</span> once;  <span class="comment">// 确保只发送一次</span></span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">request</span><span class="params">(<span class="type">long</span> n)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (n &gt; <span class="number">0</span> &amp;&amp; ONCE.compareAndSet(<span class="built_in">this</span>, <span class="number">0</span>, <span class="number">1</span>)) &#123;</span><br><span class="line">            actual.onNext(value);    <span class="comment">// 发送数据</span></span><br><span class="line">            actual.onComplete();      <span class="comment">// 完成</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>流程总结</strong>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Mono.just(&quot;Hello&quot;)</span><br><span class="line">    ↓</span><br><span class="line">new MonoJust(&quot;Hello&quot;)</span><br><span class="line">    ↓</span><br><span class="line">subscribe(consumer)</span><br><span class="line">    ↓</span><br><span class="line">onSubscribe(ScalarSubscription)</span><br><span class="line">    ↓</span><br><span class="line">request(Long.MAX_VALUE)  // LambdaSubscriber 默认请求无限</span><br><span class="line">    ↓</span><br><span class="line">onNext(&quot;Hello&quot;)</span><br><span class="line">    ↓</span><br><span class="line">onComplete()</span><br></pre></td></tr></table></figure>
-
-<h2 id="Flux-map-源码分析"><a href="#Flux-map-源码分析" class="headerlink" title="Flux.map() 源码分析"></a>Flux.map() 源码分析</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Flux.just(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">    .map(i -&gt; i * <span class="number">2</span>)</span><br><span class="line">    .subscribe(System.out::println);</span><br></pre></td></tr></table></figure>
-
-<h3 id="1-创建-FluxMap"><a href="#1-创建-FluxMap" class="headerlink" title="1. 创建 FluxMap"></a>1. 创建 FluxMap</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Flux.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> &lt;V&gt; Flux&lt;V&gt; <span class="title function_">map</span><span class="params">(Function&lt;? <span class="built_in">super</span> T, ? extends V&gt; mapper)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> onAssembly(<span class="keyword">new</span> <span class="title class_">FluxMap</span>&lt;&gt;(<span class="built_in">this</span>, mapper));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// FluxMap.java</span></span><br><span class="line"><span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">FluxMap</span>&lt;T, R&gt; <span class="keyword">extends</span> <span class="title class_">FluxOperator</span>&lt;T, R&gt; &#123;</span><br><span class="line">    <span class="keyword">final</span> Function&lt;? <span class="built_in">super</span> T, ? <span class="keyword">extends</span> <span class="title class_">R</span>&gt; mapper;</span><br><span class="line">    </span><br><span class="line">    FluxMap(Flux&lt;? <span class="keyword">extends</span> <span class="title class_">T</span>&gt; source, Function&lt;? <span class="built_in">super</span> T, ? <span class="keyword">extends</span> <span class="title class_">R</span>&gt; mapper) &#123;</span><br><span class="line">        <span class="built_in">super</span>(source);</span><br><span class="line">        <span class="built_in">this</span>.mapper = mapper;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-订阅时的包装"><a href="#2-订阅时的包装" class="headerlink" title="2. 订阅时的包装"></a>2. 订阅时的包装</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// FluxMap.java</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">subscribe</span><span class="params">(CoreSubscriber&lt;? <span class="built_in">super</span> R&gt; actual)</span> &#123;</span><br><span class="line">    <span class="comment">// 用 MapSubscriber 包装下游订阅者</span></span><br><span class="line">    source.subscribe(<span class="keyword">new</span> <span class="title class_">MapSubscriber</span>&lt;&gt;(actual, mapper));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-数据转换"><a href="#3-数据转换" class="headerlink" title="3. 数据转换"></a>3. 数据转换</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// FluxMap.java - MapSubscriber</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">MapSubscriber</span>&lt;T, R&gt; <span class="keyword">implements</span> <span class="title class_">Subscriber</span>&lt;T&gt;, Subscription &#123;</span><br><span class="line">    <span class="keyword">final</span> CoreSubscriber&lt;? <span class="built_in">super</span> R&gt; actual;  <span class="comment">// 下游</span></span><br><span class="line">    <span class="keyword">final</span> Function&lt;? <span class="built_in">super</span> T, ? <span class="keyword">extends</span> <span class="title class_">R</span>&gt; mapper;</span><br><span class="line">    Subscription s;  <span class="comment">// 上游的 Subscription</span></span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(T t)</span> &#123;</span><br><span class="line">        <span class="type">R</span> <span class="variable">v</span> <span class="operator">=</span> mapper.apply(t);  <span class="comment">// 转换数据</span></span><br><span class="line">        actual.onNext(v);        <span class="comment">// 传给下游</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">request</span><span class="params">(<span class="type">long</span> n)</span> &#123;</span><br><span class="line">        s.request(n);  <span class="comment">// 背压信号向上传递</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>订阅链结构</strong>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">FluxArray [1,2,3]</span><br><span class="line">    ↓ subscribe</span><br><span class="line">MapSubscriber (mapper: i -&gt; i*2)</span><br><span class="line">    ↓ subscribe  </span><br><span class="line">LambdaSubscriber (consumer: println)</span><br></pre></td></tr></table></figure>
-
-<p><strong>数据流向</strong>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">FluxArray.onNext(1)</span><br><span class="line">    ↓</span><br><span class="line">MapSubscriber.onNext(1) → mapper.apply(1) = 2</span><br><span class="line">    ↓</span><br><span class="line">LambdaSubscriber.onNext(2) → println(2)</span><br></pre></td></tr></table></figure>
-
-<h2 id="背压传递源码"><a href="#背压传递源码" class="headerlink" title="背压传递源码"></a>背压传递源码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Flux.range(<span class="number">1</span>, <span class="number">100</span>)</span><br><span class="line">    .filter(i -&gt; i % <span class="number">2</span> == <span class="number">0</span>)</span><br><span class="line">    .take(<span class="number">5</span>)</span><br><span class="line">    .subscribe(System.out::println);</span><br></pre></td></tr></table></figure>
-
-<h3 id="request-的传递"><a href="#request-的传递" class="headerlink" title="request 的传递"></a>request 的传递</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// FluxTake.java - TakeSubscriber</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">request</span><span class="params">(<span class="type">long</span> n)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (n &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 向上游请求，但不超过剩余需要的数量</span></span><br><span class="line">        <span class="type">long</span> <span class="variable">toRequest</span> <span class="operator">=</span> Math.min(n, remaining);</span><br><span class="line">        s.request(toRequest);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// FluxFilter.java - FilterSubscriber  </span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">request</span><span class="params">(<span class="type">long</span> n)</span> &#123;</span><br><span class="line">    <span class="comment">// filter 可能需要请求更多，因为有些会被过滤掉</span></span><br><span class="line">    s.request(n);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="完整的背压流程"><a href="#完整的背压流程" class="headerlink" title="完整的背压流程"></a>完整的背压流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">LambdaSubscriber.request(Long.MAX_VALUE)</span><br><span class="line">    ↓</span><br><span class="line">TakeSubscriber.request(Long.MAX_VALUE) </span><br><span class="line">    → 实际请求 min(MAX_VALUE, 5) = 5</span><br><span class="line">    ↓</span><br><span class="line">FilterSubscriber.request(5)</span><br><span class="line">    → 直接传递（filter 不知道会过滤多少）</span><br><span class="line">    ↓</span><br><span class="line">RangeSubscription.request(5)</span><br><span class="line">    → 开始生产 1,2,3,4,5</span><br></pre></td></tr></table></figure>
-
-<h2 id="异步边界与调度器"><a href="#异步边界与调度器" class="headerlink" title="异步边界与调度器"></a>异步边界与调度器</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Flux.range(<span class="number">1</span>, <span class="number">10</span>)</span><br><span class="line">    .publishOn(Schedulers.parallel())</span><br><span class="line">    .map(i -&gt; i * <span class="number">2</span>)</span><br><span class="line">    .subscribe(System.out::println);</span><br></pre></td></tr></table></figure>
-
-<h3 id="publishOn-的实现"><a href="#publishOn-的实现" class="headerlink" title="publishOn 的实现"></a>publishOn 的实现</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// FluxPublishOn.java</span></span><br><span class="line"><span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">FluxPublishOn</span>&lt;T&gt; <span class="keyword">extends</span> <span class="title class_">FluxOperator</span>&lt;T, T&gt; &#123;</span><br><span class="line">    <span class="keyword">final</span> Scheduler scheduler;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">int</span> prefetch;  <span class="comment">// 预取数量</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// PublishOnSubscriber 内部有队列</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">PublishOnSubscriber</span>&lt;T&gt; <span class="keyword">implements</span> <span class="title class_">Subscriber</span>&lt;T&gt;, Runnable &#123;</span><br><span class="line">        <span class="keyword">final</span> Queue&lt;T&gt; queue;  <span class="comment">// 缓冲队列</span></span><br><span class="line">        <span class="keyword">final</span> Worker worker;   <span class="comment">// 调度器工作线程</span></span><br><span class="line">        </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(T t)</span> &#123;</span><br><span class="line">            queue.offer(t);     <span class="comment">// 放入队列</span></span><br><span class="line">            trySchedule();      <span class="comment">// 调度执行</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">void</span> <span class="title function_">trySchedule</span><span class="params">()</span> &#123;</span><br><span class="line">            worker.schedule(<span class="built_in">this</span>);  <span class="comment">// 在另一个线程执行 run()</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="comment">// 在调度器线程中执行</span></span><br><span class="line">            <span class="type">T</span> <span class="variable">v</span> <span class="operator">=</span> queue.poll();</span><br><span class="line">            actual.onNext(v);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>线程切换点</strong>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">main 线程: range → publishOn 的 queue</span><br><span class="line">    ↓ (线程切换)</span><br><span class="line">parallel 线程: queue → map → subscribe</span><br></pre></td></tr></table></figure>
-
-<h2 id="关键设计模式"><a href="#关键设计模式" class="headerlink" title="关键设计模式"></a>关键设计模式</h2><h3 id="1-装饰器模式"><a href="#1-装饰器模式" class="headerlink" title="1. 装饰器模式"></a>1. 装饰器模式</h3><p>每个操作符都是对上游的装饰：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Flux&lt;Integer&gt; source = Flux.range(<span class="number">1</span>, <span class="number">10</span>);</span><br><span class="line">Flux&lt;Integer&gt; mapped = <span class="keyword">new</span> <span class="title class_">FluxMap</span>&lt;&gt;(source, i -&gt; i * <span class="number">2</span>);</span><br><span class="line">Flux&lt;Integer&gt; filtered = <span class="keyword">new</span> <span class="title class_">FluxFilter</span>&lt;&gt;(mapped, i -&gt; i &gt; <span class="number">5</span>);</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-责任链模式"><a href="#2-责任链模式" class="headerlink" title="2. 责任链模式"></a>2. 责任链模式</h3><p>订阅时形成 Subscriber 链：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">source.subscribe(</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">MapSubscriber</span>(</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">FilterSubscriber</span>(</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">LambdaSubscriber</span>(consumer)</span><br><span class="line">        )</span><br><span class="line">    )</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-观察者模式"><a href="#3-观察者模式" class="headerlink" title="3. 观察者模式"></a>3. 观察者模式</h3><p>Publisher-Subscriber 本身就是观察者模式的变体。</p>
-<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
-<li>上一篇：Project Reactor 实现</li>
-<li>Reactive Streams 规范</li>
-<li>WebFlux - 线程模型与Netty</li>
+<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul>
+<li>一个请求<strong>独占</strong>一个线程，从头到尾</li>
+<li>线程在等待 I&#x2F;O（数据库、网络调用）时<strong>阻塞</strong>，什么都不做</li>
+<li>高并发时需要大量线程（Tomcat 默认 200 个）</li>
+<li>线程切换开销大，内存占用高（每线程约 1MB 栈空间）</li>
 </ul>
+<h2 id="WebFlux-事件循环模型"><a href="#WebFlux-事件循环模型" class="headerlink" title="WebFlux 事件循环模型"></a>WebFlux 事件循环模型</h2><p>WebFlux 基于 Netty，采用<strong>事件循环（Event Loop）</strong> 模型：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">                 ┌─────────────────────────────────────┐</span><br><span class="line">                 │         Event Loop 线程池           │</span><br><span class="line">                 │     (少量线程，如 CPU 核心数)        │</span><br><span class="line">                 └─────────────────────────────────────┘</span><br><span class="line">                                 │</span><br><span class="line">     ┌───────────────────────────┼───────────────────────────┐</span><br><span class="line">     ↓                           ↓                           ↓</span><br><span class="line">接收请求1                    接收请求2                    接收请求3</span><br><span class="line">     │                           │                           │</span><br><span class="line">     ↓                           ↓                           ↓</span><br><span class="line">提交I/O任务                 提交I/O任务                 提交I/O任务</span><br><span class="line">(非阻塞返回)                (非阻塞返回)                (非阻塞返回)</span><br><span class="line">     │                           │                           │</span><br><span class="line">     └───────────────────────────┼───────────────────────────┘</span><br><span class="line">                                 ↓</span><br><span class="line">                 ┌─────────────────────────────────────┐</span><br><span class="line">                 │      I/O 完成后触发回调              │</span><br><span class="line">                 │      Event Loop 继续处理            │</span><br><span class="line">                 └─────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
 
-      
-    </div>
+<h3 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h3><ul>
+<li>线程<strong>不等待</strong> I&#x2F;O 完成，立即去处理其他请求</li>
+<li>I&#x2F;O 完成后通过<strong>回调&#x2F;事件</strong>通知</li>
+<li>少量线程就能处理大量并发连接</li>
+</ul>
+<h2 id="WebFlux-中的线程池"><a href="#WebFlux-中的线程池" class="headerlink" title="WebFlux 中的线程池"></a>WebFlux 中的线程池</h2><p>WebFlux 使用多个线程池，各司其职：</p>
+<h3 id="1-Event-Loop-线程池"><a href="#1-Event-Loop-线程池" class="headerlink" title="1. Event Loop 线程池"></a>1. Event Loop 线程池</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Netty 的 NioEventLoopGroup</span></span><br><span class="line"><span class="comment">// 线程数 = CPU 核心数</span></span><br></pre></td></tr></table></figure>
 
-    
-    
-    
+<ul>
+<li>处理连接建立、读写事件</li>
+<li><strong>绝对不能阻塞</strong>，否则影响所有请求</li>
+</ul>
+<h3 id="2-boundedElastic-线程池"><a href="#2-boundedElastic-线程池" class="headerlink" title="2. boundedElastic 线程池"></a>2. boundedElastic 线程池</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Mono.fromCallable(() -&gt; blockingCall())</span><br><span class="line">    .subscribeOn(Schedulers.boundedElastic())</span><br></pre></td></tr></table></figure>
 
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
+<ul>
+<li>处理<strong>必须阻塞</strong>的操作（如调用阻塞 API）</li>
+<li>弹性伸缩，有上限保护</li>
+<li>适合 I&#x2F;O 密集型阻塞操作</li>
+</ul>
+<h3 id="3-parallel-线程池"><a href="#3-parallel-线程池" class="headerlink" title="3. parallel 线程池"></a>3. parallel 线程池</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Flux.range(<span class="number">1</span>, <span class="number">100</span>)</span><br><span class="line">    .parallel()</span><br><span class="line">    .runOn(Schedulers.parallel())</span><br></pre></td></tr></table></figure>
 
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="ZhiMy">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zmmmmy's Blog">
-      <meta itemprop="description" content="一个来自于 AI+Obsidian 的知识库">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Zmmmmy's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">线程池原理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2026-01-10 00:00:00" itemprop="dateCreated datePublished" datetime="2026-01-10T00:00:00+08:00">2026-01-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-01-22 15:44:14" itemprop="dateModified" datetime="2026-01-22T15:44:14+08:00">2026-01-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">并发编程</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" itemprop="url" rel="index"><span itemprop="name">线程池</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="线程池原理"><a href="#线程池原理" class="headerlink" title="线程池原理"></a>线程池原理</h1><h2 id="核心参数（7大参数）"><a href="#核心参数（7大参数）" class="headerlink" title="核心参数（7大参数）"></a>核心参数（7大参数）</h2><p><code>ThreadPoolExecutor</code> 是线程池的核心实现类，其构造函数包含 7 个关键参数：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">ThreadPoolExecutor</span><span class="params">(</span></span><br><span class="line"><span class="params">    <span class="type">int</span> corePoolSize,           // 核心线程数</span></span><br><span class="line"><span class="params">    <span class="type">int</span> maximumPoolSize,        // 最大线程数</span></span><br><span class="line"><span class="params">    <span class="type">long</span> keepAliveTime,         // 空闲线程存活时间</span></span><br><span class="line"><span class="params">    TimeUnit unit,              // 时间单位</span></span><br><span class="line"><span class="params">    BlockingQueue&lt;Runnable&gt; workQueue,  // 任务队列</span></span><br><span class="line"><span class="params">    ThreadFactory threadFactory,        // 线程工厂</span></span><br><span class="line"><span class="params">    RejectedExecutionHandler handler    // 拒绝策略</span></span><br><span class="line"><span class="params">)</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="参数详解"><a href="#参数详解" class="headerlink" title="参数详解"></a>参数详解</h3><table>
+<ul>
+<li>线程数 &#x3D; CPU 核心数</li>
+<li>适合 <strong>CPU 密集型</strong>任务</li>
+</ul>
+<h2 id="线程模型对比"><a href="#线程模型对比" class="headerlink" title="线程模型对比"></a>线程模型对比</h2><table>
 <thead>
 <tr>
-<th>参数</th>
-<th>说明</th>
-<th>建议</th>
+<th>方面</th>
+<th>传统 MVC</th>
+<th>WebFlux</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><strong>corePoolSize</strong></td>
-<td>核心线程数，即使空闲也不会被回收</td>
-<td>CPU密集型：N+1，IO密集型：2N 👉详解</td>
+<td>线程数量</td>
+<td>大量（默认 200+）</td>
+<td>少量（CPU 核心数）</td>
 </tr>
 <tr>
-<td><strong>maximumPoolSize</strong></td>
-<td>线程池最大线程数</td>
-<td>根据业务峰值设置</td>
+<td>等待 I&#x2F;O 时</td>
+<td>线程阻塞等待</td>
+<td>线程去处理其他请求</td>
 </tr>
 <tr>
-<td><strong>keepAliveTime</strong></td>
-<td>非核心线程空闲存活时间</td>
-<td>一般 60s</td>
+<td>线程利用率</td>
+<td>低（大量时间在等待）</td>
+<td>高（几乎不等待）</td>
 </tr>
 <tr>
-<td><strong>unit</strong></td>
-<td>keepAliveTime 的时间单位</td>
-<td>TimeUnit.SECONDS</td>
+<td>内存占用</td>
+<td>高（每线程 ~1MB）</td>
+<td>低</td>
 </tr>
 <tr>
-<td><strong>workQueue</strong></td>
-<td>任务等待队列</td>
-<td>有界队列更安全</td>
+<td>上下文切换</td>
+<td>频繁</td>
+<td>很少</td>
 </tr>
 <tr>
-<td><strong>threadFactory</strong></td>
-<td>创建线程的工厂，可自定义线程名</td>
-<td>建议自定义便于排查</td>
-</tr>
-<tr>
-<td><strong>handler</strong></td>
-<td>队列满且线程数达到最大时的拒绝策略</td>
-<td>根据业务选择</td>
+<td>编程模型</td>
+<td>同步阻塞</td>
+<td>异步非阻塞</td>
 </tr>
 </tbody></table>
-<hr>
-<h2 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">      ┌─────────────────┐</span><br><span class="line">      │   提交任务       │</span><br><span class="line">      └────────┬────────┘</span><br><span class="line">               │</span><br><span class="line">               ▼</span><br><span class="line">┌──────────────────────────────┐</span><br><span class="line">│  核心线程数 &lt; corePoolSize?   │</span><br><span class="line">└──────────────┬───────────────┘</span><br><span class="line">      YES │          │ NO</span><br><span class="line">          ▼          ▼</span><br><span class="line">┌─────────────┐  ┌─────────────────┐</span><br><span class="line">│ 创建核心线程 │  │ 任务队列未满?    │</span><br><span class="line">│ 执行任务     │  └────────┬────────┘</span><br><span class="line">└─────────────┘      YES │     │ NO</span><br><span class="line">                        ▼     ▼</span><br><span class="line">                ┌─────────┐ ┌──────────────────┐</span><br><span class="line">                │ 入队等待 │ │ 线程数 &lt; maxSize? │</span><br><span class="line">                └─────────┘ └────────┬─────────┘</span><br><span class="line">                              YES │      │ NO</span><br><span class="line">                                  ▼      ▼</span><br><span class="line">                          ┌─────────┐ ┌─────────┐</span><br><span class="line">                          │创建非核心│ │ 拒绝策略 │</span><br><span class="line">                          │线程执行  │ └─────────┘</span><br><span class="line">                          └─────────┘</span><br></pre></td></tr></table></figure>
+<h2 id="WebFlux-与-Netty-的关系"><a href="#WebFlux-与-Netty-的关系" class="headerlink" title="WebFlux 与 Netty 的关系"></a>WebFlux 与 Netty 的关系</h2><h3 id="Netty-是什么"><a href="#Netty-是什么" class="headerlink" title="Netty 是什么"></a>Netty 是什么</h3><p>Netty 是一个<strong>高性能网络通信框架</strong>，提供：</p>
+<ul>
+<li>非阻塞 I&#x2F;O（NIO）</li>
+<li>事件驱动模型</li>
+<li>高效的内存管理</li>
+<li>协议编解码支持</li>
+</ul>
+<h3 id="直接用-Netty"><a href="#直接用-Netty" class="headerlink" title="直接用 Netty"></a>直接用 Netty</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Netty 原生代码 - 处理一个简单的 HTTP 请求</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HttpServerHandler</span> <span class="keyword">extends</span> <span class="title class_">ChannelInboundHandlerAdapter</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (msg <span class="keyword">instanceof</span> HttpRequest) &#123;</span><br><span class="line">            <span class="type">HttpRequest</span> <span class="variable">request</span> <span class="operator">=</span> (HttpRequest) msg;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 手动解析路径</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">uri</span> <span class="operator">=</span> request.uri();</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 手动构建响应</span></span><br><span class="line">            <span class="type">FullHttpResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DefaultFullHttpResponse</span>(</span><br><span class="line">                HttpVersion.HTTP_1_1, </span><br><span class="line">                HttpResponseStatus.OK,</span><br><span class="line">                Unpooled.copiedBuffer(<span class="string">&quot;Hello&quot;</span>, CharsetUtil.UTF_8)</span><br><span class="line">            );</span><br><span class="line">            response.headers().set(HttpHeaderNames.CONTENT_TYPE, <span class="string">&quot;text/plain&quot;</span>);</span><br><span class="line">            response.headers().set(HttpHeaderNames.CONTENT_LENGTH, </span><br><span class="line">                response.content().readableBytes());</span><br><span class="line">            </span><br><span class="line">            ctx.writeAndFlush(response);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="流程总结"><a href="#流程总结" class="headerlink" title="流程总结"></a>流程总结</h3><ol>
-<li><strong>核心线程优先</strong>：任务来了先看核心线程是否已满</li>
-<li><strong>队列缓冲</strong>：核心线程满了，任务进入队列等待</li>
-<li><strong>扩容线程</strong>：队列满了，创建非核心线程处理 👉详解 ^expand-thread</li>
-<li><strong>拒绝任务</strong>：线程数达到最大且队列满，执行拒绝策略</li>
+<p>需要自己处理：路由、参数解析、JSON 序列化、异常处理、连接管理…</p>
+<h3 id="用-WebFlux"><a href="#用-WebFlux" class="headerlink" title="用 WebFlux"></a>用 WebFlux</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloController</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@GetMapping(&quot;/hello/&#123;name&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">hello</span><span class="params">(<span class="meta">@PathVariable</span> String name)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userService.findByName(name);  <span class="comment">// 自动 JSON 序列化</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="WebFlux-在-Netty-之上提供了什么"><a href="#WebFlux-在-Netty-之上提供了什么" class="headerlink" title="WebFlux 在 Netty 之上提供了什么"></a>WebFlux 在 Netty 之上提供了什么</h3><table>
+<thead>
+<tr>
+<th>功能</th>
+<th>Netty</th>
+<th>WebFlux</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>路由</td>
+<td>手动解析 URI</td>
+<td><code>@GetMapping</code>、<code>RouterFunction</code></td>
+</tr>
+<tr>
+<td>参数绑定</td>
+<td>手动解析</td>
+<td><code>@PathVariable</code>、<code>@RequestBody</code></td>
+</tr>
+<tr>
+<td>JSON 序列化</td>
+<td>手动处理</td>
+<td>自动（Jackson）</td>
+</tr>
+<tr>
+<td>异常处理</td>
+<td>手动 try-catch</td>
+<td><code>@ExceptionHandler</code></td>
+</tr>
+<tr>
+<td>依赖注入</td>
+<td>无</td>
+<td>Spring IoC</td>
+</tr>
+<tr>
+<td>配置管理</td>
+<td>无</td>
+<td><code>application.yml</code></td>
+</tr>
+<tr>
+<td>安全认证</td>
+<td>手动实现</td>
+<td>Spring Security</td>
+</tr>
+<tr>
+<td>数据访问</td>
+<td>手动实现</td>
+<td>Spring Data R2DBC</td>
+</tr>
+<tr>
+<td>测试支持</td>
+<td>手动</td>
+<td><code>WebTestClient</code></td>
+</tr>
+</tbody></table>
+<h3 id="类比理解"><a href="#类比理解" class="headerlink" title="类比理解"></a>类比理解</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Netty      ≈  TCP/HTTP 协议引擎（底层）</span><br><span class="line">WebFlux    ≈  Web 开发框架（上层）</span><br><span class="line"></span><br><span class="line">就像：</span><br><span class="line">JDBC       ≈  数据库连接（底层）</span><br><span class="line">MyBatis    ≈  ORM 框架（上层）</span><br></pre></td></tr></table></figure>
+
+<p><strong>Netty 是引擎，WebFlux 是汽车。</strong> 你可以直接用引擎，但大多数人更愿意开汽车。</p>
+<h2 id="什么时候直接用-Netty"><a href="#什么时候直接用-Netty" class="headerlink" title="什么时候直接用 Netty"></a>什么时候直接用 Netty</h2><ul>
+<li>自定义协议（非 HTTP）</li>
+<li>极致性能优化</li>
+<li>不需要 Spring 生态</li>
+<li>构建基础设施（如网关、代理服务器）</li>
+</ul>
+<h2 id="为什么-WebFlux-适合高并发"><a href="#为什么-WebFlux-适合高并发" class="headerlink" title="为什么 WebFlux 适合高并发"></a>为什么 WebFlux 适合高并发</h2><ol>
+<li><strong>少量线程处理大量连接</strong>：不需要为每个连接分配线程</li>
+<li><strong>线程不阻塞</strong>：I&#x2F;O 等待时去处理其他请求</li>
+<li><strong>内存效率高</strong>：线程少，内存占用低</li>
+<li><strong>无线程切换开销</strong>：事件驱动，不需要频繁切换</li>
 </ol>
-<blockquote>
-<p><strong>注意</strong>：不是先扩容线程再入队，而是<strong>先入队再扩容</strong>！</p>
-</blockquote>
-<hr>
-<h2 id="任务队列类型"><a href="#任务队列类型" class="headerlink" title="任务队列类型"></a>任务队列类型</h2><table>
-<thead>
-<tr>
-<th>队列类型</th>
-<th>特点</th>
-<th>适用场景</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>ArrayBlockingQueue</strong></td>
-<td>有界数组队列，FIFO</td>
-<td>控制资源消耗，推荐使用</td>
-</tr>
-<tr>
-<td><strong>LinkedBlockingQueue</strong></td>
-<td>可选有界链表队列，默认无界</td>
-<td>任务量可控时使用</td>
-</tr>
-<tr>
-<td><strong>SynchronousQueue</strong></td>
-<td>不存储元素，直接传递</td>
-<td>CachedThreadPool 使用</td>
-</tr>
-<tr>
-<td><strong>PriorityBlockingQueue</strong></td>
-<td>优先级队列，无界</td>
-<td>需要任务优先级时</td>
-</tr>
-<tr>
-<td><strong>DelayQueue</strong></td>
-<td>延迟队列</td>
-<td>定时任务场景</td>
-</tr>
-</tbody></table>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 推荐：使用有界队列</span></span><br><span class="line">BlockingQueue&lt;Runnable&gt; queue = <span class="keyword">new</span> <span class="title class_">ArrayBlockingQueue</span>&lt;&gt;(<span class="number">100</span>);</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="四种拒绝策略"><a href="#四种拒绝策略" class="headerlink" title="四种拒绝策略"></a>四种拒绝策略</h2><p>当任务无法被执行时（队列满 + 线程数达到最大），触发拒绝策略：</p>
-<table>
-<thead>
-<tr>
-<th>策略</th>
-<th>行为</th>
-<th>适用场景</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>AbortPolicy</strong></td>
-<td>抛出 RejectedExecutionException</td>
-<td>默认策略，快速失败</td>
-</tr>
-<tr>
-<td><strong>CallerRunsPolicy</strong></td>
-<td>由提交任务的线程执行</td>
-<td>不丢弃任务，降级处理</td>
-</tr>
-<tr>
-<td><strong>DiscardPolicy</strong></td>
-<td>静默丢弃任务</td>
-<td>允许丢失的场景</td>
-</tr>
-<tr>
-<td><strong>DiscardOldestPolicy</strong></td>
-<td>丢弃队列最老的任务，重新提交</td>
-<td>新任务优先级更高</td>
-</tr>
-</tbody></table>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 自定义拒绝策略示例</span></span><br><span class="line"><span class="type">RejectedExecutionHandler</span> <span class="variable">customHandler</span> <span class="operator">=</span> (r, executor) -&gt; &#123;</span><br><span class="line">    <span class="comment">// 记录日志</span></span><br><span class="line">    log.warn(<span class="string">&quot;任务被拒绝: &#123;&#125;&quot;</span>, r.toString());</span><br><span class="line">    <span class="comment">// 可选：持久化到数据库/MQ，后续重试</span></span><br><span class="line">    saveToDatabase(r);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="线程池状态（5种状态）"><a href="#线程池状态（5种状态）" class="headerlink" title="线程池状态（5种状态）"></a>线程池状态（5种状态）</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">┌──────────┐</span><br><span class="line">│ RUNNING  │ ← 初始状态，接收新任务，处理队列任务</span><br><span class="line">└────┬─────┘</span><br><span class="line">     │ shutdown()</span><br><span class="line">     ▼</span><br><span class="line">┌──────────┐</span><br><span class="line">│ SHUTDOWN │ ← 不接收新任务，继续处理队列任务</span><br><span class="line">└────┬─────┘</span><br><span class="line">     │ 队列为空 &amp;&amp; 工作线程为0</span><br><span class="line">     ▼</span><br><span class="line">┌──────────┐</span><br><span class="line">│ TIDYING  │ ← 所有任务终止，工作线程为0</span><br><span class="line">└────┬─────┘</span><br><span class="line">     │ terminated() 执行完成</span><br><span class="line">     ▼</span><br><span class="line">┌──────────────┐</span><br><span class="line">│ TERMINATED   │ ← 线程池彻底终止</span><br><span class="line">└──────────────┘</span><br><span class="line"></span><br><span class="line">┌──────────┐</span><br><span class="line">│ RUNNING  │</span><br><span class="line">└────┬─────┘</span><br><span class="line">     │ shutdownNow()</span><br><span class="line">     ▼</span><br><span class="line">┌──────────┐</span><br><span class="line">│   STOP   │ ← 不接收新任务，中断正在执行的任务，清空队列</span><br><span class="line">└────┬─────┘</span><br><span class="line">     │ 工作线程为0</span><br><span class="line">     ▼</span><br><span class="line">┌──────────┐</span><br><span class="line">│ TIDYING  │</span><br><span class="line">└──────────┘</span><br></pre></td></tr></table></figure>
-
-<h3 id="状态转换方法"><a href="#状态转换方法" class="headerlink" title="状态转换方法"></a>状态转换方法</h3><table>
-<thead>
-<tr>
-<th>方法</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>shutdown()</code></td>
-<td>温和关闭，等待已提交任务完成</td>
-</tr>
-<tr>
-<td><code>shutdownNow()</code></td>
-<td>立即关闭，尝试中断执行中的任务，返回未执行的任务列表</td>
-</tr>
-<tr>
-<td><code>awaitTermination()</code></td>
-<td>阻塞等待线程池终止</td>
-</tr>
-</tbody></table>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 优雅关闭线程池</span></span><br><span class="line">executor.shutdown();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (!executor.awaitTermination(<span class="number">60</span>, TimeUnit.SECONDS)) &#123;</span><br><span class="line">        executor.shutdownNow();</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">    executor.shutdownNow();</span><br><span class="line">    Thread.currentThread().interrupt();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="线程池监控"><a href="#线程池监控" class="headerlink" title="线程池监控"></a>线程池监控</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ThreadPoolExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> (ThreadPoolExecutor) Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 监控指标</span></span><br><span class="line">System.out.println(<span class="string">&quot;核心线程数: &quot;</span> + executor.getCorePoolSize());</span><br><span class="line">System.out.println(<span class="string">&quot;最大线程数: &quot;</span> + executor.getMaximumPoolSize());</span><br><span class="line">System.out.println(<span class="string">&quot;当前线程数: &quot;</span> + executor.getPoolSize());</span><br><span class="line">System.out.println(<span class="string">&quot;活跃线程数: &quot;</span> + executor.getActiveCount());</span><br><span class="line">System.out.println(<span class="string">&quot;队列任务数: &quot;</span> + executor.getQueue().size());</span><br><span class="line">System.out.println(<span class="string">&quot;已完成任务: &quot;</span> + executor.getCompletedTaskCount());</span><br><span class="line">System.out.println(<span class="string">&quot;总任务数: &quot;</span> + executor.getTaskCount());</span><br></pre></td></tr></table></figure>
-
-<hr>
 <h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
-<li><strong>上一篇</strong>：01-线程池简介</li>
-<li><strong>下一篇</strong>：03-线程池类型</li>
+<li>Webflux简介</li>
+<li>响应式编程基础</li>
+<li>Reactor核心API</li>
 </ul>
 
       
@@ -930,6 +787,149 @@
 <li><strong>上一篇</strong>：02-线程池原理</li>
 <li><strong>下一篇</strong>：04-ForkJoinPool</li>
 <li><strong>线程池简介</strong>：01-线程池简介</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/10/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="ZhiMy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zmmmmy's Blog">
+      <meta itemprop="description" content="一个来自于 AI+Obsidian 的知识库">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Zmmmmy's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/01/10/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="post-title-link" itemprop="url">源码解析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-10 00:00:00" itemprop="dateCreated datePublished" datetime="2026-01-10T00:00:00+08:00">2026-01-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-22 15:44:14" itemprop="dateModified" datetime="2026-01-22T15:44:14+08:00">2026-01-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/Spring/Reactive-Streams/" itemprop="url" rel="index"><span itemprop="name">Reactive Streams</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h1><h2 id="Mono-just-源码分析"><a href="#Mono-just-源码分析" class="headerlink" title="Mono.just() 源码分析"></a>Mono.just() 源码分析</h2><p>从最简单的 <code>Mono.just()</code> 开始：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Mono.just(<span class="string">&quot;Hello&quot;</span>)</span><br><span class="line">    .subscribe(System.out::println);</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-创建-Mono"><a href="#1-创建-Mono" class="headerlink" title="1. 创建 Mono"></a>1. 创建 Mono</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Mono.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Mono&lt;T&gt; <span class="title function_">just</span><span class="params">(T data)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> onAssembly(<span class="keyword">new</span> <span class="title class_">MonoJust</span>&lt;&gt;(data));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// MonoJust.java - 持有数据的 Mono</span></span><br><span class="line"><span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">MonoJust</span>&lt;T&gt; <span class="keyword">extends</span> <span class="title class_">Mono</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">final</span> T value;</span><br><span class="line">    </span><br><span class="line">    MonoJust(T value) &#123;</span><br><span class="line">        <span class="built_in">this</span>.value = Objects.requireNonNull(value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-订阅时发生了什么"><a href="#2-订阅时发生了什么" class="headerlink" title="2. 订阅时发生了什么"></a>2. 订阅时发生了什么</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Mono.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">subscribe</span><span class="params">(Consumer&lt;? <span class="built_in">super</span> T&gt; consumer)</span> &#123;</span><br><span class="line">    <span class="comment">// 创建 LambdaMonoSubscriber 包装 consumer</span></span><br><span class="line">    subscribe(<span class="keyword">new</span> <span class="title class_">LambdaMonoSubscriber</span>&lt;&gt;(consumer, ...));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// MonoJust.java</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">subscribe</span><span class="params">(CoreSubscriber&lt;? <span class="built_in">super</span> T&gt; actual)</span> &#123;</span><br><span class="line">    <span class="comment">// 直接调用 onSubscribe 和 onNext</span></span><br><span class="line">    actual.onSubscribe(Operators.scalarSubscription(actual, value));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-数据传递"><a href="#3-数据传递" class="headerlink" title="3. 数据传递"></a>3. 数据传递</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Operators.java - ScalarSubscription</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">ScalarSubscription</span>&lt;T&gt; <span class="keyword">implements</span> <span class="title class_">Subscription</span> &#123;</span><br><span class="line">    <span class="keyword">final</span> CoreSubscriber&lt;? <span class="built_in">super</span> T&gt; actual;</span><br><span class="line">    <span class="keyword">final</span> T value;</span><br><span class="line">    <span class="keyword">volatile</span> <span class="type">int</span> once;  <span class="comment">// 确保只发送一次</span></span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">request</span><span class="params">(<span class="type">long</span> n)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (n &gt; <span class="number">0</span> &amp;&amp; ONCE.compareAndSet(<span class="built_in">this</span>, <span class="number">0</span>, <span class="number">1</span>)) &#123;</span><br><span class="line">            actual.onNext(value);    <span class="comment">// 发送数据</span></span><br><span class="line">            actual.onComplete();      <span class="comment">// 完成</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>流程总结</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Mono.just(&quot;Hello&quot;)</span><br><span class="line">    ↓</span><br><span class="line">new MonoJust(&quot;Hello&quot;)</span><br><span class="line">    ↓</span><br><span class="line">subscribe(consumer)</span><br><span class="line">    ↓</span><br><span class="line">onSubscribe(ScalarSubscription)</span><br><span class="line">    ↓</span><br><span class="line">request(Long.MAX_VALUE)  // LambdaSubscriber 默认请求无限</span><br><span class="line">    ↓</span><br><span class="line">onNext(&quot;Hello&quot;)</span><br><span class="line">    ↓</span><br><span class="line">onComplete()</span><br></pre></td></tr></table></figure>
+
+<h2 id="Flux-map-源码分析"><a href="#Flux-map-源码分析" class="headerlink" title="Flux.map() 源码分析"></a>Flux.map() 源码分析</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Flux.just(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">    .map(i -&gt; i * <span class="number">2</span>)</span><br><span class="line">    .subscribe(System.out::println);</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-创建-FluxMap"><a href="#1-创建-FluxMap" class="headerlink" title="1. 创建 FluxMap"></a>1. 创建 FluxMap</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Flux.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> &lt;V&gt; Flux&lt;V&gt; <span class="title function_">map</span><span class="params">(Function&lt;? <span class="built_in">super</span> T, ? extends V&gt; mapper)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> onAssembly(<span class="keyword">new</span> <span class="title class_">FluxMap</span>&lt;&gt;(<span class="built_in">this</span>, mapper));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// FluxMap.java</span></span><br><span class="line"><span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">FluxMap</span>&lt;T, R&gt; <span class="keyword">extends</span> <span class="title class_">FluxOperator</span>&lt;T, R&gt; &#123;</span><br><span class="line">    <span class="keyword">final</span> Function&lt;? <span class="built_in">super</span> T, ? <span class="keyword">extends</span> <span class="title class_">R</span>&gt; mapper;</span><br><span class="line">    </span><br><span class="line">    FluxMap(Flux&lt;? <span class="keyword">extends</span> <span class="title class_">T</span>&gt; source, Function&lt;? <span class="built_in">super</span> T, ? <span class="keyword">extends</span> <span class="title class_">R</span>&gt; mapper) &#123;</span><br><span class="line">        <span class="built_in">super</span>(source);</span><br><span class="line">        <span class="built_in">this</span>.mapper = mapper;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-订阅时的包装"><a href="#2-订阅时的包装" class="headerlink" title="2. 订阅时的包装"></a>2. 订阅时的包装</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// FluxMap.java</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">subscribe</span><span class="params">(CoreSubscriber&lt;? <span class="built_in">super</span> R&gt; actual)</span> &#123;</span><br><span class="line">    <span class="comment">// 用 MapSubscriber 包装下游订阅者</span></span><br><span class="line">    source.subscribe(<span class="keyword">new</span> <span class="title class_">MapSubscriber</span>&lt;&gt;(actual, mapper));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-数据转换"><a href="#3-数据转换" class="headerlink" title="3. 数据转换"></a>3. 数据转换</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// FluxMap.java - MapSubscriber</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">MapSubscriber</span>&lt;T, R&gt; <span class="keyword">implements</span> <span class="title class_">Subscriber</span>&lt;T&gt;, Subscription &#123;</span><br><span class="line">    <span class="keyword">final</span> CoreSubscriber&lt;? <span class="built_in">super</span> R&gt; actual;  <span class="comment">// 下游</span></span><br><span class="line">    <span class="keyword">final</span> Function&lt;? <span class="built_in">super</span> T, ? <span class="keyword">extends</span> <span class="title class_">R</span>&gt; mapper;</span><br><span class="line">    Subscription s;  <span class="comment">// 上游的 Subscription</span></span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(T t)</span> &#123;</span><br><span class="line">        <span class="type">R</span> <span class="variable">v</span> <span class="operator">=</span> mapper.apply(t);  <span class="comment">// 转换数据</span></span><br><span class="line">        actual.onNext(v);        <span class="comment">// 传给下游</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">request</span><span class="params">(<span class="type">long</span> n)</span> &#123;</span><br><span class="line">        s.request(n);  <span class="comment">// 背压信号向上传递</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>订阅链结构</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">FluxArray [1,2,3]</span><br><span class="line">    ↓ subscribe</span><br><span class="line">MapSubscriber (mapper: i -&gt; i*2)</span><br><span class="line">    ↓ subscribe  </span><br><span class="line">LambdaSubscriber (consumer: println)</span><br></pre></td></tr></table></figure>
+
+<p><strong>数据流向</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">FluxArray.onNext(1)</span><br><span class="line">    ↓</span><br><span class="line">MapSubscriber.onNext(1) → mapper.apply(1) = 2</span><br><span class="line">    ↓</span><br><span class="line">LambdaSubscriber.onNext(2) → println(2)</span><br></pre></td></tr></table></figure>
+
+<h2 id="背压传递源码"><a href="#背压传递源码" class="headerlink" title="背压传递源码"></a>背压传递源码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Flux.range(<span class="number">1</span>, <span class="number">100</span>)</span><br><span class="line">    .filter(i -&gt; i % <span class="number">2</span> == <span class="number">0</span>)</span><br><span class="line">    .take(<span class="number">5</span>)</span><br><span class="line">    .subscribe(System.out::println);</span><br></pre></td></tr></table></figure>
+
+<h3 id="request-的传递"><a href="#request-的传递" class="headerlink" title="request 的传递"></a>request 的传递</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// FluxTake.java - TakeSubscriber</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">request</span><span class="params">(<span class="type">long</span> n)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (n &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 向上游请求，但不超过剩余需要的数量</span></span><br><span class="line">        <span class="type">long</span> <span class="variable">toRequest</span> <span class="operator">=</span> Math.min(n, remaining);</span><br><span class="line">        s.request(toRequest);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// FluxFilter.java - FilterSubscriber  </span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">request</span><span class="params">(<span class="type">long</span> n)</span> &#123;</span><br><span class="line">    <span class="comment">// filter 可能需要请求更多，因为有些会被过滤掉</span></span><br><span class="line">    s.request(n);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="完整的背压流程"><a href="#完整的背压流程" class="headerlink" title="完整的背压流程"></a>完整的背压流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">LambdaSubscriber.request(Long.MAX_VALUE)</span><br><span class="line">    ↓</span><br><span class="line">TakeSubscriber.request(Long.MAX_VALUE) </span><br><span class="line">    → 实际请求 min(MAX_VALUE, 5) = 5</span><br><span class="line">    ↓</span><br><span class="line">FilterSubscriber.request(5)</span><br><span class="line">    → 直接传递（filter 不知道会过滤多少）</span><br><span class="line">    ↓</span><br><span class="line">RangeSubscription.request(5)</span><br><span class="line">    → 开始生产 1,2,3,4,5</span><br></pre></td></tr></table></figure>
+
+<h2 id="异步边界与调度器"><a href="#异步边界与调度器" class="headerlink" title="异步边界与调度器"></a>异步边界与调度器</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Flux.range(<span class="number">1</span>, <span class="number">10</span>)</span><br><span class="line">    .publishOn(Schedulers.parallel())</span><br><span class="line">    .map(i -&gt; i * <span class="number">2</span>)</span><br><span class="line">    .subscribe(System.out::println);</span><br></pre></td></tr></table></figure>
+
+<h3 id="publishOn-的实现"><a href="#publishOn-的实现" class="headerlink" title="publishOn 的实现"></a>publishOn 的实现</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// FluxPublishOn.java</span></span><br><span class="line"><span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">FluxPublishOn</span>&lt;T&gt; <span class="keyword">extends</span> <span class="title class_">FluxOperator</span>&lt;T, T&gt; &#123;</span><br><span class="line">    <span class="keyword">final</span> Scheduler scheduler;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">int</span> prefetch;  <span class="comment">// 预取数量</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// PublishOnSubscriber 内部有队列</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">PublishOnSubscriber</span>&lt;T&gt; <span class="keyword">implements</span> <span class="title class_">Subscriber</span>&lt;T&gt;, Runnable &#123;</span><br><span class="line">        <span class="keyword">final</span> Queue&lt;T&gt; queue;  <span class="comment">// 缓冲队列</span></span><br><span class="line">        <span class="keyword">final</span> Worker worker;   <span class="comment">// 调度器工作线程</span></span><br><span class="line">        </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(T t)</span> &#123;</span><br><span class="line">            queue.offer(t);     <span class="comment">// 放入队列</span></span><br><span class="line">            trySchedule();      <span class="comment">// 调度执行</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">void</span> <span class="title function_">trySchedule</span><span class="params">()</span> &#123;</span><br><span class="line">            worker.schedule(<span class="built_in">this</span>);  <span class="comment">// 在另一个线程执行 run()</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="comment">// 在调度器线程中执行</span></span><br><span class="line">            <span class="type">T</span> <span class="variable">v</span> <span class="operator">=</span> queue.poll();</span><br><span class="line">            actual.onNext(v);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>线程切换点</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">main 线程: range → publishOn 的 queue</span><br><span class="line">    ↓ (线程切换)</span><br><span class="line">parallel 线程: queue → map → subscribe</span><br></pre></td></tr></table></figure>
+
+<h2 id="关键设计模式"><a href="#关键设计模式" class="headerlink" title="关键设计模式"></a>关键设计模式</h2><h3 id="1-装饰器模式"><a href="#1-装饰器模式" class="headerlink" title="1. 装饰器模式"></a>1. 装饰器模式</h3><p>每个操作符都是对上游的装饰：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Flux&lt;Integer&gt; source = Flux.range(<span class="number">1</span>, <span class="number">10</span>);</span><br><span class="line">Flux&lt;Integer&gt; mapped = <span class="keyword">new</span> <span class="title class_">FluxMap</span>&lt;&gt;(source, i -&gt; i * <span class="number">2</span>);</span><br><span class="line">Flux&lt;Integer&gt; filtered = <span class="keyword">new</span> <span class="title class_">FluxFilter</span>&lt;&gt;(mapped, i -&gt; i &gt; <span class="number">5</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-责任链模式"><a href="#2-责任链模式" class="headerlink" title="2. 责任链模式"></a>2. 责任链模式</h3><p>订阅时形成 Subscriber 链：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">source.subscribe(</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">MapSubscriber</span>(</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">FilterSubscriber</span>(</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">LambdaSubscriber</span>(consumer)</span><br><span class="line">        )</span><br><span class="line">    )</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-观察者模式"><a href="#3-观察者模式" class="headerlink" title="3. 观察者模式"></a>3. 观察者模式</h3><p>Publisher-Subscriber 本身就是观察者模式的变体。</p>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
+<li>上一篇：Project Reactor 实现</li>
+<li>Reactive Streams 规范</li>
+<li>WebFlux - 线程模型与Netty</li>
 </ul>
 
       

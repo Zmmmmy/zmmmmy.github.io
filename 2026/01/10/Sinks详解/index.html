@@ -1,24 +1,25 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=auto>
-
-
-
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
 
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
-  <link rel="icon" href="/img/fluid.png">
-  
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="ZhiMy">
-  <meta name="keywords" content="技术博客,编程">
-  
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zmmmmy.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
     <meta name="description" content="Sinks 详解什么是 SinksSinks 是 Reactor 提供的”手动发送数据”的工具，让你可以在代码中主动 push 数据到响应式流中。 核心问题：Mono&#x2F;Flux 的局限1234&#x2F;&#x2F; Mono&#x2F;Flux 通常是&quot;被动&quot;的 - 数据在创建时就确定了Mono.just(&quot;hello&quot;);           &#x2F;&#x2F; 数据已确定Flux.fr">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Sinks详解">
@@ -36,268 +37,257 @@
 <meta property="article:tag" content="Spring">
 <meta property="article:tag" content="多播">
 <meta property="article:tag" content="热流">
-<meta name="twitter:card" content="summary_large_image">
-  
-  
-  
-  <title>Sinks详解 - Zmmmmy&#39;s Blog</title>
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+<meta name="twitter:card" content="summary">
 
 
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+<link rel="canonical" href="https://zmmmmy.github.io/2026/01/10/Sinks%E8%AF%A6%E8%A7%A3/">
 
 
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zmmmmy.github.io/2026/01/10/Sinks%E8%AF%A6%E8%A7%A3/","path":"2026/01/10/Sinks详解/","title":"Sinks详解"}</script>
 
-<!-- 主题依赖的图标库，不要自行修改 -->
-<!-- Do not modify the link that theme dependent icons -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-
-  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
-  
-    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Sinks详解 | Zmmmmy's Blog</title>
   
 
 
 
 
-  <script id="fluid-configs">
-    var Fluid = window.Fluid || {};
-    Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"zmmmmy.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2,"offset_top":300},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
-    if (CONFIG.web_analytics.follow_dnt) {
-      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
-      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
-    }
-  </script>
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
-  
+
 
 
   
-<meta name="generator" content="Hexo 8.1.1"></head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
 
 
-<body>
+
+
+
+
+
   
 
-  <header>
-    
 
-<div class="header-inner" style="height: 70vh;">
-  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand" href="/">
-      <strong>Zmmmmy&#39;s Blog</strong>
-    </a>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
 
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/" target="_self">
-                <i class="iconfont icon-home-fill"></i>
-                <span>首页</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/" target="_self">
-                <i class="iconfont icon-archive-fill"></i>
-                <span>归档</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/" target="_self">
-                <i class="iconfont icon-category-fill"></i>
-                <span>分类</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/" target="_self">
-                <i class="iconfont icon-tags-fill"></i>
-                <span>标签</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/" target="_self">
-                <i class="iconfont icon-user-fill"></i>
-                <span>关于</span>
-              </a>
-            </li>
-          
-        
-        
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              <i class="iconfont icon-search"></i>
-            </a>
-          </li>
-          
-        
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
-              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
-            </a>
-          </li>
-        
-      </ul>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
     </div>
   </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Zmmmmy's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人技术博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
 </nav>
 
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Sinks-%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">Sinks 详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Sinks"><span class="nav-number">1.1.</span> <span class="nav-text">什么是 Sinks</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E9%97%AE%E9%A2%98%EF%BC%9AMono-Flux-%E7%9A%84%E5%B1%80%E9%99%90"><span class="nav-number">1.1.1.</span> <span class="nav-text">核心问题：Mono&#x2F;Flux 的局限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sinks-%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">1.1.2.</span> <span class="nav-text">Sinks 的作用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sinks-%E4%B8%8E-Mono-Flux-%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.2.</span> <span class="nav-text">Sinks 与 Mono&#x2F;Flux 的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sinks-%E7%9A%84%E4%B8%89%E7%A7%8D%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.3.</span> <span class="nav-text">Sinks 的三种类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Sinks-One-%E5%8D%95%E5%80%BC%EF%BC%88%E5%AF%B9%E5%BA%94-Mono%EF%BC%89"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. Sinks.One - 单值（对应 Mono）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Sinks-Empty-%E6%97%A0%E5%80%BC%EF%BC%88%E5%AF%B9%E5%BA%94-Mono%EF%BC%89"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. Sinks.Empty - 无值（对应 Mono）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Sinks-Many-%E5%A4%9A%E5%80%BC%EF%BC%88%E5%AF%B9%E5%BA%94-Flux%EF%BC%89"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. Sinks.Many - 多值（对应 Flux）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sinks-Many-%E7%9A%84%E4%B8%89%E7%A7%8D%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.4.</span> <span class="nav-text">Sinks.Many 的三种模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Unicast%EF%BC%88%E5%8D%95%E6%92%AD%EF%BC%89-%E5%8F%AA%E8%83%BD%E6%9C%89%E4%B8%80%E4%B8%AA%E8%AE%A2%E9%98%85%E8%80%85"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. Unicast（单播）- 只能有一个订阅者</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Multicast%EF%BC%88%E5%A4%9A%E6%92%AD%EF%BC%89-%E5%A4%9A%E4%B8%AA%E8%AE%A2%E9%98%85%E8%80%85%E5%85%B1%E4%BA%AB"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. Multicast（多播）- 多个订阅者共享</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Replay%EF%BC%88%E9%87%8D%E6%94%BE%EF%BC%89-%E6%96%B0%E8%AE%A2%E9%98%85%E8%80%85%E5%8F%AF%E6%94%B6%E5%88%B0%E5%8E%86%E5%8F%B2%E6%95%B0%E6%8D%AE"><span class="nav-number">1.4.3.</span> <span class="nav-text">3. Replay（重放）- 新订阅者可收到历史数据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E7%A7%8D%E6%A8%A1%E5%BC%8F%E5%AF%B9%E6%AF%94"><span class="nav-number">1.5.</span> <span class="nav-text">三种模式对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E6%95%B0%E6%8D%AE%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">1.6.</span> <span class="nav-text">发送数据的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#tryEmitXxx-vs-emitXxx"><span class="nav-number">1.6.1.</span> <span class="nav-text">tryEmitXxx vs emitXxx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EmitResult-%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.6.2.</span> <span class="nav-text">EmitResult 的类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84-EmitFailureHandler"><span class="nav-number">1.6.3.</span> <span class="nav-text">常用的 EmitFailureHandler</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E6%88%98%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.7.</span> <span class="nav-text">实战示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B1%EF%BC%9AWebSocket-%E6%B6%88%E6%81%AF%E6%8E%A8%E9%80%81"><span class="nav-number">1.7.1.</span> <span class="nav-text">示例1：WebSocket 消息推送</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B2%EF%BC%9A%E4%BA%8B%E4%BB%B6%E6%80%BB%E7%BA%BF"><span class="nav-number">1.7.2.</span> <span class="nav-text">示例2：事件总线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B3%EF%BC%9A%E5%BC%82%E6%AD%A5%E4%BB%BB%E5%8A%A1%E7%BB%93%E6%9E%9C%E6%94%B6%E9%9B%86"><span class="nav-number">1.7.3.</span> <span class="nav-text">示例3：异步任务结果收集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B4%EF%BC%9A%E7%BC%93%E5%AD%98%E6%9C%80%E6%96%B0%E7%8A%B6%E6%80%81"><span class="nav-number">1.7.4.</span> <span class="nav-text">示例4：缓存最新状态</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sinks-vs-%E6%97%A7%E7%89%88-Processor"><span class="nav-number">1.8.</span> <span class="nav-text">Sinks vs 旧版 Processor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8"><span class="nav-number">1.9.</span> <span class="nav-text">线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.10.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%93%BE%E6%8E%A5"><span class="nav-number">1.11.</span> <span class="nav-text">相关链接</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZhiMy"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">ZhiMy</p>
+  <div class="site-description" itemprop="description">记录学习与成长</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">100</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Zmmmmy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Zmmmmy" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
-<div id="banner" class="banner" parallax=true
-     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
-  <div class="full-bg-img">
-    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-      <div class="banner-text text-center fade-in-up">
-        <div class="h2">
-          
-            <span id="subtitle" data-typed-text="Sinks详解"></span>
-          
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/10/Sinks%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="ZhiMy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zmmmmy's Blog">
+      <meta itemprop="description" content="记录学习与成长">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Sinks详解 | Zmmmmy's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Sinks详解
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-10 00:00:00" itemprop="dateCreated datePublished" datetime="2026-01-10T00:00:00+08:00">2026-01-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-22 15:44:14" itemprop="dateModified" datetime="2026-01-22T15:44:14+08:00">2026-01-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/Spring/Reactive-Streams/" itemprop="url" rel="index"><span itemprop="name">Reactive Streams</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
         </div>
-
-        
-          
-  <div class="mt-3">
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-author" aria-hidden="true"></i>
-        ZhiMy
-      </span>
-    
-    
-      <span class="post-meta">
-        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-01-10 00:00" pubdate>
-          2026-01-10
-        </time>
-      </span>
-    
-  </div>
-
-  <div class="mt-1">
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-chart"></i>
-        
-          1.9k 字
-        
-      </span>
-    
-
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-clock-fill"></i>
-        
-        
-        
-          17 分钟
-        
-      </span>
-    
+      </header>
 
     
     
-  </div>
-
-
-        
-      </div>
-
-      
-    </div>
-  </div>
-</div>
-
-</div>
-
-  </header>
-
-  <main>
     
-      
-
-<div class="container-fluid nopadding-x">
-  <div class="row nomargin-x">
-    <div class="side-col d-none d-lg-block col-lg-2">
-      
-
-    </div>
-
-    <div class="col-lg-8 nopadding-x-md">
-      <div class="container nopadding-x-md" id="board-ctn">
-        <div id="board">
-          <article class="post-content mx-auto">
-            <h1 id="seo-header">Sinks详解</h1>
-            
-              <p id="updated-time" class="note note-info" style="">
-                
-                  
-                    <!-- compatible with older versions-->
-                    本文最后更新于2026年1月22日 下午
-                  
-                
-              </p>
-            
-            
-              <div class="markdown-body">
-                
-                <h1 id="Sinks-详解"><a href="#Sinks-详解" class="headerlink" title="Sinks 详解"></a>Sinks 详解</h1><h2 id="什么是-Sinks"><a href="#什么是-Sinks" class="headerlink" title="什么是 Sinks"></a>什么是 Sinks</h2><p><strong>Sinks 是 Reactor 提供的”手动发送数据”的工具</strong>，让你可以在代码中主动 push 数据到响应式流中。</p>
-<h3 id="核心问题：Mono-Flux-的局限"><a href="#核心问题：Mono-Flux-的局限" class="headerlink" title="核心问题：Mono&#x2F;Flux 的局限"></a>核心问题：Mono&#x2F;Flux 的局限</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// Mono/Flux 通常是&quot;被动&quot;的 - 数据在创建时就确定了</span><br>Mono.just(<span class="hljs-string">&quot;hello&quot;</span>);           <span class="hljs-comment">// 数据已确定</span><br>Flux.fromIterable(list);      <span class="hljs-comment">// 数据已确定</span><br>Flux.interval(Duration.ofSeconds(<span class="hljs-number">1</span>));  <span class="hljs-comment">// 数据按规则生成</span><br></code></pre></td></tr></table></figure>
+    <div class="post-body" itemprop="articleBody"><h1 id="Sinks-详解"><a href="#Sinks-详解" class="headerlink" title="Sinks 详解"></a>Sinks 详解</h1><h2 id="什么是-Sinks"><a href="#什么是-Sinks" class="headerlink" title="什么是 Sinks"></a>什么是 Sinks</h2><p><strong>Sinks 是 Reactor 提供的”手动发送数据”的工具</strong>，让你可以在代码中主动 push 数据到响应式流中。</p>
+<h3 id="核心问题：Mono-Flux-的局限"><a href="#核心问题：Mono-Flux-的局限" class="headerlink" title="核心问题：Mono&#x2F;Flux 的局限"></a>核心问题：Mono&#x2F;Flux 的局限</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Mono/Flux 通常是&quot;被动&quot;的 - 数据在创建时就确定了</span></span><br><span class="line">Mono.just(<span class="string">&quot;hello&quot;</span>);           <span class="comment">// 数据已确定</span></span><br><span class="line">Flux.fromIterable(list);      <span class="comment">// 数据已确定</span></span><br><span class="line">Flux.interval(Duration.ofSeconds(<span class="number">1</span>));  <span class="comment">// 数据按规则生成</span></span><br></pre></td></tr></table></figure>
 
 <p><strong>但有些场景需要”主动”发送数据</strong>：</p>
 <ul>
@@ -306,30 +296,30 @@
 <li>异步回调结果</li>
 <li>多个地方产生数据，汇聚到一个流</li>
 </ul>
-<h3 id="Sinks-的作用"><a href="#Sinks-的作用" class="headerlink" title="Sinks 的作用"></a>Sinks 的作用</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// Sinks 让你可以&quot;主动&quot;发送数据</span><br>Sinks.Many&lt;String&gt; sink = Sinks.many().multicast().onBackpressureBuffer();<br><br><span class="hljs-comment">// 在任何地方、任何时候发送数据</span><br>sink.tryEmitNext(<span class="hljs-string">&quot;消息1&quot;</span>);<br>sink.tryEmitNext(<span class="hljs-string">&quot;消息2&quot;</span>);<br><br><span class="hljs-comment">// 订阅者可以收到这些数据</span><br>sink.asFlux().subscribe(System.out::println);<br></code></pre></td></tr></table></figure>
+<h3 id="Sinks-的作用"><a href="#Sinks-的作用" class="headerlink" title="Sinks 的作用"></a>Sinks 的作用</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Sinks 让你可以&quot;主动&quot;发送数据</span></span><br><span class="line">Sinks.Many&lt;String&gt; sink = Sinks.many().multicast().onBackpressureBuffer();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在任何地方、任何时候发送数据</span></span><br><span class="line">sink.tryEmitNext(<span class="string">&quot;消息1&quot;</span>);</span><br><span class="line">sink.tryEmitNext(<span class="string">&quot;消息2&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 订阅者可以收到这些数据</span></span><br><span class="line">sink.asFlux().subscribe(System.out::println);</span><br></pre></td></tr></table></figure>
 
 <hr>
-<h2 id="Sinks-与-Mono-Flux-的关系"><a href="#Sinks-与-Mono-Flux-的关系" class="headerlink" title="Sinks 与 Mono&#x2F;Flux 的关系"></a>Sinks 与 Mono&#x2F;Flux 的关系</h2><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs stylus">┌─────────────────────────────────────────────────────────────┐<br>│                        数据生产方式                          │<br>├─────────────────────────────────────────────────────────────┤<br>│                                                             │<br>│   Mono/Flux (被动)              Sinks (主动)                │<br>│   ─────────────────            ─────────────                │<br>│   数据在创建时确定              数据可以随时发送              │<br>│   <span class="hljs-built_in">just</span>(), <span class="hljs-built_in">fromIterable</span>()       <span class="hljs-built_in">tryEmitNext</span>()               │<br>│   <span class="hljs-built_in">interval</span>(), <span class="hljs-built_in">range</span>()          <span class="hljs-built_in">tryEmitComplete</span>()           │<br>│                                                             │<br>│                    ↓ 转换 ↓                                 │<br>│                                                             │<br>│              sink<span class="hljs-selector-class">.asFlux</span>() → Flux&lt;T&gt;                        │<br>│              sink<span class="hljs-selector-class">.asMono</span>() → Mono&lt;T&gt;                        │<br>│                                                             │<br>│   最终都是 Flux/Mono，订阅者无感知差异                        │<br>└─────────────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+<h2 id="Sinks-与-Mono-Flux-的关系"><a href="#Sinks-与-Mono-Flux-的关系" class="headerlink" title="Sinks 与 Mono&#x2F;Flux 的关系"></a>Sinks 与 Mono&#x2F;Flux 的关系</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────────────────────────────┐</span><br><span class="line">│                        数据生产方式                          │</span><br><span class="line">├─────────────────────────────────────────────────────────────┤</span><br><span class="line">│                                                             │</span><br><span class="line">│   Mono/Flux (被动)              Sinks (主动)                │</span><br><span class="line">│   ─────────────────            ─────────────                │</span><br><span class="line">│   数据在创建时确定              数据可以随时发送              │</span><br><span class="line">│   just(), fromIterable()       tryEmitNext()               │</span><br><span class="line">│   interval(), range()          tryEmitComplete()           │</span><br><span class="line">│                                                             │</span><br><span class="line">│                    ↓ 转换 ↓                                 │</span><br><span class="line">│                                                             │</span><br><span class="line">│              sink.asFlux() → Flux&lt;T&gt;                        │</span><br><span class="line">│              sink.asMono() → Mono&lt;T&gt;                        │</span><br><span class="line">│                                                             │</span><br><span class="line">│   最终都是 Flux/Mono，订阅者无感知差异                        │</span><br><span class="line">└─────────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
 
 <p>本质：Sinks 是 Flux&#x2F;Mono 的数据源，它生产数据，Flux&#x2F;Mono 传递数据。</p>
 <hr>
 <h2 id="Sinks-的三种类型"><a href="#Sinks-的三种类型" class="headerlink" title="Sinks 的三种类型"></a>Sinks 的三种类型</h2><h3 id="1-Sinks-One-单值（对应-Mono）"><a href="#1-Sinks-One-单值（对应-Mono）" class="headerlink" title="1. Sinks.One - 单值（对应 Mono）"></a>1. Sinks.One - 单值（对应 Mono）</h3><p>只能发送 0 或 1 个值，然后完成。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java">Sinks.One&lt;String&gt; sink = Sinks.one();<br><br><span class="hljs-comment">// 发送一个值</span><br>sink.tryEmitValue(<span class="hljs-string">&quot;结果&quot;</span>);<br><br><span class="hljs-comment">// 转为 Mono</span><br>Mono&lt;String&gt; mono = sink.asMono();<br>mono.subscribe(System.out::println);  <span class="hljs-comment">// 输出: 结果</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Sinks.One&lt;String&gt; sink = Sinks.one();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 发送一个值</span></span><br><span class="line">sink.tryEmitValue(<span class="string">&quot;结果&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转为 Mono</span></span><br><span class="line">Mono&lt;String&gt; mono = sink.asMono();</span><br><span class="line">mono.subscribe(System.out::println);  <span class="comment">// 输出: 结果</span></span><br></pre></td></tr></table></figure>
 
 <p>使用场景：异步操作的单个结果</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 示例：封装异步回调</span><br><span class="hljs-keyword">public</span> Mono&lt;User&gt; <span class="hljs-title function_">fetchUserAsync</span><span class="hljs-params">(Long id)</span> &#123;<br>    Sinks.One&lt;User&gt; sink = Sinks.one();<br>    <br>    <span class="hljs-comment">// 假设这是一个回调式的 API</span><br>    asyncClient.getUser(id, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Callback</span>&lt;User&gt;() &#123;<br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onSuccess</span><span class="hljs-params">(User user)</span> &#123;<br>            sink.tryEmitValue(user);  <span class="hljs-comment">// 成功时发送值</span><br>        &#125;<br>        <br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onError</span><span class="hljs-params">(Exception e)</span> &#123;<br>            sink.tryEmitError(e);     <span class="hljs-comment">// 失败时发送错误</span><br>        &#125;<br>    &#125;);<br>    <br>    <span class="hljs-keyword">return</span> sink.asMono();<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 示例：封装异步回调</span></span><br><span class="line"><span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">fetchUserAsync</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">    Sinks.One&lt;User&gt; sink = Sinks.one();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 假设这是一个回调式的 API</span></span><br><span class="line">    asyncClient.getUser(id, <span class="keyword">new</span> <span class="title class_">Callback</span>&lt;User&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onSuccess</span><span class="params">(User user)</span> &#123;</span><br><span class="line">            sink.tryEmitValue(user);  <span class="comment">// 成功时发送值</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(Exception e)</span> &#123;</span><br><span class="line">            sink.tryEmitError(e);     <span class="comment">// 失败时发送错误</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> sink.asMono();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="2-Sinks-Empty-无值（对应-Mono）"><a href="#2-Sinks-Empty-无值（对应-Mono）" class="headerlink" title="2. Sinks.Empty - 无值（对应 Mono）"></a>2. Sinks.Empty - 无值（对应 Mono<Void>）</h3><p>只发送完成或错误信号，不发送值。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java">Sinks.Empty&lt;Void&gt; sink = Sinks.empty();<br><br><span class="hljs-comment">// 发送完成信号</span><br>sink.tryEmitEmpty();<br><br><span class="hljs-comment">// 转为 Mono&lt;Void&gt;</span><br>Mono&lt;Void&gt; mono = sink.asMono();<br>mono.subscribe(<br>    v -&gt; &#123;&#125;,<br>    e -&gt; &#123;&#125;,<br>    () -&gt; System.out.println(<span class="hljs-string">&quot;完成了&quot;</span>)  <span class="hljs-comment">// 输出: 完成了</span><br>);<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Sinks.Empty&lt;Void&gt; sink = Sinks.empty();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 发送完成信号</span></span><br><span class="line">sink.tryEmitEmpty();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转为 Mono&lt;Void&gt;</span></span><br><span class="line">Mono&lt;Void&gt; mono = sink.asMono();</span><br><span class="line">mono.subscribe(</span><br><span class="line">    v -&gt; &#123;&#125;,</span><br><span class="line">    e -&gt; &#123;&#125;,</span><br><span class="line">    () -&gt; System.out.println(<span class="string">&quot;完成了&quot;</span>)  <span class="comment">// 输出: 完成了</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 
 <p>使用场景：只关心操作是否完成，不关心返回值</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 示例：等待初始化完成</span><br><span class="hljs-keyword">public</span> Mono&lt;Void&gt; <span class="hljs-title function_">waitForInit</span><span class="hljs-params">()</span> &#123;<br>    Sinks.Empty&lt;Void&gt; sink = Sinks.empty();<br>    <br>    initService.onReady(() -&gt; sink.tryEmitEmpty());<br>    <br>    <span class="hljs-keyword">return</span> sink.asMono();<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 示例：等待初始化完成</span></span><br><span class="line"><span class="keyword">public</span> Mono&lt;Void&gt; <span class="title function_">waitForInit</span><span class="params">()</span> &#123;</span><br><span class="line">    Sinks.Empty&lt;Void&gt; sink = Sinks.empty();</span><br><span class="line">    </span><br><span class="line">    initService.onReady(() -&gt; sink.tryEmitEmpty());</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> sink.asMono();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="3-Sinks-Many-多值（对应-Flux）"><a href="#3-Sinks-Many-多值（对应-Flux）" class="headerlink" title="3. Sinks.Many - 多值（对应 Flux）"></a>3. Sinks.Many - 多值（对应 Flux）</h3><p>可以发送 0 到 N 个值，这是最常用的类型。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java">Sinks.Many&lt;String&gt; sink = Sinks.many().multicast().onBackpressureBuffer();<br><br><span class="hljs-comment">// 发送多个值</span><br>sink.tryEmitNext(<span class="hljs-string">&quot;消息1&quot;</span>);<br>sink.tryEmitNext(<span class="hljs-string">&quot;消息2&quot;</span>);<br>sink.tryEmitNext(<span class="hljs-string">&quot;消息3&quot;</span>);<br>sink.tryEmitComplete();<br><br><span class="hljs-comment">// 转为 Flux</span><br>Flux&lt;String&gt; flux = sink.asFlux();<br>flux.subscribe(System.out::println);<br><span class="hljs-comment">// 输出: 消息1, 消息2, 消息3</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Sinks.Many&lt;String&gt; sink = Sinks.many().multicast().onBackpressureBuffer();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 发送多个值</span></span><br><span class="line">sink.tryEmitNext(<span class="string">&quot;消息1&quot;</span>);</span><br><span class="line">sink.tryEmitNext(<span class="string">&quot;消息2&quot;</span>);</span><br><span class="line">sink.tryEmitNext(<span class="string">&quot;消息3&quot;</span>);</span><br><span class="line">sink.tryEmitComplete();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转为 Flux</span></span><br><span class="line">Flux&lt;String&gt; flux = sink.asFlux();</span><br><span class="line">flux.subscribe(System.out::println);</span><br><span class="line"><span class="comment">// 输出: 消息1, 消息2, 消息3</span></span><br></pre></td></tr></table></figure>
 
 <hr>
-<h2 id="Sinks-Many-的三种模式"><a href="#Sinks-Many-的三种模式" class="headerlink" title="Sinks.Many 的三种模式"></a>Sinks.Many 的三种模式</h2><h3 id="1-Unicast（单播）-只能有一个订阅者"><a href="#1-Unicast（单播）-只能有一个订阅者" class="headerlink" title="1. Unicast（单播）- 只能有一个订阅者"></a>1. Unicast（单播）- 只能有一个订阅者</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java">Sinks.Many&lt;String&gt; sink = Sinks.many().unicast().onBackpressureBuffer();<br><br>Flux&lt;String&gt; flux = sink.asFlux();<br><br><span class="hljs-comment">// 第一个订阅者 </span><br>flux.subscribe(v -&gt; System.out.println(<span class="hljs-string">&quot;订阅者1: &quot;</span> + v));<br><br><span class="hljs-comment">// 第二个订阅者  会报错！</span><br>flux.subscribe(v -&gt; System.out.println(<span class="hljs-string">&quot;订阅者2: &quot;</span> + v));<br><span class="hljs-comment">// 抛出 IllegalStateException</span><br></code></pre></td></tr></table></figure>
+<h2 id="Sinks-Many-的三种模式"><a href="#Sinks-Many-的三种模式" class="headerlink" title="Sinks.Many 的三种模式"></a>Sinks.Many 的三种模式</h2><h3 id="1-Unicast（单播）-只能有一个订阅者"><a href="#1-Unicast（单播）-只能有一个订阅者" class="headerlink" title="1. Unicast（单播）- 只能有一个订阅者"></a>1. Unicast（单播）- 只能有一个订阅者</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Sinks.Many&lt;String&gt; sink = Sinks.many().unicast().onBackpressureBuffer();</span><br><span class="line"></span><br><span class="line">Flux&lt;String&gt; flux = sink.asFlux();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 第一个订阅者 </span></span><br><span class="line">flux.subscribe(v -&gt; System.out.println(<span class="string">&quot;订阅者1: &quot;</span> + v));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 第二个订阅者  会报错！</span></span><br><span class="line">flux.subscribe(v -&gt; System.out.println(<span class="string">&quot;订阅者2: &quot;</span> + v));</span><br><span class="line"><span class="comment">// 抛出 IllegalStateException</span></span><br></pre></td></tr></table></figure>
 
 <p>特点：</p>
 <ul>
@@ -337,7 +327,7 @@
 <li>内存效率高（不需要维护多个订阅者状态）</li>
 <li>适合点对点通信</li>
 </ul>
-<h3 id="2-Multicast（多播）-多个订阅者共享"><a href="#2-Multicast（多播）-多个订阅者共享" class="headerlink" title="2. Multicast（多播）- 多个订阅者共享"></a>2. Multicast（多播）- 多个订阅者共享</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java">Sinks.Many&lt;String&gt; sink = Sinks.many().multicast().onBackpressureBuffer();<br><br>Flux&lt;String&gt; flux = sink.asFlux();<br><br><span class="hljs-comment">// 多个订阅者都可以收到数据 </span><br>flux.subscribe(v -&gt; System.out.println(<span class="hljs-string">&quot;订阅者1: &quot;</span> + v));<br>flux.subscribe(v -&gt; System.out.println(<span class="hljs-string">&quot;订阅者2: &quot;</span> + v));<br><br>sink.tryEmitNext(<span class="hljs-string">&quot;Hello&quot;</span>);<br><span class="hljs-comment">// 输出:</span><br><span class="hljs-comment">// 订阅者1: Hello</span><br><span class="hljs-comment">// 订阅者2: Hello</span><br></code></pre></td></tr></table></figure>
+<h3 id="2-Multicast（多播）-多个订阅者共享"><a href="#2-Multicast（多播）-多个订阅者共享" class="headerlink" title="2. Multicast（多播）- 多个订阅者共享"></a>2. Multicast（多播）- 多个订阅者共享</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Sinks.Many&lt;String&gt; sink = Sinks.many().multicast().onBackpressureBuffer();</span><br><span class="line"></span><br><span class="line">Flux&lt;String&gt; flux = sink.asFlux();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 多个订阅者都可以收到数据 </span></span><br><span class="line">flux.subscribe(v -&gt; System.out.println(<span class="string">&quot;订阅者1: &quot;</span> + v));</span><br><span class="line">flux.subscribe(v -&gt; System.out.println(<span class="string">&quot;订阅者2: &quot;</span> + v));</span><br><span class="line"></span><br><span class="line">sink.tryEmitNext(<span class="string">&quot;Hello&quot;</span>);</span><br><span class="line"><span class="comment">// 输出:</span></span><br><span class="line"><span class="comment">// 订阅者1: Hello</span></span><br><span class="line"><span class="comment">// 订阅者2: Hello</span></span><br></pre></td></tr></table></figure>
 
 <p>特点：</p>
 <ul>
@@ -345,12 +335,12 @@
 <li>热流：新订阅者只能收到订阅后的数据</li>
 <li>适合广播场景</li>
 </ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 热流特性演示</span><br>Sinks.Many&lt;String&gt; sink = Sinks.many().multicast().onBackpressureBuffer();<br><br>sink.tryEmitNext(<span class="hljs-string">&quot;消息1&quot;</span>);  <span class="hljs-comment">// 此时没有订阅者，消息丢失</span><br><br>Flux&lt;String&gt; flux = sink.asFlux();<br>flux.subscribe(v -&gt; System.out.println(<span class="hljs-string">&quot;收到: &quot;</span> + v));<br><br>sink.tryEmitNext(<span class="hljs-string">&quot;消息2&quot;</span>);  <span class="hljs-comment">// 订阅者收到</span><br><span class="hljs-comment">// 输出: 收到: 消息2</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 热流特性演示</span></span><br><span class="line">Sinks.Many&lt;String&gt; sink = Sinks.many().multicast().onBackpressureBuffer();</span><br><span class="line"></span><br><span class="line">sink.tryEmitNext(<span class="string">&quot;消息1&quot;</span>);  <span class="comment">// 此时没有订阅者，消息丢失</span></span><br><span class="line"></span><br><span class="line">Flux&lt;String&gt; flux = sink.asFlux();</span><br><span class="line">flux.subscribe(v -&gt; System.out.println(<span class="string">&quot;收到: &quot;</span> + v));</span><br><span class="line"></span><br><span class="line">sink.tryEmitNext(<span class="string">&quot;消息2&quot;</span>);  <span class="comment">// 订阅者收到</span></span><br><span class="line"><span class="comment">// 输出: 收到: 消息2</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="3-Replay（重放）-新订阅者可收到历史数据"><a href="#3-Replay（重放）-新订阅者可收到历史数据" class="headerlink" title="3. Replay（重放）- 新订阅者可收到历史数据"></a>3. Replay（重放）- 新订阅者可收到历史数据</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 重放所有历史数据</span><br>Sinks.Many&lt;String&gt; sink = Sinks.many().replay().all();<br><br>sink.tryEmitNext(<span class="hljs-string">&quot;消息1&quot;</span>);<br>sink.tryEmitNext(<span class="hljs-string">&quot;消息2&quot;</span>);<br><br><span class="hljs-comment">// 新订阅者可以收到之前的数据！</span><br>sink.asFlux().subscribe(v -&gt; System.out.println(<span class="hljs-string">&quot;收到: &quot;</span> + v));<br><span class="hljs-comment">// 输出:</span><br><span class="hljs-comment">// 收到: 消息1</span><br><span class="hljs-comment">// 收到: 消息2</span><br></code></pre></td></tr></table></figure>
+<h3 id="3-Replay（重放）-新订阅者可收到历史数据"><a href="#3-Replay（重放）-新订阅者可收到历史数据" class="headerlink" title="3. Replay（重放）- 新订阅者可收到历史数据"></a>3. Replay（重放）- 新订阅者可收到历史数据</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 重放所有历史数据</span></span><br><span class="line">Sinks.Many&lt;String&gt; sink = Sinks.many().replay().all();</span><br><span class="line"></span><br><span class="line">sink.tryEmitNext(<span class="string">&quot;消息1&quot;</span>);</span><br><span class="line">sink.tryEmitNext(<span class="string">&quot;消息2&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 新订阅者可以收到之前的数据！</span></span><br><span class="line">sink.asFlux().subscribe(v -&gt; System.out.println(<span class="string">&quot;收到: &quot;</span> + v));</span><br><span class="line"><span class="comment">// 输出:</span></span><br><span class="line"><span class="comment">// 收到: 消息1</span></span><br><span class="line"><span class="comment">// 收到: 消息2</span></span><br></pre></td></tr></table></figure>
 
 <p>Replay 的变体：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 重放所有</span><br>Sinks.many().replay().all();<br><br><span class="hljs-comment">// 重放最近 N 条</span><br>Sinks.many().replay().limit(<span class="hljs-number">10</span>);<br><br><span class="hljs-comment">// 只重放最新一条</span><br>Sinks.many().replay().latest();<br><br><span class="hljs-comment">// 重放指定时间内的数据</span><br>Sinks.many().replay().limit(Duration.ofMinutes(<span class="hljs-number">5</span>));<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 重放所有</span></span><br><span class="line">Sinks.many().replay().all();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 重放最近 N 条</span></span><br><span class="line">Sinks.many().replay().limit(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 只重放最新一条</span></span><br><span class="line">Sinks.many().replay().latest();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 重放指定时间内的数据</span></span><br><span class="line">Sinks.many().replay().limit(Duration.ofMinutes(<span class="number">5</span>));</span><br></pre></td></tr></table></figure>
 
 <hr>
 <h2 id="三种模式对比"><a href="#三种模式对比" class="headerlink" title="三种模式对比"></a>三种模式对比</h2><table>
@@ -382,7 +372,7 @@
 </tr>
 </tbody></table>
 <hr>
-<h2 id="发送数据的方法"><a href="#发送数据的方法" class="headerlink" title="发送数据的方法"></a>发送数据的方法</h2><h3 id="tryEmitXxx-vs-emitXxx"><a href="#tryEmitXxx-vs-emitXxx" class="headerlink" title="tryEmitXxx vs emitXxx"></a>tryEmitXxx vs emitXxx</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java">Sinks.Many&lt;String&gt; sink = Sinks.many().multicast().onBackpressureBuffer();<br><br><span class="hljs-comment">// 方式1: tryEmitXxx - 返回结果，不抛异常</span><br>Sinks.<span class="hljs-type">EmitResult</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> sink.tryEmitNext(<span class="hljs-string">&quot;data&quot;</span>);<br><span class="hljs-keyword">if</span> (result.isFailure()) &#123;<br>    <span class="hljs-comment">// 处理失败</span><br>    System.out.println(<span class="hljs-string">&quot;发送失败: &quot;</span> + result);<br>&#125;<br><br><span class="hljs-comment">// 方式2: emitXxx - 可自定义失败处理</span><br>sink.emitNext(<span class="hljs-string">&quot;data&quot;</span>, (signalType, emitResult) -&gt; &#123;<br>    <span class="hljs-comment">// 返回 true 表示重试，false 表示放弃</span><br>    <span class="hljs-keyword">return</span> emitResult == Sinks.EmitResult.FAIL_NON_SERIALIZED;<br>&#125;);<br></code></pre></td></tr></table></figure>
+<h2 id="发送数据的方法"><a href="#发送数据的方法" class="headerlink" title="发送数据的方法"></a>发送数据的方法</h2><h3 id="tryEmitXxx-vs-emitXxx"><a href="#tryEmitXxx-vs-emitXxx" class="headerlink" title="tryEmitXxx vs emitXxx"></a>tryEmitXxx vs emitXxx</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Sinks.Many&lt;String&gt; sink = Sinks.many().multicast().onBackpressureBuffer();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方式1: tryEmitXxx - 返回结果，不抛异常</span></span><br><span class="line">Sinks.<span class="type">EmitResult</span> <span class="variable">result</span> <span class="operator">=</span> sink.tryEmitNext(<span class="string">&quot;data&quot;</span>);</span><br><span class="line"><span class="keyword">if</span> (result.isFailure()) &#123;</span><br><span class="line">    <span class="comment">// 处理失败</span></span><br><span class="line">    System.out.println(<span class="string">&quot;发送失败: &quot;</span> + result);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方式2: emitXxx - 可自定义失败处理</span></span><br><span class="line">sink.emitNext(<span class="string">&quot;data&quot;</span>, (signalType, emitResult) -&gt; &#123;</span><br><span class="line">    <span class="comment">// 返回 true 表示重试，false 表示放弃</span></span><br><span class="line">    <span class="keyword">return</span> emitResult == Sinks.EmitResult.FAIL_NON_SERIALIZED;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 
 <h3 id="EmitResult-的类型"><a href="#EmitResult-的类型" class="headerlink" title="EmitResult 的类型"></a>EmitResult 的类型</h3><table>
 <thead>
@@ -416,16 +406,16 @@
 <td>没有订阅者（unicast）</td>
 </tr>
 </tbody></table>
-<h3 id="常用的-EmitFailureHandler"><a href="#常用的-EmitFailureHandler" class="headerlink" title="常用的 EmitFailureHandler"></a>常用的 EmitFailureHandler</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 快速失败 - 失败就放弃</span><br>Sinks.EmitFailureHandler.FAIL_FAST<br><br><span class="hljs-comment">// 忙等待重试 - 适合并发场景</span><br>Sinks.EmitFailureHandler.busyLooping(Duration.ofMillis(<span class="hljs-number">100</span>))<br></code></pre></td></tr></table></figure>
+<h3 id="常用的-EmitFailureHandler"><a href="#常用的-EmitFailureHandler" class="headerlink" title="常用的 EmitFailureHandler"></a>常用的 EmitFailureHandler</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 快速失败 - 失败就放弃</span></span><br><span class="line">Sinks.EmitFailureHandler.FAIL_FAST</span><br><span class="line"></span><br><span class="line"><span class="comment">// 忙等待重试 - 适合并发场景</span></span><br><span class="line">Sinks.EmitFailureHandler.busyLooping(Duration.ofMillis(<span class="number">100</span>))</span><br></pre></td></tr></table></figure>
 
 <hr>
-<h2 id="实战示例"><a href="#实战示例" class="headerlink" title="实战示例"></a>实战示例</h2><h3 id="示例1：WebSocket-消息推送"><a href="#示例1：WebSocket-消息推送" class="headerlink" title="示例1：WebSocket 消息推送"></a>示例1：WebSocket 消息推送</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">WebSocketHandler</span> &#123;<br>    <br>    <span class="hljs-comment">// 用于向所有连接的客户端广播消息</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Sinks.Many&lt;String&gt; messageSink = <br>        Sinks.many().multicast().onBackpressureBuffer();<br>    <br>    <span class="hljs-comment">// 获取消息流，供 WebSocket 订阅</span><br>    <span class="hljs-keyword">public</span> Flux&lt;String&gt; <span class="hljs-title function_">getMessageStream</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> messageSink.asFlux();<br>    &#125;<br>    <br>    <span class="hljs-comment">// 发送消息给所有客户端</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">broadcast</span><span class="hljs-params">(String message)</span> &#123;<br>        messageSink.tryEmitNext(message);<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// WebSocket 配置</span><br><span class="hljs-meta">@Bean</span><br><span class="hljs-keyword">public</span> HandlerMapping <span class="hljs-title function_">webSocketMapping</span><span class="hljs-params">(WebSocketHandler handler)</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SimpleUrlHandlerMapping</span>(Map.of(<br>        <span class="hljs-string">&quot;/ws&quot;</span>, session -&gt; session.send(<br>            handler.getMessageStream()<br>                .map(session::textMessage)<br>        )<br>    ), -<span class="hljs-number">1</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="实战示例"><a href="#实战示例" class="headerlink" title="实战示例"></a>实战示例</h2><h3 id="示例1：WebSocket-消息推送"><a href="#示例1：WebSocket-消息推送" class="headerlink" title="示例1：WebSocket 消息推送"></a>示例1：WebSocket 消息推送</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WebSocketHandler</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 用于向所有连接的客户端广播消息</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Sinks.Many&lt;String&gt; messageSink = </span><br><span class="line">        Sinks.many().multicast().onBackpressureBuffer();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 获取消息流，供 WebSocket 订阅</span></span><br><span class="line">    <span class="keyword">public</span> Flux&lt;String&gt; <span class="title function_">getMessageStream</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> messageSink.asFlux();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 发送消息给所有客户端</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">broadcast</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        messageSink.tryEmitNext(message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// WebSocket 配置</span></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="keyword">public</span> HandlerMapping <span class="title function_">webSocketMapping</span><span class="params">(WebSocketHandler handler)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">SimpleUrlHandlerMapping</span>(Map.of(</span><br><span class="line">        <span class="string">&quot;/ws&quot;</span>, session -&gt; session.send(</span><br><span class="line">            handler.getMessageStream()</span><br><span class="line">                .map(session::textMessage)</span><br><span class="line">        )</span><br><span class="line">    ), -<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="示例2：事件总线"><a href="#示例2：事件总线" class="headerlink" title="示例2：事件总线"></a>示例2：事件总线</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EventBus</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Sinks.Many&lt;Event&gt; eventSink = <br>        Sinks.many().multicast().onBackpressureBuffer();<br>    <br>    <span class="hljs-comment">// 发布事件</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">publish</span><span class="hljs-params">(Event event)</span> &#123;<br>        eventSink.tryEmitNext(event);<br>    &#125;<br>    <br>    <span class="hljs-comment">// 订阅特定类型的事件</span><br>    <span class="hljs-keyword">public</span> &lt;T <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Event</span>&gt; Flux&lt;T&gt; <span class="hljs-title function_">subscribe</span><span class="hljs-params">(Class&lt;T&gt; eventType)</span> &#123;<br>        <span class="hljs-keyword">return</span> eventSink.asFlux()<br>            .filter(eventType::isInstance)<br>            .cast(eventType);<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// 使用</span><br>eventBus.subscribe(UserCreatedEvent.class)<br>    .subscribe(event -&gt; System.out.println(<span class="hljs-string">&quot;用户创建: &quot;</span> + event.getUserId()));<br><br>eventBus.publish(<span class="hljs-keyword">new</span> <span class="hljs-title class_">UserCreatedEvent</span>(<span class="hljs-number">123L</span>));<br></code></pre></td></tr></table></figure>
+<h3 id="示例2：事件总线"><a href="#示例2：事件总线" class="headerlink" title="示例2：事件总线"></a>示例2：事件总线</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">EventBus</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Sinks.Many&lt;Event&gt; eventSink = </span><br><span class="line">        Sinks.many().multicast().onBackpressureBuffer();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 发布事件</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">publish</span><span class="params">(Event event)</span> &#123;</span><br><span class="line">        eventSink.tryEmitNext(event);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 订阅特定类型的事件</span></span><br><span class="line">    <span class="keyword">public</span> &lt;T <span class="keyword">extends</span> <span class="title class_">Event</span>&gt; Flux&lt;T&gt; <span class="title function_">subscribe</span><span class="params">(Class&lt;T&gt; eventType)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> eventSink.asFlux()</span><br><span class="line">            .filter(eventType::isInstance)</span><br><span class="line">            .cast(eventType);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用</span></span><br><span class="line">eventBus.subscribe(UserCreatedEvent.class)</span><br><span class="line">    .subscribe(event -&gt; System.out.println(<span class="string">&quot;用户创建: &quot;</span> + event.getUserId()));</span><br><span class="line"></span><br><span class="line">eventBus.publish(<span class="keyword">new</span> <span class="title class_">UserCreatedEvent</span>(<span class="number">123L</span>));</span><br></pre></td></tr></table></figure>
 
-<h3 id="示例3：异步任务结果收集"><a href="#示例3：异步任务结果收集" class="headerlink" title="示例3：异步任务结果收集"></a>示例3：异步任务结果收集</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> Flux&lt;Result&gt; <span class="hljs-title function_">executeTasksAsync</span><span class="hljs-params">(List&lt;Task&gt; tasks)</span> &#123;<br>    Sinks.Many&lt;Result&gt; sink = Sinks.many().unicast().onBackpressureBuffer();<br>    <br>    <span class="hljs-type">AtomicInteger</span> <span class="hljs-variable">remaining</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AtomicInteger</span>(tasks.size());<br>    <br>    <span class="hljs-keyword">for</span> (Task task : tasks) &#123;<br>        CompletableFuture.runAsync(() -&gt; &#123;<br>            <span class="hljs-type">Result</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> task.execute();<br>            sink.tryEmitNext(result);<br>            <br>            <span class="hljs-keyword">if</span> (remaining.decrementAndGet() == <span class="hljs-number">0</span>) &#123;<br>                sink.tryEmitComplete();<br>            &#125;<br>        &#125;);<br>    &#125;<br>    <br>    <span class="hljs-keyword">return</span> sink.asFlux();<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="示例3：异步任务结果收集"><a href="#示例3：异步任务结果收集" class="headerlink" title="示例3：异步任务结果收集"></a>示例3：异步任务结果收集</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Flux&lt;Result&gt; <span class="title function_">executeTasksAsync</span><span class="params">(List&lt;Task&gt; tasks)</span> &#123;</span><br><span class="line">    Sinks.Many&lt;Result&gt; sink = Sinks.many().unicast().onBackpressureBuffer();</span><br><span class="line">    </span><br><span class="line">    <span class="type">AtomicInteger</span> <span class="variable">remaining</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AtomicInteger</span>(tasks.size());</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (Task task : tasks) &#123;</span><br><span class="line">        CompletableFuture.runAsync(() -&gt; &#123;</span><br><span class="line">            <span class="type">Result</span> <span class="variable">result</span> <span class="operator">=</span> task.execute();</span><br><span class="line">            sink.tryEmitNext(result);</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (remaining.decrementAndGet() == <span class="number">0</span>) &#123;</span><br><span class="line">                sink.tryEmitComplete();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> sink.asFlux();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="示例4：缓存最新状态"><a href="#示例4：缓存最新状态" class="headerlink" title="示例4：缓存最新状态"></a>示例4：缓存最新状态</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">StatusCache</span> &#123;<br>    <br>    <span class="hljs-comment">// 使用 replay().latest() 缓存最新状态</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Sinks.Many&lt;SystemStatus&gt; statusSink = <br>        Sinks.many().replay().latest();<br>    <br>    <span class="hljs-comment">// 更新状态</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">updateStatus</span><span class="hljs-params">(SystemStatus status)</span> &#123;<br>        statusSink.tryEmitNext(status);<br>    &#125;<br>    <br>    <span class="hljs-comment">// 获取当前状态（新订阅者立即收到最新状态）</span><br>    <span class="hljs-keyword">public</span> Mono&lt;SystemStatus&gt; <span class="hljs-title function_">getCurrentStatus</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> statusSink.asFlux().next();<br>    &#125;<br>    <br>    <span class="hljs-comment">// 监听状态变化</span><br>    <span class="hljs-keyword">public</span> Flux&lt;SystemStatus&gt; <span class="hljs-title function_">watchStatus</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> statusSink.asFlux();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="示例4：缓存最新状态"><a href="#示例4：缓存最新状态" class="headerlink" title="示例4：缓存最新状态"></a>示例4：缓存最新状态</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StatusCache</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 使用 replay().latest() 缓存最新状态</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Sinks.Many&lt;SystemStatus&gt; statusSink = </span><br><span class="line">        Sinks.many().replay().latest();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 更新状态</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateStatus</span><span class="params">(SystemStatus status)</span> &#123;</span><br><span class="line">        statusSink.tryEmitNext(status);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 获取当前状态（新订阅者立即收到最新状态）</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;SystemStatus&gt; <span class="title function_">getCurrentStatus</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> statusSink.asFlux().next();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 监听状态变化</span></span><br><span class="line">    <span class="keyword">public</span> Flux&lt;SystemStatus&gt; <span class="title function_">watchStatus</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> statusSink.asFlux();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <hr>
 <h2 id="Sinks-vs-旧版-Processor"><a href="#Sinks-vs-旧版-Processor" class="headerlink" title="Sinks vs 旧版 Processor"></a>Sinks vs 旧版 Processor</h2><p>Reactor 3.4 之前使用 <code>Processor</code>，现在已废弃：</p>
@@ -461,7 +451,7 @@
 </ul>
 <hr>
 <h2 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h2><p>Sinks 默认是线程安全的，但有性能开销。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 默认：线程安全</span><br>Sinks.Many&lt;String&gt; sink = Sinks.many().multicast().onBackpressureBuffer();<br><br><span class="hljs-comment">// 如果确定单线程使用，可以用 unsafe 版本提升性能</span><br>Sinks.Many&lt;String&gt; unsafeSink = Sinks.unsafe().many().multicast().onBackpressureBuffer();<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 默认：线程安全</span></span><br><span class="line">Sinks.Many&lt;String&gt; sink = Sinks.many().multicast().onBackpressureBuffer();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果确定单线程使用，可以用 unsafe 版本提升性能</span></span><br><span class="line">Sinks.Many&lt;String&gt; unsafeSink = Sinks.unsafe().many().multicast().onBackpressureBuffer();</span><br></pre></td></tr></table></figure>
 
 <p><strong>注意</strong>：<code>unsafe</code> 版本在多线程下会出问题，只在确定单线程时使用。</p>
 <hr>
@@ -512,414 +502,100 @@
 <li>WebFlux 核心组件</li>
 </ul>
 
-                
-              </div>
-            
-            <hr/>
-            <div>
-              <div class="post-metas my-3">
-  
-    <div class="post-meta mr-3 d-flex align-items-center">
-      <i class="iconfont icon-category"></i>
-      
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Java/" class="category-chain-item">Java</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/Java/Spring/" class="category-chain-item">Spring</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/Java/Spring/Reactive-Streams/" class="category-chain-item">Reactive Streams</a>
-  
-  
-
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
     </div>
-  
-  
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/Java/" class="print-no-link">#Java</a>
-      
-        <a href="/tags/Spring/" class="print-no-link">#Spring</a>
-      
-        <a href="/tags/ReactiveStreams/" class="print-no-link">#ReactiveStreams</a>
-      
-        <a href="/tags/Reactor/" class="print-no-link">#Reactor</a>
-      
-        <a href="/tags/Sinks/" class="print-no-link">#Sinks</a>
-      
-        <a href="/tags/%E7%83%AD%E6%B5%81/" class="print-no-link">#热流</a>
-      
-        <a href="/tags/%E5%A4%9A%E6%92%AD/" class="print-no-link">#多播</a>
-      
-    </div>
-  
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>ZhiMy
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://zmmmmy.github.io/2026/01/10/Sinks%E8%AF%A6%E8%A7%A3/" title="Sinks详解">https://zmmmmy.github.io/2026/01/10/Sinks详解/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
 </div>
 
-
-              
-  
-
-  <div class="license-box my-3">
-    <div class="license-title">
-      <div>Sinks详解</div>
-      <div>https://zmmmmy.github.io/2026/01/10/Sinks详解/</div>
-    </div>
-    <div class="license-meta">
-      
-        <div class="license-meta-item">
-          <div>作者</div>
-          <div>ZhiMy</div>
-        </div>
-      
-      
-        <div class="license-meta-item license-meta-date">
-          <div>发布于</div>
-          <div>2026-01-10</div>
-        </div>
-      
-      
-        <div class="license-meta-item license-meta-date">
-          <div>更新于</div>
-          <div>2026-01-22</div>
-        </div>
-      
-      
-        <div class="license-meta-item">
-          <div>许可协议</div>
-          <div>
-            
-              
-              
-                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
-                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
-                    <i class="iconfont icon-cc-by"></i>
-                  </span>
-                </a>
-              
-                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
-                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
-                    <i class="iconfont icon-cc-nc"></i>
-                  </span>
-                </a>
-              
-                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
-                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
-                    <i class="iconfont icon-cc-sa"></i>
-                  </span>
-                </a>
-              
-            
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+              <a href="/tags/Spring/" rel="tag"># Spring</a>
+              <a href="/tags/ReactiveStreams/" rel="tag"># ReactiveStreams</a>
+              <a href="/tags/Reactor/" rel="tag"># Reactor</a>
+              <a href="/tags/Sinks/" rel="tag"># Sinks</a>
+              <a href="/tags/%E7%83%AD%E6%B5%81/" rel="tag"># 热流</a>
+              <a href="/tags/%E5%A4%9A%E6%92%AD/" rel="tag"># 多播</a>
           </div>
-        </div>
-      
-    </div>
-    <div class="license-icon iconfont"></div>
-  </div>
 
+        
 
-
-              
-                <div class="post-prevnext my-3">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2026/01/10/ThreadLocal%E5%8E%9F%E7%90%86/" title="ThreadLocal原理">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">ThreadLocal原理</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2026/01/10/Webflux%E7%AE%80%E4%BB%8B/" title="Webflux简介">
-                        <span class="hidden-mobile">Webflux简介</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/01/10/%E5%93%8D%E5%BA%94%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/" rel="prev" title="响应式编程基础">
+                  <i class="fa fa-angle-left"></i> 响应式编程基础
+                </a>
             </div>
-
-            
-          </article>
-        </div>
-      </div>
-    </div>
-
-    <div class="side-col d-none d-lg-block col-lg-2">
-      
-  <aside class="sidebar" style="margin-left: -1rem">
-    <div id="toc">
-  <p class="toc-header">
-    <i class="iconfont icon-list"></i>
-    <span>目录</span>
-  </p>
-  <div class="toc-body" id="toc-body"></div>
-</div>
-
-
-
-  </aside>
-
-
-    </div>
-  </div>
+            <div class="post-nav-item">
+                <a href="/2026/01/10/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%AB%AF%E7%82%B9/" rel="next" title="函数式端点">
+                  函数式端点 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
 </div>
 
 
 
 
 
-  
 
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-
-
-
-
-    
-
-    
-      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-      </a>
-    
-
-    
-      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
 </div>
-
-    
-
-    
   </main>
 
-  <footer>
+  <footer class="footer">
     <div class="footer-inner">
-  
-    <div class="footer-content">
-       <a href="https://hexo.io" target="_blank" rel="nofollow noopener">Hexo</a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">Fluid</a> 
-    </div>
-  
-  
-  
-</div>
 
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">ZhiMy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
   </footer>
 
-  <!-- Scripts -->
   
-  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
-  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-  <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
-    NProgress.start()
-    window.addEventListener('load', function() {
-      NProgress.done();
-    })
-  </script>
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-
-<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
-<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
-<script  src="/js/events.js" ></script>
-<script  src="/js/plugins.js" ></script>
-
-
-  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
-  <script>
-    (function (window, document) {
-      var typing = Fluid.plugins.typing;
-      var subtitle = document.getElementById('subtitle');
-      if (!subtitle || !typing) {
-        return;
-      }
-      var text = subtitle.getAttribute('data-typed-text');
-      
-        typing(text);
-      
-    })(window, document);
-  </script>
-
-
-
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
-
-
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
-    var toc = jQuery('#toc');
-    if (toc.length === 0 || !window.tocbot) { return; }
-    var boardCtn = jQuery('#board-ctn');
-    var boardTop = boardCtn.offset().top;
-
-    window.tocbot.init(Object.assign({
-      tocSelector     : '#toc-body',
-      contentSelector : '.markdown-body',
-      linkClass       : 'tocbot-link',
-      activeLinkClass : 'tocbot-active-link',
-      listClass       : 'tocbot-list',
-      isCollapsedClass: 'tocbot-is-collapsed',
-      collapsibleClass: 'tocbot-is-collapsible',
-      scrollSmooth    : true,
-      includeTitleTags: true,
-      headingsOffset  : -boardTop,
-    }, CONFIG.toc));
-    if (toc.find('.toc-list-item').length > 0) {
-      toc.css('visibility', 'visible');
-    }
-
-    Fluid.events.registerRefreshCallback(function() {
-      if ('tocbot' in window) {
-        tocbot.refresh();
-        var toc = jQuery('#toc');
-        if (toc.length === 0 || !tocbot) {
-          return;
-        }
-        if (toc.find('.toc-list-item').length > 0) {
-          toc.css('visibility', 'visible');
-        }
-      }
-    });
-  });
-</script>
-
-
-  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
-
-  <script>Fluid.plugins.codeWidget();</script>
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
-    window.anchors.options = {
-      placement: CONFIG.anchorjs.placement,
-      visible  : CONFIG.anchorjs.visible
-    };
-    if (CONFIG.anchorjs.icon) {
-      window.anchors.options.icon = CONFIG.anchorjs.icon;
-    }
-    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
-    var res = [];
-    for (var item of el) {
-      res.push('.markdown-body > ' + item.trim());
-    }
-    if (CONFIG.anchorjs.placement === 'left') {
-      window.anchors.options.class = 'anchorjs-link-left';
-    }
-    window.anchors.add(res.join(', '));
-
-    Fluid.events.registerRefreshCallback(function() {
-      if ('anchors' in window) {
-        anchors.removeAll();
-        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
-        var res = [];
-        for (var item of el) {
-          res.push('.markdown-body > ' + item.trim());
-        }
-        if (CONFIG.anchorjs.placement === 'left') {
-          anchors.options.class = 'anchorjs-link-left';
-        }
-        anchors.add(res.join(', '));
-      }
-    });
-  });
-</script>
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
-    Fluid.plugins.fancyBox();
-  });
-</script>
-
-
-  <script>Fluid.plugins.imageCaption();</script>
-
-  <script  src="/js/local-search.js" ></script>
-
-
-
-
-
-<!-- 主题的启动项，将它保持在最底部 -->
-<!-- the boot of the theme, keep it at the bottom -->
-<script  src="/js/boot.js" ></script>
-
-
-  
-
-  <noscript>
-    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
-  </noscript>
 </body>
 </html>

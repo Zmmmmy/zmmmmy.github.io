@@ -1,24 +1,25 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=auto>
-
-
-
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
 
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
-  <link rel="icon" href="/img/fluid.png">
-  
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="ZhiMy">
-  <meta name="keywords" content="技术博客,编程">
-  
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zmmmmy.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
     <meta name="description" content="实战案例项目结构123456789101112131415161718webflux-demo&#x2F;├── src&#x2F;main&#x2F;java&#x2F;com&#x2F;example&#x2F;demo&#x2F;│   ├── DemoApplication.java│   ├── config&#x2F;│   │   └── RouterConfig.java│   ├── controller&#x2F;│   │   └── UserController">
 <meta property="og:type" content="article">
 <meta property="og:title" content="实战案例">
@@ -35,285 +36,274 @@
 <meta property="article:tag" content="WebFlux">
 <meta property="article:tag" content="实战">
 <meta property="article:tag" content="测试">
-<meta name="twitter:card" content="summary_large_image">
-  
-  
-  
-  <title>实战案例 - Zmmmmy&#39;s Blog</title>
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+<meta name="twitter:card" content="summary">
 
 
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+<link rel="canonical" href="https://zmmmmy.github.io/2026/01/10/%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B/">
 
 
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zmmmmy.github.io/2026/01/10/%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B/","path":"2026/01/10/实战案例/","title":"实战案例"}</script>
 
-<!-- 主题依赖的图标库，不要自行修改 -->
-<!-- Do not modify the link that theme dependent icons -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-
-  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
-  
-    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>实战案例 | Zmmmmy's Blog</title>
   
 
 
 
 
-  <script id="fluid-configs">
-    var Fluid = window.Fluid || {};
-    Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"zmmmmy.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2,"offset_top":300},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
-    if (CONFIG.web_analytics.follow_dnt) {
-      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
-      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
-    }
-  </script>
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
-  
+
 
 
   
-<meta name="generator" content="Hexo 8.1.1"></head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
 
 
-<body>
+
+
+
+
+
   
 
-  <header>
-    
 
-<div class="header-inner" style="height: 70vh;">
-  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand" href="/">
-      <strong>Zmmmmy&#39;s Blog</strong>
-    </a>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
 
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/" target="_self">
-                <i class="iconfont icon-home-fill"></i>
-                <span>首页</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/" target="_self">
-                <i class="iconfont icon-archive-fill"></i>
-                <span>归档</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/" target="_self">
-                <i class="iconfont icon-category-fill"></i>
-                <span>分类</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/" target="_self">
-                <i class="iconfont icon-tags-fill"></i>
-                <span>标签</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/" target="_self">
-                <i class="iconfont icon-user-fill"></i>
-                <span>关于</span>
-              </a>
-            </li>
-          
-        
-        
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              <i class="iconfont icon-search"></i>
-            </a>
-          </li>
-          
-        
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
-              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
-            </a>
-          </li>
-        
-      </ul>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
     </div>
   </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Zmmmmy's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人技术博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
 </nav>
 
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B"><span class="nav-number">1.</span> <span class="nav-text">实战案例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">项目结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Maven-%E4%BE%9D%E8%B5%96"><span class="nav-number">1.2.</span> <span class="nav-text">Maven 依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E4%BD%93%E7%B1%BB"><span class="nav-number">1.3.</span> <span class="nav-text">实体类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Repository"><span class="nav-number">1.4.</span> <span class="nav-text">Repository</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Service"><span class="nav-number">1.5.</span> <span class="nav-text">Service</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Controller%EF%BC%88%E6%B3%A8%E8%A7%A3%E5%BC%8F%EF%BC%89"><span class="nav-number">1.6.</span> <span class="nav-text">Controller（注解式）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">1.7.</span> <span class="nav-text">配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%9D%E5%A7%8B%E5%8C%96%E8%84%9A%E6%9C%AC"><span class="nav-number">1.8.</span> <span class="nav-text">数据库初始化脚本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WebClient-%E8%B0%83%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.9.</span> <span class="nav-text">WebClient 调用示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95"><span class="nav-number">1.10.</span> <span class="nav-text">单元测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.11.</span> <span class="nav-text">性能优化建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%93%BE%E6%8E%A5"><span class="nav-number">1.12.</span> <span class="nav-text">相关链接</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZhiMy"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">ZhiMy</p>
+  <div class="site-description" itemprop="description">记录学习与成长</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">100</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Zmmmmy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Zmmmmy" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
-<div id="banner" class="banner" parallax=true
-     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
-  <div class="full-bg-img">
-    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-      <div class="banner-text text-center fade-in-up">
-        <div class="h2">
-          
-            <span id="subtitle" data-typed-text="实战案例"></span>
-          
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/10/%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="ZhiMy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zmmmmy's Blog">
+      <meta itemprop="description" content="记录学习与成长">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="实战案例 | Zmmmmy's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          实战案例
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-10 00:00:00" itemprop="dateCreated datePublished" datetime="2026-01-10T00:00:00+08:00">2026-01-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-22 15:44:14" itemprop="dateModified" datetime="2026-01-22T15:44:14+08:00">2026-01-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/Spring/Webflux/" itemprop="url" rel="index"><span itemprop="name">Webflux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
         </div>
-
-        
-          
-  <div class="mt-3">
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-author" aria-hidden="true"></i>
-        ZhiMy
-      </span>
-    
-    
-      <span class="post-meta">
-        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-01-10 00:00" pubdate>
-          2026-01-10
-        </time>
-      </span>
-    
-  </div>
-
-  <div class="mt-1">
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-chart"></i>
-        
-          1.2k 字
-        
-      </span>
-    
-
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-clock-fill"></i>
-        
-        
-        
-          11 分钟
-        
-      </span>
-    
+      </header>
 
     
     
-  </div>
-
-
-        
-      </div>
-
-      
-    </div>
-  </div>
-</div>
-
-</div>
-
-  </header>
-
-  <main>
     
-      
+    <div class="post-body" itemprop="articleBody"><h1 id="实战案例"><a href="#实战案例" class="headerlink" title="实战案例"></a>实战案例</h1><h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">webflux-demo/</span><br><span class="line">├── src/main/java/com/example/demo/</span><br><span class="line">│   ├── DemoApplication.java</span><br><span class="line">│   ├── config/</span><br><span class="line">│   │   └── RouterConfig.java</span><br><span class="line">│   ├── controller/</span><br><span class="line">│   │   └── UserController.java</span><br><span class="line">│   ├── handler/</span><br><span class="line">│   │   └── UserHandler.java</span><br><span class="line">│   ├── model/</span><br><span class="line">│   │   └── User.java</span><br><span class="line">│   ├── repository/</span><br><span class="line">│   │   └── UserRepository.java</span><br><span class="line">│   └── service/</span><br><span class="line">│       └── UserService.java</span><br><span class="line">├── src/main/resources/</span><br><span class="line">│   └── application.yml</span><br><span class="line">└── pom.xml</span><br></pre></td></tr></table></figure>
 
-<div class="container-fluid nopadding-x">
-  <div class="row nomargin-x">
-    <div class="side-col d-none d-lg-block col-lg-2">
-      
+<h2 id="Maven-依赖"><a href="#Maven-依赖" class="headerlink" title="Maven 依赖"></a>Maven 依赖</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 </span></span></span><br><span class="line"><span class="string"><span class="tag">         http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.2.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.example<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>webflux-demo<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- WebFlux --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-webflux<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">&lt;!-- R2DBC (响应式数据库) --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-r2dbc<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">&lt;!-- H2 数据库 (开发测试用) --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.r2dbc<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>r2dbc-h2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>runtime<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">&lt;!-- Lombok --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">&lt;!-- 测试 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.projectreactor<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>reactor-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-    </div>
+<h2 id="实体类"><a href="#实体类" class="headerlink" title="实体类"></a>实体类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.model;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.AllArgsConstructor;</span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"><span class="keyword">import</span> lombok.NoArgsConstructor;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.annotation.Id;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.relational.core.mapping.Table;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.LocalDateTime;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@NoArgsConstructor</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="meta">@Table(&quot;users&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String email;</span><br><span class="line">    <span class="keyword">private</span> LocalDateTime createdAt;</span><br><span class="line">    <span class="keyword">private</span> LocalDateTime updatedAt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-    <div class="col-lg-8 nopadding-x-md">
-      <div class="container nopadding-x-md" id="board-ctn">
-        <div id="board">
-          <article class="post-content mx-auto">
-            <h1 id="seo-header">实战案例</h1>
-            
-              <p id="updated-time" class="note note-info" style="">
-                
-                  
-                    <!-- compatible with older versions-->
-                    本文最后更新于2026年1月22日 下午
-                  
-                
-              </p>
-            
-            
-              <div class="markdown-body">
-                
-                <h1 id="实战案例"><a href="#实战案例" class="headerlink" title="实战案例"></a>实战案例</h1><h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs stylus">webflux-demo/<br>├── <span class="hljs-attribute">src</span>/main/java/com/example/demo/<br>│   ├── DemoApplication<span class="hljs-selector-class">.java</span><br>│   ├── config/<br>│   │   └── RouterConfig<span class="hljs-selector-class">.java</span><br>│   ├── controller/<br>│   │   └── UserController<span class="hljs-selector-class">.java</span><br>│   ├── handler/<br>│   │   └── UserHandler<span class="hljs-selector-class">.java</span><br>│   ├── model/<br>│   │   └── User<span class="hljs-selector-class">.java</span><br>│   ├── repository/<br>│   │   └── UserRepository<span class="hljs-selector-class">.java</span><br>│   └── service/<br>│       └── UserService<span class="hljs-selector-class">.java</span><br>├── <span class="hljs-attribute">src</span>/main/resources/<br>│   └── application<span class="hljs-selector-class">.yml</span><br>└── pom.xml<br></code></pre></td></tr></table></figure>
+<h2 id="Repository"><a href="#Repository" class="headerlink" title="Repository"></a>Repository</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.repository;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.model.User;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.r2dbc.repository.Query;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.repository.reactive.ReactiveCrudRepository;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Flux;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserRepository</span> <span class="keyword">extends</span> <span class="title class_">ReactiveCrudRepository</span>&lt;User, Long&gt; &#123;</span><br><span class="line">    </span><br><span class="line">    Mono&lt;User&gt; <span class="title function_">findByEmail</span><span class="params">(String email)</span>;</span><br><span class="line">    </span><br><span class="line">    Flux&lt;User&gt; <span class="title function_">findByNameContaining</span><span class="params">(String name)</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Query(&quot;SELECT * FROM users WHERE created_at &gt; :since&quot;)</span></span><br><span class="line">    Flux&lt;User&gt; <span class="title function_">findRecentUsers</span><span class="params">(LocalDateTime since)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="Maven-依赖"><a href="#Maven-依赖" class="headerlink" title="Maven 依赖"></a>Maven 依赖</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-meta">&lt;?xml version=<span class="hljs-string">&quot;1.0&quot;</span> encoding=<span class="hljs-string">&quot;UTF-8&quot;</span>?&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">project</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span></span><br><span class="hljs-tag">         <span class="hljs-attr">xmlns:xsi</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span><br><span class="hljs-tag">         <span class="hljs-attr">xsi:schemaLocation</span>=<span class="hljs-string">&quot;http://maven.apache.org/POM/4.0.0 </span></span><br><span class="hljs-string"><span class="hljs-tag">         http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">modelVersion</span>&gt;</span>4.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">modelVersion</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">parent</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>3.2.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">parent</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.example<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>webflux-demo<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.0.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>    <br>    <span class="hljs-tag">&lt;<span class="hljs-name">dependencies</span>&gt;</span><br>        <span class="hljs-comment">&lt;!-- WebFlux --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-starter-webflux<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <br>        <span class="hljs-comment">&lt;!-- R2DBC (响应式数据库) --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-starter-data-r2dbc<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <br>        <span class="hljs-comment">&lt;!-- H2 数据库 (开发测试用) --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>io.r2dbc<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>r2dbc-h2<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">scope</span>&gt;</span>runtime<span class="hljs-tag">&lt;/<span class="hljs-name">scope</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <br>        <span class="hljs-comment">&lt;!-- Lombok --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.projectlombok<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>lombok<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">optional</span>&gt;</span>true<span class="hljs-tag">&lt;/<span class="hljs-name">optional</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <br>        <span class="hljs-comment">&lt;!-- 测试 --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">scope</span>&gt;</span>test<span class="hljs-tag">&lt;/<span class="hljs-name">scope</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>io.projectreactor<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>reactor-test<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">scope</span>&gt;</span>test<span class="hljs-tag">&lt;/<span class="hljs-name">scope</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependencies</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">project</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<h2 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.model.User;</span><br><span class="line"><span class="keyword">import</span> com.example.demo.repository.UserRepository;</span><br><span class="line"><span class="keyword">import</span> lombok.RequiredArgsConstructor;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Flux;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.LocalDateTime;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> UserRepository userRepository;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Flux&lt;User&gt; <span class="title function_">findAll</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userRepository.findAll();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">findById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userRepository.findById(id);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">findByEmail</span><span class="params">(String email)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userRepository.findByEmail(email);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">save</span><span class="params">(User user)</span> &#123;</span><br><span class="line">        user.setCreatedAt(LocalDateTime.now());</span><br><span class="line">        user.setUpdatedAt(LocalDateTime.now());</span><br><span class="line">        <span class="keyword">return</span> userRepository.save(user);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">update</span><span class="params">(Long id, User user)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userRepository.findById(id)</span><br><span class="line">            .flatMap(existingUser -&gt; &#123;</span><br><span class="line">                existingUser.setName(user.getName());</span><br><span class="line">                existingUser.setEmail(user.getEmail());</span><br><span class="line">                existingUser.setUpdatedAt(LocalDateTime.now());</span><br><span class="line">                <span class="keyword">return</span> userRepository.save(existingUser);</span><br><span class="line">            &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Void&gt; <span class="title function_">deleteById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userRepository.deleteById(id);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="实体类"><a href="#实体类" class="headerlink" title="实体类"></a>实体类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.example.demo.model;<br><br><span class="hljs-keyword">import</span> lombok.AllArgsConstructor;<br><span class="hljs-keyword">import</span> lombok.Data;<br><span class="hljs-keyword">import</span> lombok.NoArgsConstructor;<br><span class="hljs-keyword">import</span> org.springframework.data.annotation.Id;<br><span class="hljs-keyword">import</span> org.springframework.data.relational.core.mapping.Table;<br><br><span class="hljs-keyword">import</span> java.time.LocalDateTime;<br><br><span class="hljs-meta">@Data</span><br><span class="hljs-meta">@NoArgsConstructor</span><br><span class="hljs-meta">@AllArgsConstructor</span><br><span class="hljs-meta">@Table(&quot;users&quot;)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">User</span> &#123;<br>    <br>    <span class="hljs-meta">@Id</span><br>    <span class="hljs-keyword">private</span> Long id;<br>    <span class="hljs-keyword">private</span> String name;<br>    <span class="hljs-keyword">private</span> String email;<br>    <span class="hljs-keyword">private</span> LocalDateTime createdAt;<br>    <span class="hljs-keyword">private</span> LocalDateTime updatedAt;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="Controller（注解式）"><a href="#Controller（注解式）" class="headerlink" title="Controller（注解式）"></a>Controller（注解式）</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.model.User;</span><br><span class="line"><span class="keyword">import</span> com.example.demo.service.UserService;</span><br><span class="line"><span class="keyword">import</span> lombok.RequiredArgsConstructor;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.HttpStatus;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.MediaType;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.*;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Flux;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.Duration;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/api/users&quot;)</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserController</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> UserService userService;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@GetMapping</span></span><br><span class="line">    <span class="keyword">public</span> Flux&lt;User&gt; <span class="title function_">getAllUsers</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userService.findAll();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@GetMapping(&quot;/&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">getUserById</span><span class="params">(<span class="meta">@PathVariable</span> Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userService.findById(id);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@PostMapping</span></span><br><span class="line">    <span class="meta">@ResponseStatus(HttpStatus.CREATED)</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">createUser</span><span class="params">(<span class="meta">@RequestBody</span> User user)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userService.save(user);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@PutMapping(&quot;/&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">updateUser</span><span class="params">(<span class="meta">@PathVariable</span> Long id, <span class="meta">@RequestBody</span> User user)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userService.update(id, user);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@DeleteMapping(&quot;/&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="meta">@ResponseStatus(HttpStatus.NO_CONTENT)</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Void&gt; <span class="title function_">deleteUser</span><span class="params">(<span class="meta">@PathVariable</span> Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userService.deleteById(id);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// SSE 流式响应示例</span></span><br><span class="line">    <span class="meta">@GetMapping(value = &quot;/stream&quot;, produces = MediaType.TEXT_EVENT_STREAM_VALUE)</span></span><br><span class="line">    <span class="keyword">public</span> Flux&lt;User&gt; <span class="title function_">streamUsers</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userService.findAll()</span><br><span class="line">            .delayElements(Duration.ofSeconds(<span class="number">1</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="Repository"><a href="#Repository" class="headerlink" title="Repository"></a>Repository</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.example.demo.repository;<br><br><span class="hljs-keyword">import</span> com.example.demo.model.User;<br><span class="hljs-keyword">import</span> org.springframework.data.r2dbc.repository.Query;<br><span class="hljs-keyword">import</span> org.springframework.data.repository.reactive.ReactiveCrudRepository;<br><span class="hljs-keyword">import</span> reactor.core.publisher.Flux;<br><span class="hljs-keyword">import</span> reactor.core.publisher.Mono;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">UserRepository</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">ReactiveCrudRepository</span>&lt;User, Long&gt; &#123;<br>    <br>    Mono&lt;User&gt; <span class="hljs-title function_">findByEmail</span><span class="hljs-params">(String email)</span>;<br>    <br>    Flux&lt;User&gt; <span class="hljs-title function_">findByNameContaining</span><span class="hljs-params">(String name)</span>;<br>    <br>    <span class="hljs-meta">@Query(&quot;SELECT * FROM users WHERE created_at &gt; :since&quot;)</span><br>    Flux&lt;User&gt; <span class="hljs-title function_">findRecentUsers</span><span class="hljs-params">(LocalDateTime since)</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># application.yml</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">r2dbc:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">r2dbc:h2:mem:///testdb</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">sa</span></span><br><span class="line">    <span class="attr">password:</span></span><br><span class="line">  </span><br><span class="line">  <span class="attr">sql:</span></span><br><span class="line">    <span class="attr">init:</span></span><br><span class="line">      <span class="attr">mode:</span> <span class="string">always</span></span><br><span class="line">      <span class="attr">schema-locations:</span> <span class="string">classpath:schema.sql</span></span><br><span class="line"></span><br><span class="line"><span class="attr">logging:</span></span><br><span class="line">  <span class="attr">level:</span></span><br><span class="line">    <span class="attr">org.springframework.r2dbc:</span> <span class="string">DEBUG</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.example.demo.service;<br><br><span class="hljs-keyword">import</span> com.example.demo.model.User;<br><span class="hljs-keyword">import</span> com.example.demo.repository.UserRepository;<br><span class="hljs-keyword">import</span> lombok.RequiredArgsConstructor;<br><span class="hljs-keyword">import</span> org.springframework.stereotype.Service;<br><span class="hljs-keyword">import</span> reactor.core.publisher.Flux;<br><span class="hljs-keyword">import</span> reactor.core.publisher.Mono;<br><br><span class="hljs-keyword">import</span> java.time.LocalDateTime;<br><br><span class="hljs-meta">@Service</span><br><span class="hljs-meta">@RequiredArgsConstructor</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserService</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> UserRepository userRepository;<br>    <br>    <span class="hljs-keyword">public</span> Flux&lt;User&gt; <span class="hljs-title function_">findAll</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> userRepository.findAll();<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> Mono&lt;User&gt; <span class="hljs-title function_">findById</span><span class="hljs-params">(Long id)</span> &#123;<br>        <span class="hljs-keyword">return</span> userRepository.findById(id);<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> Mono&lt;User&gt; <span class="hljs-title function_">findByEmail</span><span class="hljs-params">(String email)</span> &#123;<br>        <span class="hljs-keyword">return</span> userRepository.findByEmail(email);<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> Mono&lt;User&gt; <span class="hljs-title function_">save</span><span class="hljs-params">(User user)</span> &#123;<br>        user.setCreatedAt(LocalDateTime.now());<br>        user.setUpdatedAt(LocalDateTime.now());<br>        <span class="hljs-keyword">return</span> userRepository.save(user);<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> Mono&lt;User&gt; <span class="hljs-title function_">update</span><span class="hljs-params">(Long id, User user)</span> &#123;<br>        <span class="hljs-keyword">return</span> userRepository.findById(id)<br>            .flatMap(existingUser -&gt; &#123;<br>                existingUser.setName(user.getName());<br>                existingUser.setEmail(user.getEmail());<br>                existingUser.setUpdatedAt(LocalDateTime.now());<br>                <span class="hljs-keyword">return</span> userRepository.save(existingUser);<br>            &#125;);<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> Mono&lt;Void&gt; <span class="hljs-title function_">deleteById</span><span class="hljs-params">(Long id)</span> &#123;<br>        <span class="hljs-keyword">return</span> userRepository.deleteById(id);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="数据库初始化脚本"><a href="#数据库初始化脚本" class="headerlink" title="数据库初始化脚本"></a>数据库初始化脚本</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- schema.sql</span></span><br><span class="line"><span class="keyword">CREATE TABLE</span> IF <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> users (</span><br><span class="line">    id <span class="type">BIGINT</span> AUTO_INCREMENT <span class="keyword">PRIMARY KEY</span>,</span><br><span class="line">    name <span class="type">VARCHAR</span>(<span class="number">100</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">    email <span class="type">VARCHAR</span>(<span class="number">100</span>) <span class="keyword">UNIQUE</span> <span class="keyword">NOT NULL</span>,</span><br><span class="line">    created_at <span class="type">TIMESTAMP</span> <span class="keyword">DEFAULT</span> <span class="built_in">CURRENT_TIMESTAMP</span>,</span><br><span class="line">    updated_at <span class="type">TIMESTAMP</span> <span class="keyword">DEFAULT</span> <span class="built_in">CURRENT_TIMESTAMP</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT INTO</span> users (name, email) <span class="keyword">VALUES</span> (<span class="string">&#x27;张三&#x27;</span>, <span class="string">&#x27;zhangsan@example.com&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT INTO</span> users (name, email) <span class="keyword">VALUES</span> (<span class="string">&#x27;李四&#x27;</span>, <span class="string">&#x27;lisi@example.com&#x27;</span>);</span><br></pre></td></tr></table></figure>
 
-<h2 id="Controller（注解式）"><a href="#Controller（注解式）" class="headerlink" title="Controller（注解式）"></a>Controller（注解式）</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.example.demo.controller;<br><br><span class="hljs-keyword">import</span> com.example.demo.model.User;<br><span class="hljs-keyword">import</span> com.example.demo.service.UserService;<br><span class="hljs-keyword">import</span> lombok.RequiredArgsConstructor;<br><span class="hljs-keyword">import</span> org.springframework.http.HttpStatus;<br><span class="hljs-keyword">import</span> org.springframework.http.MediaType;<br><span class="hljs-keyword">import</span> org.springframework.web.bind.annotation.*;<br><span class="hljs-keyword">import</span> reactor.core.publisher.Flux;<br><span class="hljs-keyword">import</span> reactor.core.publisher.Mono;<br><br><span class="hljs-keyword">import</span> java.time.Duration;<br><br><span class="hljs-meta">@RestController</span><br><span class="hljs-meta">@RequestMapping(&quot;/api/users&quot;)</span><br><span class="hljs-meta">@RequiredArgsConstructor</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserController</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> UserService userService;<br>    <br>    <span class="hljs-meta">@GetMapping</span><br>    <span class="hljs-keyword">public</span> Flux&lt;User&gt; <span class="hljs-title function_">getAllUsers</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> userService.findAll();<br>    &#125;<br>    <br>    <span class="hljs-meta">@GetMapping(&quot;/&#123;id&#125;&quot;)</span><br>    <span class="hljs-keyword">public</span> Mono&lt;User&gt; <span class="hljs-title function_">getUserById</span><span class="hljs-params">(<span class="hljs-meta">@PathVariable</span> Long id)</span> &#123;<br>        <span class="hljs-keyword">return</span> userService.findById(id);<br>    &#125;<br>    <br>    <span class="hljs-meta">@PostMapping</span><br>    <span class="hljs-meta">@ResponseStatus(HttpStatus.CREATED)</span><br>    <span class="hljs-keyword">public</span> Mono&lt;User&gt; <span class="hljs-title function_">createUser</span><span class="hljs-params">(<span class="hljs-meta">@RequestBody</span> User user)</span> &#123;<br>        <span class="hljs-keyword">return</span> userService.save(user);<br>    &#125;<br>    <br>    <span class="hljs-meta">@PutMapping(&quot;/&#123;id&#125;&quot;)</span><br>    <span class="hljs-keyword">public</span> Mono&lt;User&gt; <span class="hljs-title function_">updateUser</span><span class="hljs-params">(<span class="hljs-meta">@PathVariable</span> Long id, <span class="hljs-meta">@RequestBody</span> User user)</span> &#123;<br>        <span class="hljs-keyword">return</span> userService.update(id, user);<br>    &#125;<br>    <br>    <span class="hljs-meta">@DeleteMapping(&quot;/&#123;id&#125;&quot;)</span><br>    <span class="hljs-meta">@ResponseStatus(HttpStatus.NO_CONTENT)</span><br>    <span class="hljs-keyword">public</span> Mono&lt;Void&gt; <span class="hljs-title function_">deleteUser</span><span class="hljs-params">(<span class="hljs-meta">@PathVariable</span> Long id)</span> &#123;<br>        <span class="hljs-keyword">return</span> userService.deleteById(id);<br>    &#125;<br>    <br>    <span class="hljs-comment">// SSE 流式响应示例</span><br>    <span class="hljs-meta">@GetMapping(value = &quot;/stream&quot;, produces = MediaType.TEXT_EVENT_STREAM_VALUE)</span><br>    <span class="hljs-keyword">public</span> Flux&lt;User&gt; <span class="hljs-title function_">streamUsers</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> userService.findAll()<br>            .delayElements(Duration.ofSeconds(<span class="hljs-number">1</span>));<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="WebClient-调用示例"><a href="#WebClient-调用示例" class="headerlink" title="WebClient 调用示例"></a>WebClient 调用示例</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo.client;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.model.User;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.client.WebClient;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Flux;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserClient</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WebClient webClient;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UserClient</span><span class="params">(WebClient.Builder builder)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.webClient = builder</span><br><span class="line">            .baseUrl(<span class="string">&quot;http://localhost:8080/api&quot;</span>)</span><br><span class="line">            .build();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Flux&lt;User&gt; <span class="title function_">getAllUsers</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClient.get()</span><br><span class="line">            .uri(<span class="string">&quot;/users&quot;</span>)</span><br><span class="line">            .retrieve()</span><br><span class="line">            .bodyToFlux(User.class);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">getUserById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClient.get()</span><br><span class="line">            .uri(<span class="string">&quot;/users/&#123;id&#125;&quot;</span>, id)</span><br><span class="line">            .retrieve()</span><br><span class="line">            .bodyToMono(User.class);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Mono&lt;User&gt; <span class="title function_">createUser</span><span class="params">(User user)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> webClient.post()</span><br><span class="line">            .uri(<span class="string">&quot;/users&quot;</span>)</span><br><span class="line">            .bodyValue(user)</span><br><span class="line">            .retrieve()</span><br><span class="line">            .bodyToMono(User.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># application.yml</span><br><span class="hljs-attr">spring:</span><br>  <span class="hljs-attr">r2dbc:</span><br>    <span class="hljs-attr">url:</span> <span class="hljs-string">r2dbc:h2:mem:///testdb</span><br>    <span class="hljs-attr">username:</span> <span class="hljs-string">sa</span><br>    <span class="hljs-attr">password:</span><br>  <br>  <span class="hljs-attr">sql:</span><br>    <span class="hljs-attr">init:</span><br>      <span class="hljs-attr">mode:</span> <span class="hljs-string">always</span><br>      <span class="hljs-attr">schema-locations:</span> <span class="hljs-string">classpath:schema.sql</span><br><br><span class="hljs-attr">logging:</span><br>  <span class="hljs-attr">level:</span><br>    <span class="hljs-attr">org.springframework.r2dbc:</span> <span class="hljs-string">DEBUG</span><br></code></pre></td></tr></table></figure>
-
-<h2 id="数据库初始化脚本"><a href="#数据库初始化脚本" class="headerlink" title="数据库初始化脚本"></a>数据库初始化脚本</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-comment">-- schema.sql</span><br><span class="hljs-keyword">CREATE TABLE</span> IF <span class="hljs-keyword">NOT</span> <span class="hljs-keyword">EXISTS</span> users (<br>    id <span class="hljs-type">BIGINT</span> AUTO_INCREMENT <span class="hljs-keyword">PRIMARY KEY</span>,<br>    name <span class="hljs-type">VARCHAR</span>(<span class="hljs-number">100</span>) <span class="hljs-keyword">NOT NULL</span>,<br>    email <span class="hljs-type">VARCHAR</span>(<span class="hljs-number">100</span>) <span class="hljs-keyword">UNIQUE</span> <span class="hljs-keyword">NOT NULL</span>,<br>    created_at <span class="hljs-type">TIMESTAMP</span> <span class="hljs-keyword">DEFAULT</span> <span class="hljs-built_in">CURRENT_TIMESTAMP</span>,<br>    updated_at <span class="hljs-type">TIMESTAMP</span> <span class="hljs-keyword">DEFAULT</span> <span class="hljs-built_in">CURRENT_TIMESTAMP</span><br>);<br><br><span class="hljs-keyword">INSERT INTO</span> users (name, email) <span class="hljs-keyword">VALUES</span> (<span class="hljs-string">&#x27;张三&#x27;</span>, <span class="hljs-string">&#x27;zhangsan@example.com&#x27;</span>);<br><span class="hljs-keyword">INSERT INTO</span> users (name, email) <span class="hljs-keyword">VALUES</span> (<span class="hljs-string">&#x27;李四&#x27;</span>, <span class="hljs-string">&#x27;lisi@example.com&#x27;</span>);<br></code></pre></td></tr></table></figure>
-
-<h2 id="WebClient-调用示例"><a href="#WebClient-调用示例" class="headerlink" title="WebClient 调用示例"></a>WebClient 调用示例</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.example.demo.client;<br><br><span class="hljs-keyword">import</span> com.example.demo.model.User;<br><span class="hljs-keyword">import</span> org.springframework.stereotype.Component;<br><span class="hljs-keyword">import</span> org.springframework.web.reactive.function.client.WebClient;<br><span class="hljs-keyword">import</span> reactor.core.publisher.Flux;<br><span class="hljs-keyword">import</span> reactor.core.publisher.Mono;<br><br><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserClient</span> &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> WebClient webClient;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">UserClient</span><span class="hljs-params">(WebClient.Builder builder)</span> &#123;<br>        <span class="hljs-built_in">this</span>.webClient = builder<br>            .baseUrl(<span class="hljs-string">&quot;http://localhost:8080/api&quot;</span>)<br>            .build();<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> Flux&lt;User&gt; <span class="hljs-title function_">getAllUsers</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> webClient.get()<br>            .uri(<span class="hljs-string">&quot;/users&quot;</span>)<br>            .retrieve()<br>            .bodyToFlux(User.class);<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> Mono&lt;User&gt; <span class="hljs-title function_">getUserById</span><span class="hljs-params">(Long id)</span> &#123;<br>        <span class="hljs-keyword">return</span> webClient.get()<br>            .uri(<span class="hljs-string">&quot;/users/&#123;id&#125;&quot;</span>, id)<br>            .retrieve()<br>            .bodyToMono(User.class);<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> Mono&lt;User&gt; <span class="hljs-title function_">createUser</span><span class="hljs-params">(User user)</span> &#123;<br>        <span class="hljs-keyword">return</span> webClient.post()<br>            .uri(<span class="hljs-string">&quot;/users&quot;</span>)<br>            .bodyValue(user)<br>            .retrieve()<br>            .bodyToMono(User.class);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<h2 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.example.demo;<br><br><span class="hljs-keyword">import</span> com.example.demo.model.User;<br><span class="hljs-keyword">import</span> com.example.demo.service.UserService;<br><span class="hljs-keyword">import</span> org.junit.jupiter.api.Test;<br><span class="hljs-keyword">import</span> org.springframework.beans.factory.annotation.Autowired;<br><span class="hljs-keyword">import</span> org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;<br><span class="hljs-keyword">import</span> org.springframework.boot.test.context.SpringBootTest;<br><span class="hljs-keyword">import</span> org.springframework.http.MediaType;<br><span class="hljs-keyword">import</span> org.springframework.test.web.reactive.server.WebTestClient;<br><span class="hljs-keyword">import</span> reactor.test.StepVerifier;<br><br><span class="hljs-meta">@SpringBootTest</span><br><span class="hljs-meta">@AutoConfigureWebTestClient</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">UserControllerTest</span> &#123;<br>    <br>    <span class="hljs-meta">@Autowired</span><br>    <span class="hljs-keyword">private</span> WebTestClient webTestClient;<br>    <br>    <span class="hljs-meta">@Autowired</span><br>    <span class="hljs-keyword">private</span> UserService userService;<br>    <br>    <span class="hljs-meta">@Test</span><br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">getAllUsers</span><span class="hljs-params">()</span> &#123;<br>        webTestClient.get()<br>            .uri(<span class="hljs-string">&quot;/api/users&quot;</span>)<br>            .accept(MediaType.APPLICATION_JSON)<br>            .exchange()<br>            .expectStatus().isOk()<br>            .expectBodyList(User.class)<br>            .hasSize(<span class="hljs-number">2</span>);<br>    &#125;<br>    <br>    <span class="hljs-meta">@Test</span><br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">getUserById</span><span class="hljs-params">()</span> &#123;<br>        webTestClient.get()<br>            .uri(<span class="hljs-string">&quot;/api/users/1&quot;</span>)<br>            .accept(MediaType.APPLICATION_JSON)<br>            .exchange()<br>            .expectStatus().isOk()<br>            .expectBody()<br>            .jsonPath(<span class="hljs-string">&quot;$.name&quot;</span>).isEqualTo(<span class="hljs-string">&quot;张三&quot;</span>);<br>    &#125;<br>    <br>    <span class="hljs-meta">@Test</span><br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">createUser</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-type">User</span> <span class="hljs-variable">newUser</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">User</span>();<br>        newUser.setName(<span class="hljs-string">&quot;王五&quot;</span>);<br>        newUser.setEmail(<span class="hljs-string">&quot;wangwu@example.com&quot;</span>);<br>        <br>        webTestClient.post()<br>            .uri(<span class="hljs-string">&quot;/api/users&quot;</span>)<br>            .contentType(MediaType.APPLICATION_JSON)<br>            .bodyValue(newUser)<br>            .exchange()<br>            .expectStatus().isCreated()<br>            .expectBody()<br>            .jsonPath(<span class="hljs-string">&quot;$.name&quot;</span>).isEqualTo(<span class="hljs-string">&quot;王五&quot;</span>);<br>    &#125;<br>    <br>    <span class="hljs-meta">@Test</span><br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">testServiceWithStepVerifier</span><span class="hljs-params">()</span> &#123;<br>        StepVerifier.create(userService.findAll())<br>            .expectNextCount(<span class="hljs-number">2</span>)<br>            .verifyComplete();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.example.demo.model.User;</span><br><span class="line"><span class="keyword">import</span> com.example.demo.service.UserService;</span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.test.context.SpringBootTest;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.MediaType;</span><br><span class="line"><span class="keyword">import</span> org.springframework.test.web.reactive.server.WebTestClient;</span><br><span class="line"><span class="keyword">import</span> reactor.test.StepVerifier;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="meta">@AutoConfigureWebTestClient</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UserControllerTest</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> WebTestClient webTestClient;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">getAllUsers</span><span class="params">()</span> &#123;</span><br><span class="line">        webTestClient.get()</span><br><span class="line">            .uri(<span class="string">&quot;/api/users&quot;</span>)</span><br><span class="line">            .accept(MediaType.APPLICATION_JSON)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBodyList(User.class)</span><br><span class="line">            .hasSize(<span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">getUserById</span><span class="params">()</span> &#123;</span><br><span class="line">        webTestClient.get()</span><br><span class="line">            .uri(<span class="string">&quot;/api/users/1&quot;</span>)</span><br><span class="line">            .accept(MediaType.APPLICATION_JSON)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isOk()</span><br><span class="line">            .expectBody()</span><br><span class="line">            .jsonPath(<span class="string">&quot;$.name&quot;</span>).isEqualTo(<span class="string">&quot;张三&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">createUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">newUser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">        newUser.setName(<span class="string">&quot;王五&quot;</span>);</span><br><span class="line">        newUser.setEmail(<span class="string">&quot;wangwu@example.com&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        webTestClient.post()</span><br><span class="line">            .uri(<span class="string">&quot;/api/users&quot;</span>)</span><br><span class="line">            .contentType(MediaType.APPLICATION_JSON)</span><br><span class="line">            .bodyValue(newUser)</span><br><span class="line">            .exchange()</span><br><span class="line">            .expectStatus().isCreated()</span><br><span class="line">            .expectBody()</span><br><span class="line">            .jsonPath(<span class="string">&quot;$.name&quot;</span>).isEqualTo(<span class="string">&quot;王五&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testServiceWithStepVerifier</span><span class="params">()</span> &#123;</span><br><span class="line">        StepVerifier.create(userService.findAll())</span><br><span class="line">            .expectNextCount(<span class="number">2</span>)</span><br><span class="line">            .verifyComplete();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="性能优化建议"><a href="#性能优化建议" class="headerlink" title="性能优化建议"></a>性能优化建议</h2><ol>
 <li><strong>合理使用调度器</strong>：I&#x2F;O 操作使用 <code>boundedElastic</code>，CPU 密集型使用 <code>parallel</code></li>
@@ -327,412 +317,99 @@
 <li>返回：Webflux简介</li>
 </ul>
 
-                
-              </div>
-            
-            <hr/>
-            <div>
-              <div class="post-metas my-3">
-  
-    <div class="post-meta mr-3 d-flex align-items-center">
-      <i class="iconfont icon-category"></i>
-      
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Java/" class="category-chain-item">Java</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/Java/Spring/" class="category-chain-item">Spring</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/Java/Spring/Webflux/" class="category-chain-item">Webflux</a>
-  
-  
-
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
     </div>
-  
-  
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/Java/" class="print-no-link">#Java</a>
-      
-        <a href="/tags/Spring/" class="print-no-link">#Spring</a>
-      
-        <a href="/tags/WebFlux/" class="print-no-link">#WebFlux</a>
-      
-        <a href="/tags/%E5%AE%9E%E6%88%98/" class="print-no-link">#实战</a>
-      
-        <a href="/tags/R2DBC/" class="print-no-link">#R2DBC</a>
-      
-        <a href="/tags/%E6%B5%8B%E8%AF%95/" class="print-no-link">#测试</a>
-      
-    </div>
-  
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>ZhiMy
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://zmmmmy.github.io/2026/01/10/%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B/" title="实战案例">https://zmmmmy.github.io/2026/01/10/实战案例/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
 </div>
 
-
-              
-  
-
-  <div class="license-box my-3">
-    <div class="license-title">
-      <div>实战案例</div>
-      <div>https://zmmmmy.github.io/2026/01/10/实战案例/</div>
-    </div>
-    <div class="license-meta">
-      
-        <div class="license-meta-item">
-          <div>作者</div>
-          <div>ZhiMy</div>
-        </div>
-      
-      
-        <div class="license-meta-item license-meta-date">
-          <div>发布于</div>
-          <div>2026-01-10</div>
-        </div>
-      
-      
-        <div class="license-meta-item license-meta-date">
-          <div>更新于</div>
-          <div>2026-01-22</div>
-        </div>
-      
-      
-        <div class="license-meta-item">
-          <div>许可协议</div>
-          <div>
-            
-              
-              
-                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
-                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
-                    <i class="iconfont icon-cc-by"></i>
-                  </span>
-                </a>
-              
-                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
-                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
-                    <i class="iconfont icon-cc-nc"></i>
-                  </span>
-                </a>
-              
-                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
-                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
-                    <i class="iconfont icon-cc-sa"></i>
-                  </span>
-                </a>
-              
-            
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+              <a href="/tags/Spring/" rel="tag"># Spring</a>
+              <a href="/tags/WebFlux/" rel="tag"># WebFlux</a>
+              <a href="/tags/%E5%AE%9E%E6%88%98/" rel="tag"># 实战</a>
+              <a href="/tags/R2DBC/" rel="tag"># R2DBC</a>
+              <a href="/tags/%E6%B5%8B%E8%AF%95/" rel="tag"># 测试</a>
           </div>
-        </div>
-      
-    </div>
-    <div class="license-icon iconfont"></div>
-  </div>
 
+        
 
-
-              
-                <div class="post-prevnext my-3">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%B1%BB%E5%9E%8B/" title="线程池类型">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">线程池类型</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%AE%80%E4%BB%8B/" title="线程池简介">
-                        <span class="hidden-mobile">线程池简介</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/01/10/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" rel="prev" title="源码解析">
+                  <i class="fa fa-angle-left"></i> 源码解析
+                </a>
             </div>
-
-            
-          </article>
-        </div>
-      </div>
-    </div>
-
-    <div class="side-col d-none d-lg-block col-lg-2">
-      
-  <aside class="sidebar" style="margin-left: -1rem">
-    <div id="toc">
-  <p class="toc-header">
-    <i class="iconfont icon-list"></i>
-    <span>目录</span>
-  </p>
-  <div class="toc-body" id="toc-body"></div>
-</div>
-
-
-
-  </aside>
-
-
-    </div>
-  </div>
+            <div class="post-nav-item">
+                <a href="/2026/01/10/%E5%93%8D%E5%BA%94%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/" rel="next" title="响应式编程基础">
+                  响应式编程基础 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
 </div>
 
 
 
 
 
-  
 
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-
-
-
-
-    
-
-    
-      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-      </a>
-    
-
-    
-      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
 </div>
-
-    
-
-    
   </main>
 
-  <footer>
+  <footer class="footer">
     <div class="footer-inner">
-  
-    <div class="footer-content">
-       <a href="https://hexo.io" target="_blank" rel="nofollow noopener">Hexo</a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">Fluid</a> 
-    </div>
-  
-  
-  
-</div>
 
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">ZhiMy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
   </footer>
 
-  <!-- Scripts -->
   
-  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
-  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-  <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
-    NProgress.start()
-    window.addEventListener('load', function() {
-      NProgress.done();
-    })
-  </script>
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-
-<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
-<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
-<script  src="/js/events.js" ></script>
-<script  src="/js/plugins.js" ></script>
-
-
-  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
-  <script>
-    (function (window, document) {
-      var typing = Fluid.plugins.typing;
-      var subtitle = document.getElementById('subtitle');
-      if (!subtitle || !typing) {
-        return;
-      }
-      var text = subtitle.getAttribute('data-typed-text');
-      
-        typing(text);
-      
-    })(window, document);
-  </script>
-
-
-
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
-
-
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
-    var toc = jQuery('#toc');
-    if (toc.length === 0 || !window.tocbot) { return; }
-    var boardCtn = jQuery('#board-ctn');
-    var boardTop = boardCtn.offset().top;
-
-    window.tocbot.init(Object.assign({
-      tocSelector     : '#toc-body',
-      contentSelector : '.markdown-body',
-      linkClass       : 'tocbot-link',
-      activeLinkClass : 'tocbot-active-link',
-      listClass       : 'tocbot-list',
-      isCollapsedClass: 'tocbot-is-collapsed',
-      collapsibleClass: 'tocbot-is-collapsible',
-      scrollSmooth    : true,
-      includeTitleTags: true,
-      headingsOffset  : -boardTop,
-    }, CONFIG.toc));
-    if (toc.find('.toc-list-item').length > 0) {
-      toc.css('visibility', 'visible');
-    }
-
-    Fluid.events.registerRefreshCallback(function() {
-      if ('tocbot' in window) {
-        tocbot.refresh();
-        var toc = jQuery('#toc');
-        if (toc.length === 0 || !tocbot) {
-          return;
-        }
-        if (toc.find('.toc-list-item').length > 0) {
-          toc.css('visibility', 'visible');
-        }
-      }
-    });
-  });
-</script>
-
-
-  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
-
-  <script>Fluid.plugins.codeWidget();</script>
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
-    window.anchors.options = {
-      placement: CONFIG.anchorjs.placement,
-      visible  : CONFIG.anchorjs.visible
-    };
-    if (CONFIG.anchorjs.icon) {
-      window.anchors.options.icon = CONFIG.anchorjs.icon;
-    }
-    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
-    var res = [];
-    for (var item of el) {
-      res.push('.markdown-body > ' + item.trim());
-    }
-    if (CONFIG.anchorjs.placement === 'left') {
-      window.anchors.options.class = 'anchorjs-link-left';
-    }
-    window.anchors.add(res.join(', '));
-
-    Fluid.events.registerRefreshCallback(function() {
-      if ('anchors' in window) {
-        anchors.removeAll();
-        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
-        var res = [];
-        for (var item of el) {
-          res.push('.markdown-body > ' + item.trim());
-        }
-        if (CONFIG.anchorjs.placement === 'left') {
-          anchors.options.class = 'anchorjs-link-left';
-        }
-        anchors.add(res.join(', '));
-      }
-    });
-  });
-</script>
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
-    Fluid.plugins.fancyBox();
-  });
-</script>
-
-
-  <script>Fluid.plugins.imageCaption();</script>
-
-  <script  src="/js/local-search.js" ></script>
-
-
-
-
-
-<!-- 主题的启动项，将它保持在最底部 -->
-<!-- the boot of the theme, keep it at the bottom -->
-<script  src="/js/boot.js" ></script>
-
-
-  
-
-  <noscript>
-    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
-  </noscript>
 </body>
 </html>

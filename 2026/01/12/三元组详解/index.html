@@ -1,24 +1,25 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=auto>
-
-
-
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
 
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
-  <link rel="icon" href="/img/fluid.png">
-  
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="ZhiMy">
-  <meta name="keywords" content="技术博客,编程">
-  
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zmmmmy.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
     <meta name="description" content="三元组详解什么是三元组三元组（Triple）是 RDF 图数据库 中的基本数据存储单元，用于表达一个完整的事实陈述。 三元组组成   组成部分 英文 说明    主语 Subject 被描述的实体或资源   谓语 Predicate 关系或属性   宾语 Object 属性值或关联的另一个实体   基本形式1(Subject, Predicate, Object)  三元组示例表示关系123(张三">
 <meta property="og:type" content="article">
 <meta property="og:title" content="三元组详解">
@@ -33,267 +34,252 @@
 <meta property="article:tag" content="三元组">
 <meta property="article:tag" content="图数据库">
 <meta property="article:tag" content="知识图谱">
-<meta name="twitter:card" content="summary_large_image">
-  
-  
-  
-  <title>三元组详解 - Zmmmmy&#39;s Blog</title>
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+<meta name="twitter:card" content="summary">
 
 
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+<link rel="canonical" href="https://zmmmmy.github.io/2026/01/12/%E4%B8%89%E5%85%83%E7%BB%84%E8%AF%A6%E8%A7%A3/">
 
 
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zmmmmy.github.io/2026/01/12/%E4%B8%89%E5%85%83%E7%BB%84%E8%AF%A6%E8%A7%A3/","path":"2026/01/12/三元组详解/","title":"三元组详解"}</script>
 
-<!-- 主题依赖的图标库，不要自行修改 -->
-<!-- Do not modify the link that theme dependent icons -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-
-  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
-  
-    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>三元组详解 | Zmmmmy's Blog</title>
   
 
 
 
 
-  <script id="fluid-configs">
-    var Fluid = window.Fluid || {};
-    Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"zmmmmy.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2,"offset_top":300},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
-    if (CONFIG.web_analytics.follow_dnt) {
-      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
-      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
-    }
-  </script>
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
-  
+
 
 
   
-<meta name="generator" content="Hexo 8.1.1"></head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
 
 
-<body>
+
+
+
+
+
   
 
-  <header>
-    
 
-<div class="header-inner" style="height: 70vh;">
-  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand" href="/">
-      <strong>Zmmmmy&#39;s Blog</strong>
-    </a>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
 
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/" target="_self">
-                <i class="iconfont icon-home-fill"></i>
-                <span>首页</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/" target="_self">
-                <i class="iconfont icon-archive-fill"></i>
-                <span>归档</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/" target="_self">
-                <i class="iconfont icon-category-fill"></i>
-                <span>分类</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/" target="_self">
-                <i class="iconfont icon-tags-fill"></i>
-                <span>标签</span>
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/" target="_self">
-                <i class="iconfont icon-user-fill"></i>
-                <span>关于</span>
-              </a>
-            </li>
-          
-        
-        
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              <i class="iconfont icon-search"></i>
-            </a>
-          </li>
-          
-        
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
-              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
-            </a>
-          </li>
-        
-      </ul>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
     </div>
   </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Zmmmmy's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人技术博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
 </nav>
 
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E5%85%83%E7%BB%84%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">三元组详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%89%E5%85%83%E7%BB%84"><span class="nav-number">1.1.</span> <span class="nav-text">什么是三元组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E5%85%83%E7%BB%84%E7%BB%84%E6%88%90"><span class="nav-number">1.1.1.</span> <span class="nav-text">三元组组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%BD%A2%E5%BC%8F"><span class="nav-number">1.1.2.</span> <span class="nav-text">基本形式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E5%85%83%E7%BB%84%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.2.</span> <span class="nav-text">三元组示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A8%E7%A4%BA%E5%85%B3%E7%B3%BB"><span class="nav-number">1.2.1.</span> <span class="nav-text">表示关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A8%E7%A4%BA%E5%B1%9E%E6%80%A7"><span class="nav-number">1.2.2.</span> <span class="nav-text">表示属性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E7%89%B9%E7%82%B9"><span class="nav-number">1.3.</span> <span class="nav-text">核心特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E5%85%83%E7%BB%84-vs-%E5%B1%9E%E6%80%A7%E5%9B%BE"><span class="nav-number">1.4.</span> <span class="nav-text">三元组 vs 属性图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDF-%E4%B8%89%E5%85%83%E7%BB%84%E8%A1%A8%E7%A4%BA%E6%B3%95"><span class="nav-number">1.5.</span> <span class="nav-text">RDF 三元组表示法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#N-Triples-%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.5.1.</span> <span class="nav-text">N-Triples 格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Turtle-%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.5.2.</span> <span class="nav-text">Turtle 格式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SPARQL-%E6%9F%A5%E8%AF%A2%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.6.</span> <span class="nav-text">SPARQL 查询示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E5%85%83%E7%BB%84%E5%9C%A8%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">1.7.</span> <span class="nav-text">三元组在知识图谱中的应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.8.</span> <span class="nav-text">实际应用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.9.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZhiMy"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">ZhiMy</p>
+  <div class="site-description" itemprop="description">记录学习与成长</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">100</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Zmmmmy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Zmmmmy" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
   
 
-<div id="banner" class="banner" parallax=true
-     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
-  <div class="full-bg-img">
-    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-      <div class="banner-text text-center fade-in-up">
-        <div class="h2">
-          
-            <span id="subtitle" data-typed-text="三元组详解"></span>
-          
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zmmmmy.github.io/2026/01/12/%E4%B8%89%E5%85%83%E7%BB%84%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="ZhiMy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zmmmmy's Blog">
+      <meta itemprop="description" content="记录学习与成长">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="三元组详解 | Zmmmmy's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          三元组详解
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-12 00:00:00" itemprop="dateCreated datePublished" datetime="2026-01-12T00:00:00+08:00">2026-01-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-22 15:44:14" itemprop="dateModified" datetime="2026-01-22T15:44:14+08:00">2026-01-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">图数据库</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
         </div>
-
-        
-          
-  <div class="mt-3">
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-author" aria-hidden="true"></i>
-        ZhiMy
-      </span>
-    
-    
-      <span class="post-meta">
-        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-01-12 00:00" pubdate>
-          2026-01-12
-        </time>
-      </span>
-    
-  </div>
-
-  <div class="mt-1">
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-chart"></i>
-        
-          679 字
-        
-      </span>
-    
-
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-clock-fill"></i>
-        
-        
-        
-          6 分钟
-        
-      </span>
-    
+      </header>
 
     
     
-  </div>
-
-
-        
-      </div>
-
-      
-    </div>
-  </div>
-</div>
-
-</div>
-
-  </header>
-
-  <main>
     
-      
-
-<div class="container-fluid nopadding-x">
-  <div class="row nomargin-x">
-    <div class="side-col d-none d-lg-block col-lg-2">
-      
-
-    </div>
-
-    <div class="col-lg-8 nopadding-x-md">
-      <div class="container nopadding-x-md" id="board-ctn">
-        <div id="board">
-          <article class="post-content mx-auto">
-            <h1 id="seo-header">三元组详解</h1>
-            
-              <p id="updated-time" class="note note-info" style="">
-                
-                  
-                    <!-- compatible with older versions-->
-                    本文最后更新于2026年1月22日 下午
-                  
-                
-              </p>
-            
-            
-              <div class="markdown-body">
-                
-                <h1 id="三元组详解"><a href="#三元组详解" class="headerlink" title="三元组详解"></a>三元组详解</h1><h2 id="什么是三元组"><a href="#什么是三元组" class="headerlink" title="什么是三元组"></a>什么是三元组</h2><p>三元组（Triple）是 <strong>RDF 图数据库</strong> 中的基本数据存储单元，用于表达一个完整的事实陈述。</p>
+    <div class="post-body" itemprop="articleBody"><h1 id="三元组详解"><a href="#三元组详解" class="headerlink" title="三元组详解"></a>三元组详解</h1><h2 id="什么是三元组"><a href="#什么是三元组" class="headerlink" title="什么是三元组"></a>什么是三元组</h2><p>三元组（Triple）是 <strong>RDF 图数据库</strong> 中的基本数据存储单元，用于表达一个完整的事实陈述。</p>
 <h3 id="三元组组成"><a href="#三元组组成" class="headerlink" title="三元组组成"></a>三元组组成</h3><table>
 <thead>
 <tr>
@@ -318,11 +304,11 @@
 <td>属性值或关联的另一个实体</td>
 </tr>
 </tbody></table>
-<h3 id="基本形式"><a href="#基本形式" class="headerlink" title="基本形式"></a>基本形式</h3><figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs clojure">(<span class="hljs-name">Subject</span><span class="hljs-punctuation">,</span> Predicate<span class="hljs-punctuation">,</span> Object)<br></code></pre></td></tr></table></figure>
+<h3 id="基本形式"><a href="#基本形式" class="headerlink" title="基本形式"></a>基本形式</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(Subject, Predicate, Object)</span><br></pre></td></tr></table></figure>
 
-<h2 id="三元组示例"><a href="#三元组示例" class="headerlink" title="三元组示例"></a>三元组示例</h2><h3 id="表示关系"><a href="#表示关系" class="headerlink" title="表示关系"></a>表示关系</h3><figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs clojure">(张三<span class="hljs-punctuation">,</span> 认识<span class="hljs-punctuation">,</span> 李四)<br>(北京<span class="hljs-punctuation">,</span> 是首都<span class="hljs-punctuation">,</span> 中国)<br>(<span class="hljs-name">Java</span><span class="hljs-punctuation">,</span> 属于<span class="hljs-punctuation">,</span> 编程语言)<br></code></pre></td></tr></table></figure>
+<h2 id="三元组示例"><a href="#三元组示例" class="headerlink" title="三元组示例"></a>三元组示例</h2><h3 id="表示关系"><a href="#表示关系" class="headerlink" title="表示关系"></a>表示关系</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(张三, 认识, 李四)</span><br><span class="line">(北京, 是首都, 中国)</span><br><span class="line">(Java, 属于, 编程语言)</span><br></pre></td></tr></table></figure>
 
-<h3 id="表示属性"><a href="#表示属性" class="headerlink" title="表示属性"></a>表示属性</h3><figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs clojure">(张三<span class="hljs-punctuation">,</span> 年龄<span class="hljs-punctuation">,</span> <span class="hljs-number">25</span>)<br>(张三<span class="hljs-punctuation">,</span> 职业<span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;软件工程师&quot;</span>)<br>(北京<span class="hljs-punctuation">,</span> 人口<span class="hljs-punctuation">,</span> <span class="hljs-number">21540000</span>)<br></code></pre></td></tr></table></figure>
+<h3 id="表示属性"><a href="#表示属性" class="headerlink" title="表示属性"></a>表示属性</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(张三, 年龄, 25)</span><br><span class="line">(张三, 职业, &quot;软件工程师&quot;)</span><br><span class="line">(北京, 人口, 21540000)</span><br></pre></td></tr></table></figure>
 
 <h2 id="核心特点"><a href="#核心特点" class="headerlink" title="核心特点"></a>核心特点</h2><ul>
 <li><strong>原子性</strong>：每个三元组表达一个独立、不可分割的事实</li>
@@ -365,19 +351,13 @@
 <td>社交网络、推荐系统</td>
 </tr>
 </tbody></table>
-<h2 id="RDF-三元组表示法"><a href="#RDF-三元组表示法" class="headerlink" title="RDF 三元组表示法"></a>RDF 三元组表示法</h2><h3 id="N-Triples-格式"><a href="#N-Triples-格式" class="headerlink" title="N-Triples 格式"></a>N-Triples 格式</h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs awk">&lt;http:<span class="hljs-regexp">//</span>example.org<span class="hljs-regexp">/张三&gt; &lt;http:/</span><span class="hljs-regexp">/example.org/</span>认识&gt; &lt;http:<span class="hljs-regexp">//</span>example.org/李四&gt; .<br>&lt;http:<span class="hljs-regexp">//</span>example.org<span class="hljs-regexp">/张三&gt; &lt;http:/</span><span class="hljs-regexp">/example.org/</span>年龄&gt; <span class="hljs-string">&quot;25&quot;</span>^^&lt;http:<span class="hljs-regexp">//</span>www.w3.org<span class="hljs-regexp">/2001/</span>XMLSchema<span class="hljs-comment">#integer&gt; .</span><br></code></pre></td></tr></table></figure>
+<h2 id="RDF-三元组表示法"><a href="#RDF-三元组表示法" class="headerlink" title="RDF 三元组表示法"></a>RDF 三元组表示法</h2><h3 id="N-Triples-格式"><a href="#N-Triples-格式" class="headerlink" title="N-Triples 格式"></a>N-Triples 格式</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;http://example.org/张三&gt; &lt;http://example.org/认识&gt; &lt;http://example.org/李四&gt; .</span><br><span class="line">&lt;http://example.org/张三&gt; &lt;http://example.org/年龄&gt; &quot;25&quot;^^&lt;http://www.w3.org/2001/XMLSchema#integer&gt; .</span><br></pre></td></tr></table></figure>
 
-<h3 id="Turtle-格式"><a href="#Turtle-格式" class="headerlink" title="Turtle 格式"></a>Turtle 格式</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs turtle">@prefix ex: &lt;http://example.org/&gt; .<br>@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .<br><br>ex:张三 ex:认识 ex:李四 ;<br>        ex:年龄 &quot;25&quot;^^xsd:integer .<br></code></pre></td></tr></table></figure>
+<h3 id="Turtle-格式"><a href="#Turtle-格式" class="headerlink" title="Turtle 格式"></a>Turtle 格式</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@prefix ex: &lt;http://example.org/&gt; .</span><br><span class="line">@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .</span><br><span class="line"></span><br><span class="line">ex:张三 ex:认识 ex:李四 ;</span><br><span class="line">        ex:年龄 &quot;25&quot;^^xsd:integer .</span><br></pre></td></tr></table></figure>
 
-<h2 id="SPARQL-查询示例"><a href="#SPARQL-查询示例" class="headerlink" title="SPARQL 查询示例"></a>SPARQL 查询示例</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs sparql"># 查询张三认识的所有人<br>SELECT ?person<br>WHERE &#123;<br>    ex:张三 ex:认识 ?person .<br>&#125;<br><br># 查询所有年龄大于20的人<br>SELECT ?person ?age<br>WHERE &#123;<br>    ?person ex:年龄 ?age .<br>    FILTER (?age &gt; 20)<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="SPARQL-查询示例"><a href="#SPARQL-查询示例" class="headerlink" title="SPARQL 查询示例"></a>SPARQL 查询示例</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 查询张三认识的所有人</span><br><span class="line">SELECT ?person</span><br><span class="line">WHERE &#123;</span><br><span class="line">    ex:张三 ex:认识 ?person .</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 查询所有年龄大于20的人</span><br><span class="line">SELECT ?person ?age</span><br><span class="line">WHERE &#123;</span><br><span class="line">    ?person ex:年龄 ?age .</span><br><span class="line">    FILTER (?age &gt; 20)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="三元组在知识图谱中的应用"><a href="#三元组在知识图谱中的应用" class="headerlink" title="三元组在知识图谱中的应用"></a>三元组在知识图谱中的应用</h2><pre><code class=" mermaid">graph LR
-    A[张三] --&gt;|认识| B[李四]
-    A --&gt;|工作于| C[阿里巴巴]
-    B --&gt;|工作于| D[腾讯]
-    C --&gt;|位于| E[杭州]
-    D --&gt;|位于| F[深圳]
-</code></pre>
+<h2 id="三元组在知识图谱中的应用"><a href="#三元组在知识图谱中的应用" class="headerlink" title="三元组在知识图谱中的应用"></a>三元组在知识图谱中的应用</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">    A[张三] --&gt;|认识| B[李四]</span><br><span class="line">    A --&gt;|工作于| C[阿里巴巴]</span><br><span class="line">    B --&gt;|工作于| D[腾讯]</span><br><span class="line">    C --&gt;|位于| E[杭州]</span><br><span class="line">    D --&gt;|位于| F[深圳]</span><br></pre></td></tr></table></figure>
 
 <h2 id="实际应用场景"><a href="#实际应用场景" class="headerlink" title="实际应用场景"></a>实际应用场景</h2><ul>
 <li><strong>知识图谱</strong>：Google Knowledge Graph、百度知识图谱</li>
@@ -388,401 +368,97 @@
 </ul>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>三元组是图数据库的基础数据结构，通过 <code>(主语, 谓语, 宾语)</code> 的形式表达事实。它是构建知识图谱的基石，广泛应用于语义网、智能问答等领域。</p>
 
-                
-              </div>
-            
-            <hr/>
-            <div>
-              <div class="post-metas my-3">
-  
-    <div class="post-meta mr-3 d-flex align-items-center">
-      <i class="iconfont icon-category"></i>
-      
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="category-chain-item">数据库</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93/" class="category-chain-item">图数据库</a>
-  
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
     </div>
-  
-  
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93/" class="print-no-link">#图数据库</a>
-      
-        <a href="/tags/RDF/" class="print-no-link">#RDF</a>
-      
-        <a href="/tags/%E4%B8%89%E5%85%83%E7%BB%84/" class="print-no-link">#三元组</a>
-      
-        <a href="/tags/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/" class="print-no-link">#知识图谱</a>
-      
-    </div>
-  
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>ZhiMy
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://zmmmmy.github.io/2026/01/12/%E4%B8%89%E5%85%83%E7%BB%84%E8%AF%A6%E8%A7%A3/" title="三元组详解">https://zmmmmy.github.io/2026/01/12/三元组详解/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
 </div>
 
-
-              
-  
-
-  <div class="license-box my-3">
-    <div class="license-title">
-      <div>三元组详解</div>
-      <div>https://zmmmmy.github.io/2026/01/12/三元组详解/</div>
-    </div>
-    <div class="license-meta">
-      
-        <div class="license-meta-item">
-          <div>作者</div>
-          <div>ZhiMy</div>
-        </div>
-      
-      
-        <div class="license-meta-item license-meta-date">
-          <div>发布于</div>
-          <div>2026-01-12</div>
-        </div>
-      
-      
-        <div class="license-meta-item license-meta-date">
-          <div>更新于</div>
-          <div>2026-01-22</div>
-        </div>
-      
-      
-        <div class="license-meta-item">
-          <div>许可协议</div>
-          <div>
-            
-              
-              
-                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
-                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
-                    <i class="iconfont icon-cc-by"></i>
-                  </span>
-                </a>
-              
-                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
-                  <span class="hint--top hint--rounded" aria-label="NC - 非商业性使用">
-                    <i class="iconfont icon-cc-nc"></i>
-                  </span>
-                </a>
-              
-                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
-                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
-                    <i class="iconfont icon-cc-sa"></i>
-                  </span>
-                </a>
-              
-            
+          <div class="post-tags">
+              <a href="/tags/%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 图数据库</a>
+              <a href="/tags/RDF/" rel="tag"># RDF</a>
+              <a href="/tags/%E4%B8%89%E5%85%83%E7%BB%84/" rel="tag"># 三元组</a>
+              <a href="/tags/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/" rel="tag"># 知识图谱</a>
           </div>
-        </div>
-      
-    </div>
-    <div class="license-icon iconfont"></div>
-  </div>
 
+        
 
-
-              
-                <div class="post-prevnext my-3">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2026/01/12/Reflexion%E8%87%AA%E5%8F%8D%E6%80%9DAgent%E8%AF%A6%E8%A7%A3/" title="Reflexion自反思Agent详解">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Reflexion自反思Agent详解</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2026/01/12/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF/" title="大模型学习路线">
-                        <span class="hidden-mobile">大模型学习路线</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/01/12/%E5%B1%9E%E6%80%A7%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E9%81%8D%E5%8E%86%E8%AF%A6%E8%A7%A3/" rel="prev" title="属性数据结构遍历详解">
+                  <i class="fa fa-angle-left"></i> 属性数据结构遍历详解
+                </a>
             </div>
-
-            
-          </article>
-        </div>
-      </div>
-    </div>
-
-    <div class="side-col d-none d-lg-block col-lg-2">
-      
-  <aside class="sidebar" style="margin-left: -1rem">
-    <div id="toc">
-  <p class="toc-header">
-    <i class="iconfont icon-list"></i>
-    <span>目录</span>
-  </p>
-  <div class="toc-body" id="toc-body"></div>
-</div>
-
-
-
-  </aside>
-
-
-    </div>
-  </div>
+            <div class="post-nav-item">
+                <a href="/2026/01/12/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF/" rel="next" title="大模型学习路线">
+                  大模型学习路线 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
 </div>
 
 
 
 
 
-  
 
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-
-
-
-
-    
-
-    
-      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-      </a>
-    
-
-    
-      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
 </div>
-
-    
-
-    
   </main>
 
-  <footer>
+  <footer class="footer">
     <div class="footer-inner">
-  
-    <div class="footer-content">
-       <a href="https://hexo.io" target="_blank" rel="nofollow noopener">Hexo</a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">Fluid</a> 
-    </div>
-  
-  
-  
-</div>
 
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">ZhiMy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
   </footer>
 
-  <!-- Scripts -->
   
-  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
-  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
-  <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
-    NProgress.start()
-    window.addEventListener('load', function() {
-      NProgress.done();
-    })
-  </script>
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-
-<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
-<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
-<script  src="/js/events.js" ></script>
-<script  src="/js/plugins.js" ></script>
-
-
-  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
-  <script>
-    (function (window, document) {
-      var typing = Fluid.plugins.typing;
-      var subtitle = document.getElementById('subtitle');
-      if (!subtitle || !typing) {
-        return;
-      }
-      var text = subtitle.getAttribute('data-typed-text');
-      
-        typing(text);
-      
-    })(window, document);
-  </script>
-
-
-
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
-
-
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
-    var toc = jQuery('#toc');
-    if (toc.length === 0 || !window.tocbot) { return; }
-    var boardCtn = jQuery('#board-ctn');
-    var boardTop = boardCtn.offset().top;
-
-    window.tocbot.init(Object.assign({
-      tocSelector     : '#toc-body',
-      contentSelector : '.markdown-body',
-      linkClass       : 'tocbot-link',
-      activeLinkClass : 'tocbot-active-link',
-      listClass       : 'tocbot-list',
-      isCollapsedClass: 'tocbot-is-collapsed',
-      collapsibleClass: 'tocbot-is-collapsible',
-      scrollSmooth    : true,
-      includeTitleTags: true,
-      headingsOffset  : -boardTop,
-    }, CONFIG.toc));
-    if (toc.find('.toc-list-item').length > 0) {
-      toc.css('visibility', 'visible');
-    }
-
-    Fluid.events.registerRefreshCallback(function() {
-      if ('tocbot' in window) {
-        tocbot.refresh();
-        var toc = jQuery('#toc');
-        if (toc.length === 0 || !tocbot) {
-          return;
-        }
-        if (toc.find('.toc-list-item').length > 0) {
-          toc.css('visibility', 'visible');
-        }
-      }
-    });
-  });
-</script>
-
-
-  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
-
-  <script>Fluid.plugins.codeWidget();</script>
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
-    window.anchors.options = {
-      placement: CONFIG.anchorjs.placement,
-      visible  : CONFIG.anchorjs.visible
-    };
-    if (CONFIG.anchorjs.icon) {
-      window.anchors.options.icon = CONFIG.anchorjs.icon;
-    }
-    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
-    var res = [];
-    for (var item of el) {
-      res.push('.markdown-body > ' + item.trim());
-    }
-    if (CONFIG.anchorjs.placement === 'left') {
-      window.anchors.options.class = 'anchorjs-link-left';
-    }
-    window.anchors.add(res.join(', '));
-
-    Fluid.events.registerRefreshCallback(function() {
-      if ('anchors' in window) {
-        anchors.removeAll();
-        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
-        var res = [];
-        for (var item of el) {
-          res.push('.markdown-body > ' + item.trim());
-        }
-        if (CONFIG.anchorjs.placement === 'left') {
-          anchors.options.class = 'anchorjs-link-left';
-        }
-        anchors.add(res.join(', '));
-      }
-    });
-  });
-</script>
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
-    Fluid.plugins.fancyBox();
-  });
-</script>
-
-
-  <script>Fluid.plugins.imageCaption();</script>
-
-  <script  src="/js/local-search.js" ></script>
-
-
-
-
-
-<!-- 主题的启动项，将它保持在最底部 -->
-<!-- the boot of the theme, keep it at the bottom -->
-<script  src="/js/boot.js" ></script>
-
-
-  
-
-  <noscript>
-    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
-  </noscript>
 </body>
 </html>

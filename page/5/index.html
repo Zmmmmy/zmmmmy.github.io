@@ -312,15 +312,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2026/01/10/%E6%B5%81%E5%90%88%E5%B9%B6%E4%B8%8E%E6%93%8D%E4%BD%9C%E7%AC%A6%E9%93%BE/" target="_self">
-          流合并与操作符链
+        <a href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E4%B8%8ENetty/" target="_self">
+          线程模型与Netty
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2026/01/10/%E6%B5%81%E5%90%88%E5%B9%B6%E4%B8%8E%E6%93%8D%E4%BD%9C%E7%AC%A6%E9%93%BE/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E4%B8%8ENetty/" target="_self">
         <div>
-          流合并与操作符链水利系统比喻在学习 Reactor 时，可以用水利系统来理解： 12345678910111213141516171819202122232425262728┌──────────────────────────────────────────────────────────────┐│                     Reactor 水利系统
+          线程模型与 Netty传统 Servlet 线程模型传统 Spring MVC 基于 Servlet 容器，采用每请求一线程模型： 123请求1 ──→ 线程1 ──→ [接收请求 → 处理业务 → 等待DB → 返回响应] ──→ 释放请求2 ──→ 线程2 ──→ [接收请求 → 处理业务 → 等待DB → 返回响应] ──→ 释放请求3 ──→ 线程3 ──→ [接收请求 → 处理业务 →
         </div>
       </a>
 
@@ -354,7 +354,7 @@
   
     <span>></span>
     
-  <a href="/categories/Java/Spring/Reactive-Streams/" class="category-chain-item">Reactive Streams</a>
+  <a href="/categories/Java/Spring/Webflux/" class="category-chain-item">Webflux</a>
   
   
 
@@ -377,19 +377,13 @@
             
               <a href="/tags/Spring/">#Spring</a>
             
-              <a href="/tags/ReactiveStreams/">#ReactiveStreams</a>
+              <a href="/tags/WebFlux/">#WebFlux</a>
             
-              <a href="/tags/Reactor/">#Reactor</a>
+              <a href="/tags/Netty/">#Netty</a>
             
-              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%AC%A6/">#操作符</a>
+              <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/">#线程模型</a>
             
-              <a href="/tags/merge/">#merge</a>
-            
-              <a href="/tags/concat/">#concat</a>
-            
-              <a href="/tags/zip/">#zip</a>
-            
-              <a href="/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">#最佳实践</a>
+              <a href="/tags/EventLoop/">#EventLoop</a>
             
           </div>
         

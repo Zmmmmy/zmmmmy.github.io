@@ -555,9 +555,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/01/10/%E6%B5%81%E5%90%88%E5%B9%B6%E4%B8%8E%E6%93%8D%E4%BD%9C%E7%AC%A6%E9%93%BE/" title="流合并与操作符链">
+                      <a href="/2026/01/10/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%AB%AF%E7%82%B9/" title="函数式端点">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">流合并与操作符链</span>
+                        <span class="hidden-mobile">函数式端点</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -565,8 +565,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/01/10/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" title="源码解析">
-                        <span class="hidden-mobile">源码解析</span>
+                      <a href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%B1%BB%E5%9E%8B/" title="线程池类型">
+                        <span class="hidden-mobile">线程池类型</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -624,6 +624,27 @@
 
   
 
+
+  
+  
+
+
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.utils.listenDOMLoaded(function() {
+      Fluid.events.registerRefreshCallback(function() {
+        if ('mermaid' in window) {
+          mermaid.init();
+        }
+      });
+    });
+  });
+</script>
 
 
 
@@ -804,6 +825,49 @@
 
 
   <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
 
   <script  src="/js/local-search.js" ></script>
 

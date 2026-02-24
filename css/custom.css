@@ -3,22 +3,6 @@ html, body {
   overscroll-behavior: none;
 }
 
-/* 修复视差滚动时快速回到顶部出现白条的问题 */
-/* 给 banner 容器添加与背景图相近的颜色作为底色 */
-#banner::before {
-  content: "";
-  position: absolute;
-  top: -100px;
-  left: 0;
-  right: 0;
-  height: 100px;
-  background-color: #6ec6c6; /* 企鹅背景的青色 */
-  z-index: -1;
-}
-
-html[data-user-color-scheme="dark"] #banner::before {
-  background-color: #1a1a2e;
-}
 
 /* 去除导航栏底部阴影 */
 .navbar {

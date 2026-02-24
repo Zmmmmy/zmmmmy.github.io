@@ -1,0 +1,1022 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/favicon-32x32.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#f5f5f5">
+  <meta name="author" content="ZhiMy">
+  <meta name="keywords" content="技术博客,编程">
+  
+    <meta name="description" content="Transformer 架构详解概述Transformer 是 Google 团队在 2017 年论文《Attention Is All You Need》中提出的深度学习架构。它完全基于注意力机制，摒弃了传统的循环（RNN）和卷积（CNN）结构，成为当今几乎所有大语言模型（GPT、Claude、DeepSeek 等）的基础架构。  📄 摘要: 核心思想Attention Is All You">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Transformer架构详解">
+<meta property="og:url" content="https://zmmmmy.github.io/2026/02/24/Transformer%E6%9E%B6%E6%9E%84%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Zmmmmy&#39;s Blog">
+<meta property="og:description" content="Transformer 架构详解概述Transformer 是 Google 团队在 2017 年论文《Attention Is All You Need》中提出的深度学习架构。它完全基于注意力机制，摒弃了传统的循环（RNN）和卷积（CNN）结构，成为当今几乎所有大语言模型（GPT、Claude、DeepSeek 等）的基础架构。  📄 摘要: 核心思想Attention Is All You">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-02-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-02-24T02:35:03.255Z">
+<meta property="article:author" content="ZhiMy">
+<meta property="article:tag" content="NLP">
+<meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="注意力机制">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="神经网络">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Transformer架构详解 - Zmmmmy&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zmmmmy.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":false,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Zmmmmy&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/banner.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Transformer架构详解"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-02-24 00:00" pubdate>
+          2026年2月24日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          23 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Transformer架构详解</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Transformer-架构详解"><a href="#Transformer-架构详解" class="headerlink" title="Transformer 架构详解"></a>Transformer 架构详解</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><strong>Transformer</strong> 是 Google 团队在 2017 年论文《Attention Is All You Need》中提出的深度学习架构。它<strong>完全基于注意力机制</strong>，摒弃了传统的循环（RNN）和卷积（CNN）结构，成为当今几乎所有大语言模型（GPT、Claude、DeepSeek 等）的基础架构。</p>
+<blockquote>
+<p><strong>📄 摘要: 核心思想</strong><br><strong>Attention Is All You Need</strong> — 只用注意力机制就能完成序列到序列的转换任务，而且效果更好、训练更快。</p>
+</blockquote>
+<h2 id="为什么需要-Transformer？"><a href="#为什么需要-Transformer？" class="headerlink" title="为什么需要 Transformer？"></a>为什么需要 Transformer？</h2><h3 id="传统模型的问题"><a href="#传统模型的问题" class="headerlink" title="传统模型的问题"></a>传统模型的问题</h3><p>在 Transformer 之前，序列处理任务（翻译、文本生成等）主要依赖 <strong>RNN</strong> 和 <strong>LSTM</strong>：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">RNN</span> 处理方式（串行）：<br>词<span class="hljs-number">1</span> → 词<span class="hljs-number">2</span> → 词<span class="hljs-number">3</span> → 词<span class="hljs-number">4</span> → 词<span class="hljs-number">5</span> → 输出<br> ↓      ↓      ↓      ↓      ↓<br>隐藏态 → 隐藏态 → 隐藏态 → 隐藏态 → 隐藏态<br></code></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>串行计算</strong></td>
+<td>必须逐词处理，无法并行，训练速度慢</td>
+</tr>
+<tr>
+<td><strong>长距离依赖</strong></td>
+<td>句子太长时，前面的信息会”遗忘”（梯度消失）</td>
+</tr>
+<tr>
+<td><strong>信息瓶颈</strong></td>
+<td>所有信息压缩到固定大小的隐藏状态中</td>
+</tr>
+</tbody></table>
+<h3 id="Transformer-的解决方案"><a href="#Transformer-的解决方案" class="headerlink" title="Transformer 的解决方案"></a>Transformer 的解决方案</h3><figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs abnf">Transformer 处理方式（并行）：<br>词<span class="hljs-number">1</span>  词<span class="hljs-number">2</span>  词<span class="hljs-number">3</span>  词<span class="hljs-number">4</span>  词<span class="hljs-number">5</span><br> ↕    ↕    ↕    ↕    ↕    ← 每个词同时关注所有其他词<br>[<span class="hljs-operator">=</span><span class="hljs-operator">=</span><span class="hljs-operator">=</span><span class="hljs-operator">=</span><span class="hljs-operator">=</span><span class="hljs-operator">=</span>注意力机制<span class="hljs-operator">=</span><span class="hljs-operator">=</span><span class="hljs-operator">=</span><span class="hljs-operator">=</span><span class="hljs-operator">=</span><span class="hljs-operator">=</span>]<br>         ↓<br>       输出<br></code></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>优势</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>完全并行</strong></td>
+<td>所有词同时计算，训练速度大幅提升</td>
+</tr>
+<tr>
+<td><strong>直接关联</strong></td>
+<td>任意两个词之间直接建立联系，不受距离限制</td>
+</tr>
+<tr>
+<td><strong>可扩展性</strong></td>
+<td>模型规模可以轻松扩大（堆叠更多层）</td>
+</tr>
+</tbody></table>
+<h2 id="整体架构"><a href="#整体架构" class="headerlink" title="整体架构"></a>整体架构</h2><p>Transformer 采用经典的<strong>编码器-解码器（Encoder-Decoder）</strong> 结构：</p>
+<pre><code class=" mermaid">graph LR
+    A[输入序列] --&gt; B[编码器 ×6]
+    B --&gt; |语义向量| C[解码器 ×6]
+    D[输出序列-已生成部分] --&gt; C
+    C --&gt; E[输出预测]
+</code></pre>
+
+<blockquote>
+<p><strong>ℹ️ 信息: 架构参数（原始论文）</strong></p>
+<ul>
+<li>编码器层数：<strong>6 层</strong></li>
+<li>解码器层数：<strong>6 层</strong></li>
+<li>模型维度 $d_{model}$：<strong>512</strong></li>
+<li>注意力头数：<strong>8 个</strong></li>
+<li>前馈网络维度 $d_{ff}$：<strong>2048</strong></li>
+</ul>
+</blockquote>
+<h2 id="核心组件一：注意力机制（Attention）"><a href="#核心组件一：注意力机制（Attention）" class="headerlink" title="核心组件一：注意力机制（Attention）"></a>核心组件一：注意力机制（Attention）</h2><h3 id="什么是注意力"><a href="#什么是注意力" class="headerlink" title="什么是注意力"></a>什么是注意力</h3><p>注意力机制的本质是：<strong>对输入信息的不同部分分配不同的关注权重</strong>。</p>
+<blockquote>
+<p><strong>📋 示例: 类比</strong><br>阅读”小明昨天买了一本<strong>书</strong>，他觉得很好<strong>看</strong>“时：</p>
+<ul>
+<li>理解”他”→ 高度关注”小明”（指代关系）</li>
+<li>理解”好看”→ 关注”书”（修饰对象）</li>
+<li>“昨天”→ 关注度较低（与当前词关系不大）</li>
+</ul>
+</blockquote>
+<h3 id="缩放点积注意力（Scaled-Dot-Product-Attention）"><a href="#缩放点积注意力（Scaled-Dot-Product-Attention）" class="headerlink" title="缩放点积注意力（Scaled Dot-Product Attention）"></a>缩放点积注意力（Scaled Dot-Product Attention）</h3><p>这是 Transformer 中注意力的基本计算单元。</p>
+<p><strong>三个核心向量：</strong></p>
+<table>
+<thead>
+<tr>
+<th>向量</th>
+<th>全称</th>
+<th>含义</th>
+<th>类比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Q</strong></td>
+<td>Query（查询）</td>
+<td>“我在找什么？”</td>
+<td>搜索关键词</td>
+</tr>
+<tr>
+<td><strong>K</strong></td>
+<td>Key（键）</td>
+<td>“我有什么标签？”</td>
+<td>文档标题</td>
+</tr>
+<tr>
+<td><strong>V</strong></td>
+<td>Value（值）</td>
+<td>“我的实际内容”</td>
+<td>文档内容</td>
+</tr>
+</tbody></table>
+<p><strong>计算公式：</strong></p>
+<p>$$<br>\text{Attention}(Q, K, V) &#x3D; \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V<br>$$</p>
+<p><strong>分步理解：</strong></p>
+<ol>
+<li><strong>$QK^T$</strong>（点积）— 计算 Query 与每个 Key 的相似度</li>
+<li><strong>$\div \sqrt{d_k}$</strong>（缩放）— 防止点积值过大导致 softmax 梯度消失</li>
+<li><strong>softmax</strong>（归一化）— 将相似度转为概率权重（总和为 1）</li>
+<li><strong>$\times V$</strong>（加权求和）— 用权重对 Value 加权，得到最终输出</li>
+</ol>
+<blockquote>
+<p><strong>💡 提示: 形象理解</strong><br>就像在图书馆找书：</p>
+<ol>
+<li>你带着<strong>问题（Q）</strong> 去搜索</li>
+<li>每本书有一个<strong>标签（K）</strong></li>
+<li>你比较问题和每个标签的<strong>相关程度</strong></li>
+<li>然后按相关程度，提取每本书的<strong>内容（V）</strong> 做加权混合</li>
+</ol>
+</blockquote>
+<h3 id="自注意力（Self-Attention）"><a href="#自注意力（Self-Attention）" class="headerlink" title="自注意力（Self-Attention）"></a>自注意力（Self-Attention）</h3><p>当 Q、K、V <strong>都来自同一个输入序列</strong>时，就是自注意力。每个词都在”关注”同一句话中的其他词。</p>
+<p><strong>示例：</strong> 处理句子”The animal didn’t cross the street because <strong>it</strong> was too tired”</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-string">&quot;it&quot;</span> 的注意力分布：<br>The      → <span class="hljs-number">0</span>.<span class="hljs-number">02</span><br>animal   → <span class="hljs-number">0</span>.<span class="hljs-number">68</span>  ← 高权重！<span class="hljs-string">&quot;it&quot;</span> 指代 <span class="hljs-string">&quot;animal&quot;</span><br><span class="hljs-keyword">didn&#x27;t </span>  → <span class="hljs-number">0</span>.<span class="hljs-number">01</span><br>cross    → <span class="hljs-number">0</span>.<span class="hljs-number">03</span><br>the      → <span class="hljs-number">0</span>.<span class="hljs-number">01</span><br>street   → <span class="hljs-number">0</span>.<span class="hljs-number">05</span><br><span class="hljs-keyword">because </span> → <span class="hljs-number">0</span>.<span class="hljs-number">02</span><br>it       → <span class="hljs-number">0</span>.<span class="hljs-number">08</span><br>was      → <span class="hljs-number">0</span>.<span class="hljs-number">03</span><br>too      → <span class="hljs-number">0</span>.<span class="hljs-number">02</span><br>tired    → <span class="hljs-number">0</span>.<span class="hljs-number">05</span><br></code></pre></td></tr></table></figure>
+
+<p>自注意力让模型学会了<strong>it 指代 animal</strong> 这种语义关系。</p>
+<h2 id="核心组件二：多头注意力（Multi-Head-Attention）"><a href="#核心组件二：多头注意力（Multi-Head-Attention）" class="headerlink" title="核心组件二：多头注意力（Multi-Head Attention）"></a>核心组件二：多头注意力（Multi-Head Attention）</h2><h3 id="为什么需要多头？"><a href="#为什么需要多头？" class="headerlink" title="为什么需要多头？"></a>为什么需要多头？</h3><p>单个注意力只能捕捉一种关系模式。多头注意力让模型<strong>同时从多个角度理解文本</strong>。</p>
+<blockquote>
+<p><strong>📋 示例: 类比</strong><br>分析”张三在北京的公司做了一个优秀的项目”：</p>
+<ul>
+<li><strong>头 1</strong> 关注：谁做的？→ 张三</li>
+<li><strong>头 2</strong> 关注：在哪做的？→ 北京</li>
+<li><strong>头 3</strong> 关注：做了什么？→ 项目</li>
+<li><strong>头 4</strong> 关注：做得怎样？→ 优秀</li>
+</ul>
+</blockquote>
+<h3 id="计算过程"><a href="#计算过程" class="headerlink" title="计算过程"></a>计算过程</h3><pre><code class=" mermaid">graph TD
+    A[输入] --&gt; B1[头1: Q1,K1,V1]
+    A --&gt; B2[头2: Q2,K2,V2]
+    A --&gt; B3[...]
+    A --&gt; B4[头8: Q8,K8,V8]
+    B1 --&gt; C1[注意力1]
+    B2 --&gt; C2[注意力2]
+    B3 --&gt; C3[...]
+    B4 --&gt; C4[注意力8]
+    C1 --&gt; D[拼接 Concat]
+    C2 --&gt; D
+    C3 --&gt; D
+    C4 --&gt; D
+    D --&gt; E[线性变换]
+    E --&gt; F[输出]
+</code></pre>
+
+<p><strong>公式：</strong></p>
+<p>$$<br>\text{MultiHead}(Q, K, V) &#x3D; \text{Concat}(\text{head}_1, …, \text{head}_h)W^O<br>$$</p>
+<p>$$<br>\text{head}_i &#x3D; \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)<br>$$</p>
+<p>每个头使用独立的投影矩阵 $W_i^Q$、$W_i^K$、$W_i^V$，学习不同的注意力模式，最后拼接结果并做线性变换。</p>
+<h2 id="核心组件三：位置编码（Positional-Encoding）"><a href="#核心组件三：位置编码（Positional-Encoding）" class="headerlink" title="核心组件三：位置编码（Positional Encoding）"></a>核心组件三：位置编码（Positional Encoding）</h2><h3 id="为什么需要位置编码？"><a href="#为什么需要位置编码？" class="headerlink" title="为什么需要位置编码？"></a>为什么需要位置编码？</h3><p>Transformer 的注意力机制是<strong>位置无关</strong>的——“我爱你”和”你爱我”在注意力计算中没有区别。因此需要<strong>显式地注入位置信息</strong>。</p>
+<h3 id="正弦余弦编码"><a href="#正弦余弦编码" class="headerlink" title="正弦余弦编码"></a>正弦余弦编码</h3><p>原始 Transformer 使用固定的正弦&#x2F;余弦函数生成位置编码：</p>
+<p>$$<br>PE_{(pos, 2i)} &#x3D; \sin\left(\frac{pos}{10000^{2i&#x2F;d_{model}}}\right)<br>$$</p>
+<p>$$<br>PE_{(pos, 2i+1)} &#x3D; \cos\left(\frac{pos}{10000^{2i&#x2F;d_{model}}}\right)<br>$$</p>
+<ul>
+<li>$pos$：词在句子中的位置（0, 1, 2, …）</li>
+<li>$i$：向量维度的索引</li>
+<li>$d_{model}$：模型维度（512）</li>
+</ul>
+<p><strong>特点：</strong></p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>唯一性</td>
+<td>每个位置有唯一的编码向量</td>
+</tr>
+<tr>
+<td>相对关系</td>
+<td>位置间的距离可以通过线性变换表示</td>
+</tr>
+<tr>
+<td>可外推</td>
+<td>理论上可以处理训练时没见过的更长序列</td>
+</tr>
+<tr>
+<td>无需学习</td>
+<td>固定公式，不占用模型参数</td>
+</tr>
+</tbody></table>
+<p><strong>与输入嵌入的结合方式：直接相加。</strong></p>
+<p>$$<br>\text{输入} &#x3D; \text{词嵌入（Embedding）} + \text{位置编码（PE）}<br>$$</p>
+<blockquote>
+<p><strong>📝 注意: 现代改进</strong><br>后续模型采用了更先进的位置编码方案：</p>
+<ul>
+<li><strong>可学习位置编码</strong>（GPT 系列）— 位置编码作为可训练参数</li>
+<li><strong>RoPE 旋转位置编码</strong>（LLaMA、DeepSeek）— 将位置信息融入注意力计算</li>
+<li><strong>ALiBi</strong>（BLOOM）— 基于距离的注意力偏置</li>
+</ul>
+</blockquote>
+<h2 id="核心组件四：前馈神经网络（FFN）"><a href="#核心组件四：前馈神经网络（FFN）" class="headerlink" title="核心组件四：前馈神经网络（FFN）"></a>核心组件四：前馈神经网络（FFN）</h2><p>每一层注意力之后，都跟着一个<strong>逐位置的前馈网络</strong>：</p>
+<p>$$<br>\text{FFN}(x) &#x3D; \text{ReLU}(xW_1 + b_1)W_2 + b_2<br>$$</p>
+<ul>
+<li>两层全连接：$d_{model}(512) \to d_{ff}(2048) \to d_{model}(512)$</li>
+<li>先升维再降维，中间用 ReLU 激活</li>
+<li><strong>每个位置独立计算</strong>（不同位置共享参数）</li>
+</ul>
+<blockquote>
+<p><strong>💡 提示: 作用</strong><br>注意力机制负责”信息汇聚”（词与词之间的交互），FFN 负责”信息变换”（对每个位置的特征做非线性变换），两者互补。</p>
+</blockquote>
+<h2 id="核心组件五：残差连接与层归一化"><a href="#核心组件五：残差连接与层归一化" class="headerlink" title="核心组件五：残差连接与层归一化"></a>核心组件五：残差连接与层归一化</h2><p>每个子层（注意力或 FFN）都包裹了<strong>残差连接（Residual Connection）</strong> 和<strong>层归一化（Layer Normalization）</strong>：</p>
+<p>$$<br>\text{output} &#x3D; \text{LayerNorm}(x + \text{Sublayer}(x))<br>$$</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs css">输入 <span class="hljs-attribute">x</span> ─────────────────────┐<br>  │                          │ （残差连接：跳跃连接）<br>  ↓                          ↓<br><span class="hljs-selector-attr">[子层: 注意力/FFN]</span> ───→ <span class="hljs-selector-attr">[相加]</span> ───→ <span class="hljs-selector-attr">[LayerNorm]</span> ───→ 输出<br></code></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>残差连接</td>
+<td>缓解深层网络的梯度消失问题，让信息可以”跳过”子层直接传递</td>
+</tr>
+<tr>
+<td>层归一化</td>
+<td>稳定训练过程，加速收敛</td>
+</tr>
+</tbody></table>
+<h2 id="编码器结构"><a href="#编码器结构" class="headerlink" title="编码器结构"></a>编码器结构</h2><p>编码器由 <strong>6 个相同的层</strong> 堆叠而成，每层包含两个子层：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs css">编码器单层结构：<br><br>输入<br>  ↓<br><span class="hljs-selector-attr">[多头自注意力]</span> ←── <span class="hljs-selector-tag">Q</span>, K, V 均来自输入<br>  ↓<br><span class="hljs-selector-attr">[Add &amp; LayerNorm]</span> ←── 残差 + 归一化<br>  ↓<br><span class="hljs-selector-attr">[前馈神经网络]</span><br>  ↓<br><span class="hljs-selector-attr">[Add &amp; LayerNorm]</span> ←── 残差 + 归一化<br>  ↓<br>输出 → 传递到下一层 / 传递到解码器<br></code></pre></td></tr></table></figure>
+
+<p><strong>编码器特点：</strong></p>
+<ul>
+<li>自注意力是<strong>双向</strong>的，每个词能看到所有位置</li>
+<li>6 层堆叠逐步加深对输入的理解</li>
+<li>最终输出一组<strong>上下文相关的向量表示</strong></li>
+</ul>
+<h2 id="解码器结构"><a href="#解码器结构" class="headerlink" title="解码器结构"></a>解码器结构</h2><p>解码器同样由 <strong>6 个相同的层</strong> 堆叠，每层包含三个子层：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs css">解码器单层结构：<br><br>已生成的输出<br>  ↓<br><span class="hljs-selector-attr">[掩码多头自注意力]</span> ←── 只能看到当前位置之前的词<br>  ↓<br><span class="hljs-selector-attr">[Add &amp; LayerNorm]</span><br>  ↓<br><span class="hljs-selector-attr">[多头交叉注意力]</span> ←── <span class="hljs-selector-tag">Q</span> 来自解码器，K/V 来自编码器输出<br>  ↓<br><span class="hljs-selector-attr">[Add &amp; LayerNorm]</span><br>  ↓<br><span class="hljs-selector-attr">[前馈神经网络]</span><br>  ↓<br><span class="hljs-selector-attr">[Add &amp; LayerNorm]</span><br>  ↓<br>输出 → 传递到下一层<br></code></pre></td></tr></table></figure>
+
+<h3 id="掩码自注意力（Masked-Self-Attention）"><a href="#掩码自注意力（Masked-Self-Attention）" class="headerlink" title="掩码自注意力（Masked Self-Attention）"></a>掩码自注意力（Masked Self-Attention）</h3><p>生成第 $t$ 个词时，<strong>只允许关注位置 1 到 $t-1$</strong>，通过掩码矩阵实现：</p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs tap">掩码矩阵示例（4个词）：<br><br>     词1  词2  词3  词4<br>词1 [ <span class="hljs-number"> 0 </span>  -∞   -∞   -∞ ]   ← 词1只能看自己<br>词2 [ <span class="hljs-number"> 0 </span>  <span class="hljs-number"> 0 </span>  -∞   -∞ ]   ← 词2能看词1和自己<br>词3 [ <span class="hljs-number"> 0 </span>  <span class="hljs-number"> 0 </span>  <span class="hljs-number"> 0 </span>  -∞ ]   ← 词3能看词1、2和自己<br>词4 [ <span class="hljs-number"> 0 </span>  <span class="hljs-number"> 0 </span>  <span class="hljs-number"> 0 </span>  <span class="hljs-number"> 0 </span>]   ← 词4能看所有<br></code></pre></td></tr></table></figure>
+
+<p>$-\infty$ 经过 softmax 后变为 0，从而屏蔽未来位置的信息。</p>
+<h3 id="交叉注意力（Cross-Attention）"><a href="#交叉注意力（Cross-Attention）" class="headerlink" title="交叉注意力（Cross-Attention）"></a>交叉注意力（Cross-Attention）</h3><ul>
+<li><strong>Q</strong> 来自解码器当前层</li>
+<li><strong>K、V</strong> 来自编码器最终输出</li>
+</ul>
+<p>这让解码器在生成每个词时，都能”查阅”编码器对输入的完整理解。</p>
+<h2 id="输出层"><a href="#输出层" class="headerlink" title="输出层"></a>输出层</h2><p>解码器的输出经过最后两步转换为词的预测：</p>
+<ol>
+<li><strong>线性层</strong> — 将解码器输出映射到词汇表大小的向量</li>
+<li><strong>Softmax</strong> — 转换为概率分布，选择概率最高的词作为预测</li>
+</ol>
+<p>$$<br>P(\text{下一个词}) &#x3D; \text{softmax}(W \cdot h_{decoder} + b)<br>$$</p>
+<h2 id="Transformer-的三种变体"><a href="#Transformer-的三种变体" class="headerlink" title="Transformer 的三种变体"></a>Transformer 的三种变体</h2><table>
+<thead>
+<tr>
+<th>架构</th>
+<th>结构</th>
+<th>代表模型</th>
+<th>适用任务</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Encoder-Only</td>
+<td>仅编码器</td>
+<td>BERT、RoBERTa、ERNIE</td>
+<td>文本分类、命名实体识别、情感分析</td>
+</tr>
+<tr>
+<td>Decoder-Only</td>
+<td>仅解码器</td>
+<td>GPT 系列、LLaMA、Claude、DeepSeek</td>
+<td>文本生成、对话、代码生成</td>
+</tr>
+<tr>
+<td>Encoder-Decoder</td>
+<td>完整结构</td>
+<td>T5、BART、mBART</td>
+<td>机器翻译、文本摘要、问答</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>⚠️ 重要: 当前趋势</strong><br><strong>Decoder-Only 架构已成为绝对主流。</strong> GPT-4、Claude、Gemini、DeepSeek 等顶尖大模型都采用此架构。原因是：</p>
+<ol>
+<li>架构更简单，易于扩展</li>
+<li>预训练目标（下一词预测）天然适配</li>
+<li>通过 Prompt 即可适应多种任务，无需编码器</li>
+</ol>
+</blockquote>
+<h2 id="训练细节"><a href="#训练细节" class="headerlink" title="训练细节"></a>训练细节</h2><h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>使用<strong>交叉熵损失</strong>，衡量模型预测的词概率分布与真实词之间的差距。</p>
+<h3 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h3><p>使用 <strong>Adam 优化器</strong>，配合特殊的学习率调度策略（Warmup）：</p>
+<p>$$<br>lr &#x3D; d_{model}^{-0.5} \cdot \min(step^{-0.5}, \ step \cdot warmup_steps^{-1.5})<br>$$</p>
+<p>先线性增大学习率（warmup），再按步数的平方根衰减。</p>
+<h3 id="正则化"><a href="#正则化" class="headerlink" title="正则化"></a>正则化</h3><table>
+<thead>
+<tr>
+<th>技术</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Dropout</td>
+<td>注意力权重和 FFN 输出施加 dropout（$p&#x3D;0.1$）</td>
+</tr>
+<tr>
+<td>Label Smoothing</td>
+<td>标签平滑（$\epsilon&#x3D;0.1$），防止过度自信</td>
+</tr>
+</tbody></table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="Transformer-核心组件速览"><a href="#Transformer-核心组件速览" class="headerlink" title="Transformer 核心组件速览"></a>Transformer 核心组件速览</h3><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>作用</th>
+<th>关键公式&#x2F;机制</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>自注意力</td>
+<td>捕捉序列内部的依赖关系</td>
+<td>$\text{softmax}(QK^T&#x2F;\sqrt{d_k})V$</td>
+</tr>
+<tr>
+<td>多头注意力</td>
+<td>多角度理解文本</td>
+<td>多组 Q&#x2F;K&#x2F;V 并行计算后拼接</td>
+</tr>
+<tr>
+<td>位置编码</td>
+<td>注入词序信息</td>
+<td>正弦&#x2F;余弦函数</td>
+</tr>
+<tr>
+<td>前馈网络</td>
+<td>逐位置特征变换</td>
+<td>两层全连接 + ReLU</td>
+</tr>
+<tr>
+<td>残差 + LayerNorm</td>
+<td>稳定深层训练</td>
+<td>$\text{LN}(x + \text{Sublayer}(x))$</td>
+</tr>
+</tbody></table>
+<h3 id="Transformer-的历史地位"><a href="#Transformer-的历史地位" class="headerlink" title="Transformer 的历史地位"></a>Transformer 的历史地位</h3><pre><code class=" mermaid">graph LR
+    A[Transformer 2017] --&gt; B[BERT 2018]
+    A --&gt; C[GPT 2018]
+    B --&gt; D[RoBERTa]
+    C --&gt; E[GPT-2/3/4]
+    A --&gt; F[T5 2019]
+    E --&gt; G[ChatGPT 2022]
+    A --&gt; H[ViT 2020]
+    G --&gt; I[Claude / Gemini / DeepSeek ...]
+</code></pre>
+
+<p>Transformer 不仅革新了 NLP，还扩展到了计算机视觉（ViT）、语音（Whisper）、多模态（GPT-4V）等领域，是当代 AI 的基石架构。</p>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
+<li>大模型学习路线</li>
+<li>LLM应用开发</li>
+<li>Prompt Engineering详解</li>
+<li>编码器和解码器是什么</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/AI/" class="category-chain-item">AI</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/AI/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" class="category-chain-item">大模型</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Transformer/" class="print-no-link">#Transformer</a>
+      
+        <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" class="print-no-link">#深度学习</a>
+      
+        <a href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/" class="print-no-link">#注意力机制</a>
+      
+        <a href="/tags/NLP/" class="print-no-link">#NLP</a>
+      
+        <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" class="print-no-link">#神经网络</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Transformer架构详解</div>
+      <div>https://zmmmmy.github.io/2026/02/24/Transformer架构详解/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZhiMy</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年2月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/01/22/MCP%E5%B7%A5%E5%85%B7%E5%88%97%E8%A1%A8%E8%8E%B7%E5%8F%96%E6%9C%BA%E5%88%B6/" title="MCP工具列表获取机制">
+                        <span class="hidden-mobile">MCP工具列表获取机制</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <span>© 2026</span> <i class="iconfont icon-love"></i> <a href="https://github.com/Zmmmmy" target="_blank" rel="nofollow noopener"><span>Zmmmmy</span></a> <span>|</span> <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <span>&</span> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

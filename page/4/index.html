@@ -231,15 +231,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2026/01/10/Webflux%E7%AE%80%E4%BB%8B/" target="_self">
-          Webflux简介
+        <a href="/2026/01/10/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%AB%AF%E7%82%B9/" target="_self">
+          函数式端点
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2026/01/10/Webflux%E7%AE%80%E4%BB%8B/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2026/01/10/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%AB%AF%E7%82%B9/" target="_self">
         <div>
-          Webflux 简介什么是 Spring WebFluxSpring WebFlux 是 Spring Framework 5.0 引入的响应式 Web 框架，它是 Spring MVC 的替代方案，专为构建非阻塞、异步的 Web 应用程序而设计。 核心特点 非阻塞 I&#x2F;O：基于事件驱动模型，不会阻塞线程等待 I&#x2F;O 操作完成 响应式编程：基于 Reactive Streams
+          函数式端点什么是函数式端点函数式端点（Functional Endpoints）是 WebFlux 提供的另一种编程模型，使用函数式风格定义路由和处理器，相比注解式更加灵活。 核心组件 HandlerFunction：处理请求的函数，类似于 @RequestMapping 方法 RouterFunction：路由函数，将请求映射到 HandlerFunction  HandlerFunctionH
         </div>
       </a>
 
@@ -298,7 +298,11 @@
             
               <a href="/tags/WebFlux/">#WebFlux</a>
             
-              <a href="/tags/%E5%85%A5%E9%97%A8/">#入门</a>
+              <a href="/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/">#函数式编程</a>
+            
+              <a href="/tags/RouterFunction/">#RouterFunction</a>
+            
+              <a href="/tags/HandlerFunction/">#HandlerFunction</a>
             
           </div>
         
@@ -312,15 +316,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E4%B8%8ENetty/" target="_self">
-          线程模型与Netty
+        <a href="/2026/01/10/WebFlux%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/" target="_self">
+          WebFlux核心组件
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E4%B8%8ENetty/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2026/01/10/WebFlux%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/" target="_self">
         <div>
-          线程模型与 Netty传统 Servlet 线程模型传统 Spring MVC 基于 Servlet 容器，采用每请求一线程模型： 123请求1 ──→ 线程1 ──→ [接收请求 → 处理业务 → 等待DB → 返回响应] ──→ 释放请求2 ──→ 线程2 ──→ [接收请求 → 处理业务 → 等待DB → 返回响应] ──→ 释放请求3 ──→ 线程3 ──→ [接收请求 → 处理业务 →
+          WebFlux 核心组件注解式编程模型WebFlux 支持与 Spring MVC 类似的注解式编程，使用 @Controller 和 @RestController。 基本控制器12345678910111213141516171819202122232425262728293031323334353637@RestController@RequestMapping(&quot;/api/use
         </div>
       </a>
 
@@ -379,96 +383,11 @@
             
               <a href="/tags/WebFlux/">#WebFlux</a>
             
-              <a href="/tags/Netty/">#Netty</a>
+              <a href="/tags/Controller/">#Controller</a>
             
-              <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/">#线程模型</a>
+              <a href="/tags/WebClient/">#WebClient</a>
             
-              <a href="/tags/EventLoop/">#EventLoop</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2026/01/10/%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B/" target="_self">
-          实战案例
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2026/01/10/%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B/" target="_self">
-        <div>
-          实战案例项目结构123456789101112131415161718webflux-demo/├── src/main/java/com/example/demo/│   ├── DemoApplication.java│   ├── config/│   │   └── RouterConfig.java│   ├── controller/│   │   └── UserController
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2026-01-10 00:00" pubdate>
-              2026-01-10
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Java/" class="category-chain-item">Java</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/Java/Spring/" class="category-chain-item">Spring</a>
-  
-  
-    <span>></span>
-    
-  <a href="/categories/Java/Spring/Webflux/" class="category-chain-item">Webflux</a>
-  
-  
-
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Java/">#Java</a>
-            
-              <a href="/tags/Spring/">#Spring</a>
-            
-              <a href="/tags/WebFlux/">#WebFlux</a>
-            
-              <a href="/tags/%E5%AE%9E%E6%88%98/">#实战</a>
-            
-              <a href="/tags/R2DBC/">#R2DBC</a>
-            
-              <a href="/tags/%E6%B5%8B%E8%AF%95/">#测试</a>
+              <a href="/tags/WebFilter/">#WebFilter</a>
             
           </div>
         
@@ -637,6 +556,91 @@
               <a href="/tags/%E6%BA%90%E7%A0%81/">#源码</a>
             
               <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">#设计模式</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E4%B8%8ENetty/" target="_self">
+          线程模型与Netty
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2026/01/10/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E4%B8%8ENetty/" target="_self">
+        <div>
+          线程模型与 Netty传统 Servlet 线程模型传统 Spring MVC 基于 Servlet 容器，采用每请求一线程模型： 123请求1 ──→ 线程1 ──→ [接收请求 → 处理业务 → 等待DB → 返回响应] ──→ 释放请求2 ──→ 线程2 ──→ [接收请求 → 处理业务 → 等待DB → 返回响应] ──→ 释放请求3 ──→ 线程3 ──→ [接收请求 → 处理业务 →
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-01-10 00:00" pubdate>
+              2026-01-10
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Java/Spring/" class="category-chain-item">Spring</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Java/Spring/Webflux/" class="category-chain-item">Webflux</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java/">#Java</a>
+            
+              <a href="/tags/Spring/">#Spring</a>
+            
+              <a href="/tags/WebFlux/">#WebFlux</a>
+            
+              <a href="/tags/Netty/">#Netty</a>
+            
+              <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/">#线程模型</a>
+            
+              <a href="/tags/EventLoop/">#EventLoop</a>
             
           </div>
         
@@ -971,6 +975,91 @@
               <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/">#线程池</a>
             
               <a href="/tags/Executors/">#Executors</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2026/01/10/%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B/" target="_self">
+          实战案例
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2026/01/10/%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B/" target="_self">
+        <div>
+          实战案例项目结构123456789101112131415161718webflux-demo/├── src/main/java/com/example/demo/│   ├── DemoApplication.java│   ├── config/│   │   └── RouterConfig.java│   ├── controller/│   │   └── UserController
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-01-10 00:00" pubdate>
+              2026-01-10
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Java/Spring/" class="category-chain-item">Spring</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Java/Spring/Webflux/" class="category-chain-item">Webflux</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java/">#Java</a>
+            
+              <a href="/tags/Spring/">#Spring</a>
+            
+              <a href="/tags/WebFlux/">#WebFlux</a>
+            
+              <a href="/tags/%E5%AE%9E%E6%88%98/">#实战</a>
+            
+              <a href="/tags/R2DBC/">#R2DBC</a>
+            
+              <a href="/tags/%E6%B5%8B%E8%AF%95/">#测试</a>
             
           </div>
         

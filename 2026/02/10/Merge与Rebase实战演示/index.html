@@ -1,0 +1,960 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/favicon-32x32.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#f5f5f5">
+  <meta name="author" content="ZhiMy">
+  <meta name="keywords" content="技术博客,编程">
+  
+    <meta name="description" content="Merge 与 Rebase 实战演示概述本笔记通过模拟两个开发者协作的方式，实际演示 git merge 和 git rebase 的区别，重点展示 rebase 在公共分支上使用时为什么会出问题。 演示思路用两个本地文件夹（me&#x2F; 和 xiaowang&#x2F;）分别 clone 同一个远程仓库，模拟两个人在不同电脑上操作。 演示环境 远程仓库：https:&#x2F;&#x2F;gitee.com&#x2F;Zmmmmy&#x2F;not">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Merge与Rebase实战演示">
+<meta property="og:url" content="https://zmmmmy.github.io/2026/02/10/Merge%E4%B8%8ERebase%E5%AE%9E%E6%88%98%E6%BC%94%E7%A4%BA/index.html">
+<meta property="og:site_name" content="Zmmmmy&#39;s Blog">
+<meta property="og:description" content="Merge 与 Rebase 实战演示概述本笔记通过模拟两个开发者协作的方式，实际演示 git merge 和 git rebase 的区别，重点展示 rebase 在公共分支上使用时为什么会出问题。 演示思路用两个本地文件夹（me&#x2F; 和 xiaowang&#x2F;）分别 clone 同一个远程仓库，模拟两个人在不同电脑上操作。 演示环境 远程仓库：https:&#x2F;&#x2F;gitee.com&#x2F;Zmmmmy&#x2F;not">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-02-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-02-24T02:47:26.496Z">
+<meta property="article:author" content="ZhiMy">
+<meta property="article:tag" content="Git">
+<meta property="article:tag" content="merge">
+<meta property="article:tag" content="rebase">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Merge与Rebase实战演示 - Zmmmmy&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zmmmmy.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":false,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Zmmmmy&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/banner.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Merge与Rebase实战演示"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-02-10 00:00" pubdate>
+          2026年2月10日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          21 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Merge与Rebase实战演示</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Merge-与-Rebase-实战演示"><a href="#Merge-与-Rebase-实战演示" class="headerlink" title="Merge 与 Rebase 实战演示"></a>Merge 与 Rebase 实战演示</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>本笔记通过<strong>模拟两个开发者协作</strong>的方式，实际演示 <code>git merge</code> 和 <code>git rebase</code> 的区别，重点展示 rebase 在公共分支上使用时为什么会出问题。</p>
+<h3 id="演示思路"><a href="#演示思路" class="headerlink" title="演示思路"></a>演示思路</h3><p>用两个本地文件夹（<code>me/</code> 和 <code>xiaowang/</code>）分别 clone 同一个远程仓库，模拟两个人在不同电脑上操作。</p>
+<h3 id="演示环境"><a href="#演示环境" class="headerlink" title="演示环境"></a>演示环境</h3><ul>
+<li><strong>远程仓库</strong>：<code>https://gitee.com/Zmmmmy/notes.git</code></li>
+<li><strong>本地根目录</strong>：<code>E:\ZhiMy\Code\git</code></li>
+<li><strong>“我”的仓库</strong>：<code>E:\ZhiMy\Code\git\me</code></li>
+<li><strong>“小王”的仓库</strong>：<code>E:\ZhiMy\Code\git\xiaowang</code></li>
+</ul>
+<hr>
+<h2 id="一、环境准备"><a href="#一、环境准备" class="headerlink" title="一、环境准备"></a>一、环境准备</h2><h3 id="1-1-创建演示目录"><a href="#1-1-创建演示目录" class="headerlink" title="1.1 创建演示目录"></a>1.1 创建演示目录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mkdir</span> E:\ZhiMy\Code\git<br><span class="hljs-built_in">cd</span> E:\ZhiMy\Code\git<br></code></pre></td></tr></table></figure>
+
+<h3 id="1-2-Clone-两份仓库（模拟两个人）"><a href="#1-2-Clone-两份仓库（模拟两个人）" class="headerlink" title="1.2 Clone 两份仓库（模拟两个人）"></a>1.2 Clone 两份仓库（模拟两个人）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># --- 我的电脑 ---</span><br>git <span class="hljs-built_in">clone</span> https://gitee.com/Zmmmmy/notes.git me<br><span class="hljs-comment"># 输出：Cloning into &#x27;E:\ZhiMy\Code\git\me&#x27;...</span><br><br><span class="hljs-comment"># --- 小王的电脑 ---</span><br>git <span class="hljs-built_in">clone</span> https://gitee.com/Zmmmmy/notes.git xiaowang<br><span class="hljs-comment"># 输出：Cloning into &#x27;E:\ZhiMy\Code\git\xiaowang&#x27;...</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>💡 提示: 为什么 clone 两份？</strong><br>现实中你和小王是两台不同的电脑，各自 clone 了一份。这里用两个文件夹来模拟。</p>
+</blockquote>
+<h3 id="1-3-创建-dev-分支并推送到远程"><a href="#1-3-创建-dev-分支并推送到远程" class="headerlink" title="1.3 创建 dev 分支并推送到远程"></a>1.3 创建 dev 分支并推送到远程</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># --- 我的电脑 ---</span><br><span class="hljs-built_in">cd</span> E:\ZhiMy\Code\git\me<br><br>git checkout -b dev<br><span class="hljs-comment"># 输出：Switched to a new branch &#x27;dev&#x27;</span><br><br>git push -u origin dev<br><span class="hljs-comment"># 输出：</span><br><span class="hljs-comment"># branch &#x27;dev&#x27; set up to track &#x27;origin/dev&#x27;.</span><br><span class="hljs-comment"># * [new branch]      dev -&gt; dev</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># --- 小王的电脑 ---</span><br><span class="hljs-built_in">cd</span> E:\ZhiMy\Code\git\xiaowang<br><br>git fetch origin<br>git checkout dev<br></code></pre></td></tr></table></figure>
+
+<h3 id="1-4-确认初始状态"><a href="#1-4-确认初始状态" class="headerlink" title="1.4 确认初始状态"></a>1.4 确认初始状态</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 两边都执行</span><br>git branch<br><span class="hljs-comment"># 输出：</span><br><span class="hljs-comment"># * dev</span><br><span class="hljs-comment">#   main</span><br></code></pre></td></tr></table></figure>
+
+<p>此时三边状态一致：</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs dns">远程 dev:     <span class="hljs-keyword">A</span><br>我本地 dev:   <span class="hljs-keyword">A</span><br>小王本地 dev: <span class="hljs-keyword">A</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>📝 注意: A 代表什么？</strong><br>A 代表当前 dev 分支上最新的那个 commit，三边都指向同一个 commit。</p>
+</blockquote>
+<hr>
+<h2 id="二、安全场景：rebase-未-push-的提交"><a href="#二、安全场景：rebase-未-push-的提交" class="headerlink" title="二、安全场景：rebase 未 push 的提交"></a>二、安全场景：rebase 未 push 的提交</h2><blockquote>
+<p><strong>✅ 成功: 结论先行</strong><br>如果你的提交<strong>还没有 push 到远程</strong>，rebase 是安全的，不会影响任何人。</p>
+</blockquote>
+<h3 id="2-1-小王先提交并-push"><a href="#2-1-小王先提交并-push" class="headerlink" title="2.1 小王先提交并 push"></a>2.1 小王先提交并 push</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># --- 小王的电脑 ---</span><br><span class="hljs-built_in">cd</span> E:\ZhiMy\Code\git\xiaowang<br><br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;小王写的功能代码&quot;</span> &gt; feature.txt<br>git add feature.txt<br>git commit -m <span class="hljs-string">&quot;B: 小王添加功能&quot;</span><br>git push origin dev<br></code></pre></td></tr></table></figure>
+
+<p><strong>实际输出：</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-attr">[dev 0324220]</span> <span class="hljs-selector-tag">B</span>: 小王添加功能<br> <span class="hljs-number">1</span> file changed, <span class="hljs-number">1</span> <span class="hljs-built_in">insertion</span>(+)<br> create mode <span class="hljs-number">100644</span> feature.txt<br><span class="hljs-number">9</span>dac2d9..<span class="hljs-number">0324220</span>  dev -&gt; dev<br></code></pre></td></tr></table></figure>
+
+<p>此时状态：</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs dns">远程 dev:     <span class="hljs-keyword">A</span> --- B<br>我本地 dev:   <span class="hljs-keyword">A</span>           ← 我还不知道有 B<br>小王本地 dev: <span class="hljs-keyword">A</span> --- B<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-2-我在本地提交（没有-push）"><a href="#2-2-我在本地提交（没有-push）" class="headerlink" title="2.2 我在本地提交（没有 push）"></a>2.2 我在本地提交（没有 push）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># --- 我的电脑 ---</span><br><span class="hljs-built_in">cd</span> E:\ZhiMy\Code\git\me<br><br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;我写的登录代码&quot;</span> &gt; login.txt<br>git add login.txt<br>git commit -m <span class="hljs-string">&quot;C: 我添加登录功能&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>实际输出：</strong></p>
+<figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sas">[dev 2a4a8ad] C: 我添加登录功能<br> 1 <span class="hljs-keyword">file</span> changed, 1 insertio<span class="hljs-meta">n</span>(+)<br> <span class="hljs-keyword">create</span> mode 100644 login.txt<br></code></pre></td></tr></table></figure>
+
+<p>此时状态：</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs ada">远程 dev:     A <span class="hljs-comment">--- B</span><br>我本地 dev:   A <span class="hljs-comment">--- C     ← 我有 C，但没有 B，也没 push</span><br>小王本地 dev: A <span class="hljs-comment">--- B</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="2-3-我用-rebase-同步远程最新代码"><a href="#2-3-我用-rebase-同步远程最新代码" class="headerlink" title="2.3 我用 rebase 同步远程最新代码"></a>2.3 我用 rebase 同步远程最新代码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># --- 我的电脑 ---</span><br><span class="hljs-built_in">cd</span> E:\ZhiMy\Code\git\me<br><br>git fetch origin dev<br>git rebase origin/dev<br></code></pre></td></tr></table></figure>
+
+<p><strong>实际输出：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># fetch</span><br>From https://gitee.com/Zmmmmy/notes<br> * branch            dev        -&gt; FETCH_HEAD<br>   9dac2d9..0324220  dev        -&gt; origin/dev<br><br><span class="hljs-comment"># rebase</span><br>Successfully rebased and updated refs/heads/dev.<br></code></pre></td></tr></table></figure>
+
+<p>rebase 把我的 C “搬”到了 B 后面，变成 C’：</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs dns">远程 dev:     <span class="hljs-keyword">A</span>(<span class="hljs-number">9d</span>ac2d9) --- B(<span class="hljs-number">0324220</span>)<br>我本地 dev:   <span class="hljs-keyword">A</span>(<span class="hljs-number">9d</span>ac2d9) --- B(<span class="hljs-number">0324220</span>) --- C&#x27;(<span class="hljs-number">86d</span>4af7)    ← C(<span class="hljs-number">2</span>a4a8ad) 被复制到 B 后面，hash 变了<br>小王本地 dev: <span class="hljs-keyword">A</span>(<span class="hljs-number">9d</span>ac2d9) --- B(<span class="hljs-number">0324220</span>)<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>⚠️ 重要: 为什么安全？</strong><br>因为 C(2a4a8ad) 从来没有 push 过，<strong>只有我本地有 C</strong>。C 变成 C’(86d4af7) 不影响任何人。</p>
+</blockquote>
+<h3 id="2-4-我-push，小王-pull，一切正常"><a href="#2-4-我-push，小王-pull，一切正常" class="headerlink" title="2.4 我 push，小王 pull，一切正常"></a>2.4 我 push，小王 pull，一切正常</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># --- 我的电脑 ---</span><br><span class="hljs-built_in">cd</span> E:\ZhiMy\Code\git\me<br><br>git push origin dev<br></code></pre></td></tr></table></figure>
+
+<p><strong>实际输出：</strong></p>
+<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs q"><span class="hljs-number">0324220.</span><span class="hljs-number">.86</span>d4af7  <span class="hljs-built_in">dev</span> -&gt; <span class="hljs-built_in">dev</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># --- 小王的电脑 ---</span><br><span class="hljs-built_in">cd</span> E:\ZhiMy\Code\git\xiaowang<br><br>git pull origin dev<br></code></pre></td></tr></table></figure>
+
+<p><strong>实际输出：</strong></p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs xl">From https:<span class="hljs-comment">//gitee.com/Zmmmmy/notes</span><br> * <span class="hljs-function"><span class="hljs-title">branch</span>            dev        -&gt;</span> FETCH_HEAD<br>   <span class="hljs-number">0324220</span>..<span class="hljs-number">86</span><span class="hljs-function"><span class="hljs-title">d4af7</span>  dev        -&gt;</span> origin/dev<br>Updating <span class="hljs-number">0324220</span>..<span class="hljs-number">86</span>d4af7<br>Fast-forward<br> login.txt | <span class="hljs-number">1</span> +<br> <span class="hljs-number">1</span> file changed, <span class="hljs-number">1</span> insertion(+)<br> create mode <span class="hljs-number">100644</span> login.txt<br></code></pre></td></tr></table></figure>
+
+<p>最终三边一致：</p>
+<figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs brainfuck"><span class="hljs-comment">远程 dev:     A(9dac2d9)</span> <span class="hljs-literal">---</span> <span class="hljs-comment">B(0324220)</span> <span class="hljs-literal">---</span> <span class="hljs-comment">C&#x27;(86d4af7)</span><br><span class="hljs-comment">我本地 dev:   A(9dac2d9)</span> <span class="hljs-literal">---</span> <span class="hljs-comment">B(0324220)</span> <span class="hljs-literal">---</span> <span class="hljs-comment">C&#x27;(86d4af7)</span><br><span class="hljs-comment">小王本地 dev: A(9dac2d9)</span> <span class="hljs-literal">---</span> <span class="hljs-comment">B(0324220)</span> <span class="hljs-literal">---</span> <span class="hljs-comment">C&#x27;(86d4af7)</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="2-5-查看历史：一条干净的直线"><a href="#2-5-查看历史：一条干净的直线" class="headerlink" title="2.5 查看历史：一条干净的直线"></a>2.5 查看历史：一条干净的直线</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git <span class="hljs-built_in">log</span> --oneline --graph<br></code></pre></td></tr></table></figure>
+
+<p><strong>实际输出：</strong></p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">* <span class="hljs-number">86</span>d4af7 (HEAD -&gt; dev, <span class="hljs-keyword">origin/dev) </span>C: 我添加登录功能<br>* <span class="hljs-number">0324220</span> <span class="hljs-keyword">B: </span>小王添加功能<br>* <span class="hljs-number">9</span>dac2d9 (<span class="hljs-keyword">origin/master, </span><span class="hljs-keyword">origin/HEAD, </span>master) no message<br>* <span class="hljs-keyword">b4649f3 </span>Initial commit<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>✅ 成功: 安全场景总结</strong><br>我的提交 C(2a4a8ad) <strong>从未 push 过</strong>，所以 rebase 把它变成 C’(86d4af7) 不影响任何人。历史干净整洁，是一条直线。</p>
+</blockquote>
+<hr>
+<h2 id="三、危险场景：改写已-push-的提交（commit-–amend）"><a href="#三、危险场景：改写已-push-的提交（commit-–amend）" class="headerlink" title="三、危险场景：改写已 push 的提交（commit –amend）"></a>三、危险场景：改写已 push 的提交（commit –amend）</h2><blockquote>
+<p><strong>🔥 危险: 结论先行</strong><br>如果你的提交<strong>已经 push 到远程</strong>，并且别人已经拉取了，此时用 <code>commit --amend</code>（或 <code>rebase</code>）改写历史会导致协作混乱。<br><code>commit --amend</code> 本质上和 <code>rebase</code> 一样，都是<strong>改写已有提交的 hash</strong>。</p>
+</blockquote>
+<h3 id="3-0-重置环境"><a href="#3-0-重置环境" class="headerlink" title="3.0 重置环境"></a>3.0 重置环境</h3><p>先把三边恢复到同一起点（commit A &#x3D; <code>9dac2d9</code>），方便演示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># --- 我的电脑 ---</span><br><span class="hljs-built_in">cd</span> E:\ZhiMy\Code\git\me<br>git checkout dev<br>git reset --hard 9dac2d9<br>git push --force origin dev<br><br><span class="hljs-comment"># --- 小王的电脑 ---</span><br><span class="hljs-built_in">cd</span> E:\ZhiMy\Code\git\xiaowang<br>git checkout dev<br>git fetch origin<br>git reset --hard origin/dev<br></code></pre></td></tr></table></figure>
+
+<p>此时三边回到一致状态：</p>
+<figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs isbl">远程 <span class="hljs-variable">dev</span>:     <span class="hljs-function"><span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>)</span><br>我本地 <span class="hljs-variable">dev</span>:   <span class="hljs-function"><span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>)</span><br>小王本地 <span class="hljs-variable">dev</span>: <span class="hljs-function"><span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>)</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="3-1-我先提交并-push"><a href="#3-1-我先提交并-push" class="headerlink" title="3.1 我先提交并 push"></a>3.1 我先提交并 push</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># --- 我的电脑 ---</span><br><span class="hljs-built_in">cd</span> E:\ZhiMy\Code\git\me<br><br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;我写的登录代码&quot;</span> &gt; login.txt<br>git add login.txt<br>git commit -m <span class="hljs-string">&quot;B: 我添加登录功能&quot;</span><br>git push origin dev<br></code></pre></td></tr></table></figure>
+
+<p><strong>实际输出：</strong></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-selector-attr">[dev ee3309e]</span> B: 我添加登录功能<br> <span class="hljs-number">1</span> file changed, <span class="hljs-number">1</span> <span class="hljs-built_in">insertion</span>(+)<br> create mode <span class="hljs-number">100644</span> login<span class="hljs-selector-class">.txt</span><br><span class="hljs-number">9</span>dac2d9.<span class="hljs-selector-class">.ee3309e</span>  dev -&gt; dev<br></code></pre></td></tr></table></figure>
+
+<p>此时状态：</p>
+<figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs isbl">远程 <span class="hljs-variable">dev</span>:     <span class="hljs-function"><span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>) --- <span class="hljs-title">B</span>(<span class="hljs-variable">ee3309e</span>)</span><br>我本地 <span class="hljs-variable">dev</span>:   <span class="hljs-function"><span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>) --- <span class="hljs-title">B</span>(<span class="hljs-variable">ee3309e</span>)</span><br>小王本地 <span class="hljs-variable">dev</span>: <span class="hljs-function"><span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>)                  ← 小王还不知道有 <span class="hljs-variable">B</span></span><br></code></pre></td></tr></table></figure>
+
+<h3 id="3-2-小王-pull-后也提交并-push"><a href="#3-2-小王-pull-后也提交并-push" class="headerlink" title="3.2 小王 pull 后也提交并 push"></a>3.2 小王 pull 后也提交并 push</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># --- 小王的电脑 ---</span><br><span class="hljs-built_in">cd</span> E:\ZhiMy\Code\git\xiaowang<br><br><span class="hljs-comment"># 小王先拉取最新代码，拿到了我的 B</span><br>git pull origin dev<br></code></pre></td></tr></table></figure>
+
+<p><strong>实际输出：</strong></p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs xl">From https:<span class="hljs-comment">//gitee.com/Zmmmmy/notes</span><br> * <span class="hljs-function"><span class="hljs-title">branch</span>            dev        -&gt;</span> FETCH_HEAD<br>   <span class="hljs-number">9</span><span class="hljs-function"><span class="hljs-title">dac2d9</span>..ee3309e  dev        -&gt;</span> origin/dev<br>Updating <span class="hljs-number">9</span>dac2d9..ee3309e<br>Fast-forward<br> login.txt | <span class="hljs-number">1</span> +<br> <span class="hljs-number">1</span> file changed, <span class="hljs-number">1</span> insertion(+)<br> create mode <span class="hljs-number">100644</span> login.txt<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 小王也写了代码并提交</span><br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;小王写的功能代码&quot;</span> &gt; feature.txt<br>git add feature.txt<br>git commit -m <span class="hljs-string">&quot;C: 小王添加功能&quot;</span><br>git push origin dev<br></code></pre></td></tr></table></figure>
+
+<p><strong>实际输出：</strong></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-selector-attr">[dev bc6a152]</span> C: 小王添加功能<br> <span class="hljs-number">1</span> file changed, <span class="hljs-number">1</span> <span class="hljs-built_in">insertion</span>(+)<br> create mode <span class="hljs-number">100644</span> feature<span class="hljs-selector-class">.txt</span><br>ee3309e.<span class="hljs-selector-class">.bc6a152</span>  dev -&gt; dev<br></code></pre></td></tr></table></figure>
+
+<p>此时状态：</p>
+<figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs isbl">远程 <span class="hljs-variable">dev</span>:     <span class="hljs-function"><span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>) --- <span class="hljs-title">B</span>(<span class="hljs-variable">ee3309e</span>) --- <span class="hljs-title">C</span>(<span class="hljs-variable">bc6a152</span>)</span><br>我本地 <span class="hljs-variable">dev</span>:   <span class="hljs-function"><span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>) --- <span class="hljs-title">B</span>(<span class="hljs-variable">ee3309e</span>)                  ← 我还没拉 <span class="hljs-variable">C</span></span><br><span class="hljs-function">小王本地 <span class="hljs-variable">dev</span>: <span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>) --- <span class="hljs-title">B</span>(<span class="hljs-variable">ee3309e</span>) --- <span class="hljs-title">C</span>(<span class="hljs-variable">bc6a152</span>)</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>⚠️ 警告: 关键点</strong><br>此时远程和小王都有 B(ee3309e) 这个提交（hash 相同），这是正常的。</p>
+</blockquote>
+<h3 id="3-3-我用-commit-–amend-修改已-push-的提交（作死操作）"><a href="#3-3-我用-commit-–amend-修改已-push-的提交（作死操作）" class="headerlink" title="3.3 我用 commit –amend 修改已 push 的提交（作死操作）"></a>3.3 我用 commit –amend 修改已 push 的提交（作死操作）</h3><p>我觉得之前的提交 B 写得不够好，想修改一下内容和提交信息：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># --- 我的电脑 ---</span><br><span class="hljs-built_in">cd</span> E:\ZhiMy\Code\git\me<br><br><span class="hljs-comment"># 修改 login.txt 的内容</span><br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;我写的登录代码（修改版）&quot;</span> &gt; login.txt<br>git add login.txt<br><br><span class="hljs-comment"># 用 --amend 改写上一个提交</span><br>git commit --amend -m <span class="hljs-string">&quot;B: 我添加登录功能(改进版)&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>实际输出：</strong></p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs tap">[dev 7bf219b] B: 我添加登录功能(改进版)<br> Date: Mon Feb<span class="hljs-number"> 10 </span>17:51:42<span class="hljs-number"> 2026 </span>+0800<br><span class="hljs-number"> 1 </span>file changed,<span class="hljs-number"> 1 </span>insertion(+)<br> create mode<span class="hljs-number"> 100644 </span>login.txt<br></code></pre></td></tr></table></figure>
+
+<p>此时状态：</p>
+<figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs isbl">远程 <span class="hljs-variable">dev</span>:     <span class="hljs-function"><span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>) --- <span class="hljs-title">B</span>(<span class="hljs-variable">ee3309e</span>) --- <span class="hljs-title">C</span>(<span class="hljs-variable">bc6a152</span>)</span><br>我本地 <span class="hljs-variable">dev</span>:   <span class="hljs-function"><span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>) --- <span class="hljs-variable">B</span><span class="hljs-string">&#x27;(7bf219b)                  ← B 被改写成 B&#x27;</span>，<span class="hljs-variable">hash</span> 变了！</span><br><span class="hljs-function">小王本地 <span class="hljs-variable">dev</span>: <span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>) --- <span class="hljs-title">B</span>(<span class="hljs-variable">ee3309e</span>) --- <span class="hljs-title">C</span>(<span class="hljs-variable">bc6a152</span>)</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>🔥 危险: 问题出现了</strong><br><code>commit --amend</code> 并不是”修改”提交，而是<strong>用一个新提交替换旧提交</strong>。<br>B(ee3309e) 和 B’(7bf219b) 内容不同、hash 不同，Git 认为它们是<strong>两个完全不同的提交</strong>。<br>但远程和小王那里还保留着旧的 B(ee3309e)！</p>
+</blockquote>
+<h3 id="3-4-我-push-不上去，强制推送"><a href="#3-4-我-push-不上去，强制推送" class="headerlink" title="3.4 我 push 不上去，强制推送"></a>3.4 我 push 不上去，强制推送</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># --- 我的电脑 ---</span><br><span class="hljs-built_in">cd</span> E:\ZhiMy\Code\git\me<br><br><span class="hljs-comment"># 普通 push 会被拒绝，因为本地历史和远程不一致</span><br>git push origin dev<br></code></pre></td></tr></table></figure>
+
+<p><strong>实际输出：</strong></p>
+<figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs subunit">To https://gitee.com/Zmmmmy/notes.git<br> ! [rejected]        dev -&gt; dev (non-fast-forward)<br><span class="hljs-keyword">error: </span>failed to push some refs to &#x27;https://gitee.com/Zmmmmy/notes.git&#x27;<br>hint: Updates were rejected because the tip of your current branch is behind<br>hint: its remote counterpart.<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 于是用 --force 强推</span><br>git push --force origin dev<br></code></pre></td></tr></table></figure>
+
+<p><strong>实际输出：</strong></p>
+<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs q">+ bc6a152..<span class="hljs-number">.7</span>bf219b <span class="hljs-built_in">dev</span> -&gt; <span class="hljs-built_in">dev</span> (forced <span class="hljs-keyword">update</span>)<br></code></pre></td></tr></table></figure>
+
+<p>此时状态：</p>
+<figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs isbl">远程 <span class="hljs-variable">dev</span>:     <span class="hljs-function"><span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>) --- <span class="hljs-variable">B</span><span class="hljs-string">&#x27;(7bf219b)                  ← 被我强制覆盖！B 和 C 都没了！</span></span><br><span class="hljs-string"><span class="hljs-function">我本地 dev:   A(9dac2d9) --- B&#x27;</span>(<span class="hljs-number">7</span><span class="hljs-variable">bf219b</span>)</span><br>小王本地 <span class="hljs-variable">dev</span>: <span class="hljs-function"><span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>) --- <span class="hljs-title">B</span>(<span class="hljs-variable">ee3309e</span>) --- <span class="hljs-title">C</span>(<span class="hljs-variable">bc6a152</span>)    ← 小王还是旧的</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>🔥 危险: 注意</strong><br>强制推送后，远程的 B(ee3309e) 和 C(bc6a152) 都被覆盖了。<strong>小王的提交 C 在远程直接消失了！</strong></p>
+</blockquote>
+<h3 id="3-5-小王-pull，灾难发生"><a href="#3-5-小王-pull，灾难发生" class="headerlink" title="3.5 小王 pull，灾难发生"></a>3.5 小王 pull，灾难发生</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># --- 小王的电脑 ---</span><br><span class="hljs-built_in">cd</span> E:\ZhiMy\Code\git\xiaowang<br><br>git pull origin dev<br></code></pre></td></tr></table></figure>
+
+<p><strong>实际输出：</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">From</span> https:<span class="hljs-operator">/</span><span class="hljs-operator">/</span>gitee.com<span class="hljs-operator">/</span>Zmmmmy<span class="hljs-operator">/</span>notes<br> <span class="hljs-operator">*</span> branch            dev        <span class="hljs-operator">-</span><span class="hljs-operator">&gt;</span> FETCH_HEAD<br> <span class="hljs-operator">+</span> bc6a152..<span class="hljs-number">.7</span>bf219b dev        <span class="hljs-operator">-</span><span class="hljs-operator">&gt;</span> origin<span class="hljs-operator">/</span>dev  (forced <span class="hljs-keyword">update</span>)<br>Auto<span class="hljs-operator">-</span>merging login.txt<br>CONFLICT (<span class="hljs-keyword">add</span><span class="hljs-operator">/</span><span class="hljs-keyword">add</span>): <span class="hljs-keyword">Merge</span> conflict <span class="hljs-keyword">in</span> login.txt<br>Automatic <span class="hljs-keyword">merge</span> failed; fix conflicts <span class="hljs-keyword">and</span> <span class="hljs-keyword">then</span> <span class="hljs-keyword">commit</span> the result.<br></code></pre></td></tr></table></figure>
+
+<p>打开 <code>login.txt</code>，看到冲突内容：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD<br><span class="hljs-section">我写的登录代码</span><br><span class="hljs-section">=======</span><br>我写的登录代码（修改版）<br>&gt;&gt;&gt;&gt;&gt;&gt;&gt; 7bf219b46ef1b1fc2f00f335d24d22e6011a472e<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>🔥 危险: 这就是问题所在</strong><br>小王明明什么都没改 <code>login.txt</code>，却莫名其妙遇到了冲突！<br>原因是：我用 <code>--amend</code> 改写了 B 的内容，force push 后远程的 B’(7bf219b) 和小王本地的 B(ee3309e) 内容不同，Git 不知道该用哪个版本。</p>
+<p>更严重的是，<strong>小王的提交 C(bc6a152) 在远程已经消失了</strong>，如果小王不小心处理，这个提交可能永远丢失。</p>
+</blockquote>
+<hr>
+<h2 id="四、对比：同样的场景用-merge"><a href="#四、对比：同样的场景用-merge" class="headerlink" title="四、对比：同样的场景用 merge"></a>四、对比：同样的场景用 merge</h2><p>回到 3.2 结束时的状态，这次”我”<strong>不修改已有提交</strong>，而是直接用 <code>git pull</code>（merge）来同步：</p>
+<figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs isbl">远程 <span class="hljs-variable">dev</span>:     <span class="hljs-function"><span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>) --- <span class="hljs-title">B</span>(<span class="hljs-variable">ee3309e</span>) --- <span class="hljs-title">C</span>(<span class="hljs-variable">bc6a152</span>)</span><br>我本地 <span class="hljs-variable">dev</span>:   <span class="hljs-function"><span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>) --- <span class="hljs-title">B</span>(<span class="hljs-variable">ee3309e</span>)         ← 我还没拉 <span class="hljs-variable">C</span></span><br><span class="hljs-function">小王本地 <span class="hljs-variable">dev</span>: <span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>) --- <span class="hljs-title">B</span>(<span class="hljs-variable">ee3309e</span>) --- <span class="hljs-title">C</span>(<span class="hljs-variable">bc6a152</span>)</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="4-1-我用-merge-同步（正确做法）"><a href="#4-1-我用-merge-同步（正确做法）" class="headerlink" title="4.1 我用 merge 同步（正确做法）"></a>4.1 我用 merge 同步（正确做法）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># --- 我的电脑 ---</span><br><span class="hljs-built_in">cd</span> E:\ZhiMy\Code\git\me<br><br><span class="hljs-comment"># pull 默认就是 fetch + merge</span><br>git pull origin dev<br></code></pre></td></tr></table></figure>
+
+<p><strong>实际输出：</strong></p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs gams">From https:<span class="hljs-comment">//gitee.com/Zmmmmy/notes</span><br> * branch            dev        -&gt; FETCH_HEAD<br><span class="hljs-function"><span class="hljs-title">Updating</span></span> ee3309e..bc6a152<br>Fast-forward<br> feature.txt | <span class="hljs-number">1</span> +<br> <span class="hljs-number">1</span> <span class="hljs-keyword">file</span> changed, <span class="hljs-number">1</span> insertion(+)<br> create mode <span class="hljs-number">100644</span> feature.txt<br></code></pre></td></tr></table></figure>
+
+<p>Git 自动把 C 合并进来（快进合并），<strong>不会改写任何已有提交的 hash</strong>：</p>
+<figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs isbl">远程 <span class="hljs-variable">dev</span>:     <span class="hljs-function"><span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>) --- <span class="hljs-title">B</span>(<span class="hljs-variable">ee3309e</span>) --- <span class="hljs-title">C</span>(<span class="hljs-variable">bc6a152</span>)</span><br>我本地 <span class="hljs-variable">dev</span>:   <span class="hljs-function"><span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>) --- <span class="hljs-title">B</span>(<span class="hljs-variable">ee3309e</span>) --- <span class="hljs-title">C</span>(<span class="hljs-variable">bc6a152</span>)    ← 直接快进合并</span><br><span class="hljs-function">小王本地 <span class="hljs-variable">dev</span>: <span class="hljs-title">A</span>(<span class="hljs-number">9</span><span class="hljs-variable">dac2d9</span>) --- <span class="hljs-title">B</span>(<span class="hljs-variable">ee3309e</span>) --- <span class="hljs-title">C</span>(<span class="hljs-variable">bc6a152</span>)</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="4-2-查看历史：干净且无重复"><a href="#4-2-查看历史：干净且无重复" class="headerlink" title="4.2 查看历史：干净且无重复"></a>4.2 查看历史：干净且无重复</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git <span class="hljs-built_in">log</span> --oneline --graph<br></code></pre></td></tr></table></figure>
+
+<p><strong>实际输出：</strong></p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">* <span class="hljs-keyword">bc6a152 </span>(HEAD -&gt; dev, <span class="hljs-keyword">origin/dev) </span>C: 小王添加功能<br>* ee3309e <span class="hljs-keyword">B: </span>我添加登录功能<br>* <span class="hljs-number">9</span>dac2d9 (<span class="hljs-keyword">origin/master, </span><span class="hljs-keyword">origin/HEAD, </span>master) no message<br>* <span class="hljs-keyword">b4649f3 </span>Initial commit<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>✅ 成功: merge 的优势</strong><br>所有提交的 hash 都没变，三边完全一致，小王 pull 也不会有任何问题。没有冲突，没有丢失提交。</p>
+</blockquote>
+<hr>
+<h2 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a>五、总结</h2><h3 id="核心区别一句话"><a href="#核心区别一句话" class="headerlink" title="核心区别一句话"></a>核心区别一句话</h3><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>效果</th>
+<th>风险</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>merge</code> &#x2F; <code>pull</code></td>
+<td>保留原有提交，可能多一个合并节点</td>
+<td>无风险</td>
+</tr>
+<tr>
+<td><code>rebase</code> &#x2F; <code>commit --amend</code></td>
+<td>改写提交 hash，历史变成直线</td>
+<td>已 push 的提交被改写会影响他人</td>
+</tr>
+</tbody></table>
+<h3 id="什么时候用哪个？"><a href="#什么时候用哪个？" class="headerlink" title="什么时候用哪个？"></a>什么时候用哪个？</h3><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>个人分支，提交未 push</td>
+<td><code>rebase</code></td>
+<td>没人有旧 hash，安全</td>
+</tr>
+<tr>
+<td>个人分支，已 push 但只有自己用</td>
+<td><code>rebase</code></td>
+<td>可以 <code>--force</code>，不影响他人</td>
+</tr>
+<tr>
+<td>多人共用的分支</td>
+<td><code>merge</code></td>
+<td>不改写历史，协作安全</td>
+</tr>
+<tr>
+<td>合并功能分支到 main</td>
+<td><code>merge</code></td>
+<td>保留完整开发记录</td>
+</tr>
+</tbody></table>
+<h3 id="黄金法则"><a href="#黄金法则" class="headerlink" title="黄金法则"></a>黄金法则</h3><blockquote>
+<p><strong>🔥 危险: 黄金法则</strong><br><strong>不要对已经推送到远程的公共分支执行 rebase 或 commit –amend。</strong></p>
+<p>判断标准很简单：这个分支除了你，还有没有别人在用？</p>
+<ul>
+<li><strong>只有你</strong> → 可以 rebase &#x2F; amend</li>
+<li><strong>有别人</strong> → 用 merge</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="六、清理演示环境"><a href="#六、清理演示环境" class="headerlink" title="六、清理演示环境"></a>六、清理演示环境</h2><p>演示完成后，删除本地模拟目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 删除演示目录</span><br>rd /s /q E:\ZhiMy\Code\git\me<br>rd /s /q E:\ZhiMy\Code\git\xiaowang<br></code></pre></td></tr></table></figure>
+
+<p>如需删除远程 dev 分支：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">git push origin --delete dev<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
+<li>安全场景</li>
+<li>危险场景</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Git/" class="category-chain-item">Git</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Git/%E5%9F%BA%E7%A1%80/" class="category-chain-item">基础</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Git/" class="print-no-link">#Git</a>
+      
+        <a href="/tags/merge/" class="print-no-link">#merge</a>
+      
+        <a href="/tags/rebase/" class="print-no-link">#rebase</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Merge与Rebase实战演示</div>
+      <div>https://zmmmmy.github.io/2026/02/10/Merge与Rebase实战演示/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZhiMy</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年2月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/02/24/Transformer%E6%9E%B6%E6%9E%84%E8%AF%A6%E8%A7%A3/" title="Transformer架构详解">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Transformer架构详解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/02/09/AI-Coding%E6%A6%82%E5%BF%B5%E5%85%A8%E6%99%AF/" title="AI-Coding概念全景">
+                        <span class="hidden-mobile">AI-Coding概念全景</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/10.9.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.utils.listenDOMLoaded(function() {
+      Fluid.events.registerRefreshCallback(function() {
+        if ('mermaid' in window) {
+          mermaid.init();
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <span>© 2026</span> <i class="iconfont icon-love"></i> <a href="https://github.com/Zmmmmy" target="_blank" rel="nofollow noopener"><span>Zmmmmy</span></a> <span>|</span> <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <span>&</span> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

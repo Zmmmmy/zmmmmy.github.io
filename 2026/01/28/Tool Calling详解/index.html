@@ -1,0 +1,978 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/favicon-32x32.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#f5f5f5">
+  <meta name="author" content="ZhiMy">
+  <meta name="keywords" content="技术博客,编程">
+  
+    <meta name="description" content="Spring AI Tool Calling 详解概述Tool Calling（工具调用）是 Spring AI 框架中让 AI 模型与外部世界交互的核心能力。它允许 AI 模型在对话过程中识别需要调用外部工具的时机，生成结构化的调用参数，执行工具后将结果融入对话。  💡 提示: 与 Function Calling 的关系Tool Calling 是 Spring AI 对各大模型厂商 Fun">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tool Calling详解">
+<meta property="og:url" content="https://zmmmmy.github.io/2026/01/28/Tool%20Calling%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Zmmmmy&#39;s Blog">
+<meta property="og:description" content="Spring AI Tool Calling 详解概述Tool Calling（工具调用）是 Spring AI 框架中让 AI 模型与外部世界交互的核心能力。它允许 AI 模型在对话过程中识别需要调用外部工具的时机，生成结构化的调用参数，执行工具后将结果融入对话。  💡 提示: 与 Function Calling 的关系Tool Calling 是 Spring AI 对各大模型厂商 Fun">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-01-27T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-02-24T02:47:39.072Z">
+<meta property="article:author" content="ZhiMy">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="FunctionCalling">
+<meta property="article:tag" content="SpringAI">
+<meta property="article:tag" content="ToolCalling">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Tool Calling详解 - Zmmmmy&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zmmmmy.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":false,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Zmmmmy&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/banner.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Tool Calling详解"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-28 00:00" pubdate>
+          2026年1月28日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          24 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Tool Calling详解</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Spring-AI-Tool-Calling-详解"><a href="#Spring-AI-Tool-Calling-详解" class="headerlink" title="Spring AI Tool Calling 详解"></a>Spring AI Tool Calling 详解</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Tool Calling（工具调用）是 Spring AI 框架中让 AI 模型与外部世界交互的核心能力。它允许 AI 模型在对话过程中识别需要调用外部工具的时机，生成结构化的调用参数，执行工具后将结果融入对话。</p>
+<blockquote>
+<p><strong>💡 提示: 与 Function Calling 的关系</strong><br>Tool Calling 是 Spring AI 对各大模型厂商 Function Calling 能力的统一封装，提供了更加 Spring 友好的编程模型。</p>
+</blockquote>
+<hr>
+<h2 id="核心架构"><a href="#核心架构" class="headerlink" title="核心架构"></a>核心架构</h2><h3 id="整体流程"><a href="#整体流程" class="headerlink" title="整体流程"></a>整体流程</h3><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs scss">┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐<br>│   用户请求   │────►│  ChatClient │────►│  ChatModel  │────►│   AI 模型   │<br>└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘<br>                           │                   │                    │<br>                           │                   │                    │<br>                           ▼                   ▼                    ▼<br>                    ┌─────────────┐     ┌─────────────┐     ┌─────────────┐<br>                    │   Tools     │◄────│ToolCalling  │◄────│  工具调用   │<br>                    │  (工具实现)  │     │  Manager    │     │   意图      │<br>                    └─────────────┘     └─────────────┘     └─────────────┘<br></code></pre></td></tr></table></figure>
+
+<h3 id="关键组件"><a href="#关键组件" class="headerlink" title="关键组件"></a>关键组件</h3><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>@Tool</code></td>
+<td>注解，将方法标记为可被 AI 调用的工具</td>
+</tr>
+<tr>
+<td><code>@ToolParam</code></td>
+<td>注解，描述工具参数的元信息</td>
+</tr>
+<tr>
+<td><code>ToolCallback</code></td>
+<td>接口，工具执行的核心抽象</td>
+</tr>
+<tr>
+<td><code>ToolDefinition</code></td>
+<td>工具定义（名称、描述、输入 Schema）</td>
+</tr>
+<tr>
+<td><code>ToolCallingManager</code></td>
+<td>管理工具执行生命周期</td>
+</tr>
+<tr>
+<td><code>ChatClient</code></td>
+<td>客户端，注册和调用工具的入口</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="Tool-Specification（工具规范）"><a href="#Tool-Specification（工具规范）" class="headerlink" title="Tool Specification（工具规范）"></a>Tool Specification（工具规范）</h2><p>Spring AI 提供两种定义工具的方式：<strong>Declarative（声明式）</strong> 和 <strong>Programmatic（编程式）</strong>。</p>
+<h3 id="对比总结"><a href="#对比总结" class="headerlink" title="对比总结"></a>对比总结</h3><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Declarative（声明式）</th>
+<th>Programmatic（编程式）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>实现方式</strong></td>
+<td><code>@Tool</code> + <code>@ToolParam</code> 注解</td>
+<td><code>MethodToolCallback</code> &#x2F; <code>FunctionToolCallback</code></td>
+</tr>
+<tr>
+<td><strong>Schema 生成</strong></td>
+<td>自动（基于方法签名）</td>
+<td>手动定义 <code>inputSchema</code></td>
+</tr>
+<tr>
+<td><strong>灵活性</strong></td>
+<td>低（依赖注解属性）</td>
+<td>高（完全控制所有配置）</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>大多数常规场景</td>
+<td>动态工具、复杂定制需求</td>
+</tr>
+<tr>
+<td><strong>代码量</strong></td>
+<td>少</td>
+<td>多</td>
+</tr>
+</tbody></table>
+<h3 id="ToolDefinition-接口"><a href="#ToolDefinition-接口" class="headerlink" title="ToolDefinition 接口"></a>ToolDefinition 接口</h3><p>无论哪种方式，最终都会生成 <code>ToolDefinition</code>，这是 AI 模型理解工具的核心：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">ToolDefinition</span> &#123;<br>    String <span class="hljs-title function_">name</span><span class="hljs-params">()</span>;         <span class="hljs-comment">// 工具唯一名称</span><br>    String <span class="hljs-title function_">description</span><span class="hljs-params">()</span>;  <span class="hljs-comment">// 工具描述（AI 据此判断何时调用）</span><br>    String <span class="hljs-title function_">inputSchema</span><span class="hljs-params">()</span>;  <span class="hljs-comment">// 参数的 JSON Schema</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="定义工具的三种方式"><a href="#定义工具的三种方式" class="headerlink" title="定义工具的三种方式"></a>定义工具的三种方式</h2><h3 id="方式一：-Tool-注解（Declarative，推荐）"><a href="#方式一：-Tool-注解（Declarative，推荐）" class="headerlink" title="方式一：@Tool 注解（Declarative，推荐）"></a>方式一：@Tool 注解（Declarative，推荐）</h3><p>最简洁的声明式方式，Spring AI 自动生成 JSON Schema。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> org.springframework.ai.tool.annotation.Tool;<br><span class="hljs-keyword">import</span> org.springframework.ai.tool.annotation.ToolParam;<br><span class="hljs-keyword">import</span> org.springframework.stereotype.Component;<br><br><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">WeatherService</span> &#123;<br><br>    <span class="hljs-meta">@Tool(description = &quot;获取指定城市的天气信息&quot;)</span><br>    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getWeather</span><span class="hljs-params">(</span><br><span class="hljs-params">            <span class="hljs-meta">@ToolParam(description = &quot;城市名称，如：北京、上海&quot;)</span> String city,</span><br><span class="hljs-params">            <span class="hljs-meta">@ToolParam(description = &quot;温度单位：celsius 或 fahrenheit&quot;)</span> String unit)</span> &#123;<br>        <span class="hljs-comment">// 实际调用天气 API</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;当前 &quot;</span> + city + <span class="hljs-string">&quot; 天气：晴，温度 25°C&quot;</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>⚠️ 重要: @Tool 注解属性</strong></p>
+<ul>
+<li><code>description</code>：工具描述，AI 模型根据此决定何时调用（<strong>必填</strong>）</li>
+<li><code>returnDirect</code>：是否直接返回结果给用户，跳过模型后处理（默认 <code>false</code>）</li>
+</ul>
+</blockquote>
+<h3 id="方式二：MethodToolCallback（Programmatic）"><a href="#方式二：MethodToolCallback（Programmatic）" class="headerlink" title="方式二：MethodToolCallback（Programmatic）"></a>方式二：MethodToolCallback（Programmatic）</h3><p>当需要更精细控制时使用，可完全自定义 <code>ToolDefinition</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> org.springframework.ai.tool.MethodToolCallback;<br><span class="hljs-keyword">import</span> org.springframework.ai.tool.ToolDefinition;<br><span class="hljs-keyword">import</span> org.springframework.ai.tool.ToolDefinitions;<br><span class="hljs-keyword">import</span> org.springframework.util.ReflectionUtils;<br><br><span class="hljs-comment">// 方式 A：完全手动构建</span><br><span class="hljs-type">Method</span> <span class="hljs-variable">method</span> <span class="hljs-operator">=</span> WeatherService.class.getMethod(<span class="hljs-string">&quot;getWeather&quot;</span>, String.class, String.class);<br><br><span class="hljs-type">ToolCallback</span> <span class="hljs-variable">toolCallback</span> <span class="hljs-operator">=</span> MethodToolCallback.builder()<br>    .toolDefinition(ToolDefinition.builder()<br>        .name(<span class="hljs-string">&quot;getWeather&quot;</span>)<br>        .description(<span class="hljs-string">&quot;获取指定城市的天气信息&quot;</span>)<br>        .inputSchema(<span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">            &#123;</span><br><span class="hljs-string">                &quot;type&quot;: &quot;object&quot;,</span><br><span class="hljs-string">                &quot;properties&quot;: &#123;</span><br><span class="hljs-string">                    &quot;city&quot;: &#123;&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;城市名称&quot;&#125;,</span><br><span class="hljs-string">                    &quot;unit&quot;: &#123;&quot;type&quot;: &quot;string&quot;, &quot;enum&quot;: [&quot;celsius&quot;, &quot;fahrenheit&quot;]&#125;</span><br><span class="hljs-string">                &#125;,</span><br><span class="hljs-string">                &quot;required&quot;: [&quot;city&quot;]</span><br><span class="hljs-string">            &#125;</span><br><span class="hljs-string">            &quot;&quot;&quot;</span>)<br>        .build())<br>    .toolMethod(method)<br>    .toolObject(<span class="hljs-keyword">new</span> <span class="hljs-title class_">WeatherService</span>())<br>    .build();<br><br><span class="hljs-comment">// 方式 B：从方法自动生成 ToolDefinition，再自定义部分属性</span><br><span class="hljs-type">Method</span> <span class="hljs-variable">method</span> <span class="hljs-operator">=</span> ReflectionUtils.findMethod(DateTimeTools.class, <span class="hljs-string">&quot;getCurrentDateTime&quot;</span>);<br><span class="hljs-type">ToolDefinition</span> <span class="hljs-variable">toolDefinition</span> <span class="hljs-operator">=</span> ToolDefinitions.builder(method)<br>    .name(<span class="hljs-string">&quot;currentDateTime&quot;</span>)  <span class="hljs-comment">// 覆盖默认名称</span><br>    .description(<span class="hljs-string">&quot;获取用户时区的当前日期时间&quot;</span>)  <span class="hljs-comment">// 覆盖默认描述</span><br>    .build();<br></code></pre></td></tr></table></figure>
+
+<h3 id="方式三：FunctionToolCallback（函数式）"><a href="#方式三：FunctionToolCallback（函数式）" class="headerlink" title="方式三：FunctionToolCallback（函数式）"></a>方式三：FunctionToolCallback（函数式）</h3><p>使用 <code>Function</code>、<code>Supplier</code>、<code>Consumer</code>、<code>BiFunction</code> 等函数式接口定义工具：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 定义请求/响应类型</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">record</span> <span class="hljs-title class_">WeatherRequest</span><span class="hljs-params">(String location, Unit unit)</span> &#123;&#125;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">record</span> <span class="hljs-title class_">WeatherResponse</span><span class="hljs-params">(<span class="hljs-type">double</span> temp, Unit unit)</span> &#123;&#125;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">enum</span> <span class="hljs-title class_">Unit</span> &#123; C, F &#125;<br><br><span class="hljs-comment">// 实现 Function 接口</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">WeatherFunction</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Function</span>&lt;WeatherRequest, WeatherResponse&gt; &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> WeatherResponse <span class="hljs-title function_">apply</span><span class="hljs-params">(WeatherRequest request)</span> &#123;<br>        <span class="hljs-comment">// 调用天气 API</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">WeatherResponse</span>(<span class="hljs-number">25.0</span>, Unit.C);<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// 构建 ToolCallback</span><br><span class="hljs-type">ToolCallback</span> <span class="hljs-variable">weatherTool</span> <span class="hljs-operator">=</span> FunctionToolCallback.builder(<span class="hljs-string">&quot;getWeather&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">WeatherFunction</span>())<br>    .description(<span class="hljs-string">&quot;获取指定位置的天气信息&quot;</span>)<br>    .inputType(WeatherRequest.class)<br>    .build();<br><br><span class="hljs-comment">// 注册到 ChatClient</span><br><span class="hljs-type">ChatClient</span> <span class="hljs-variable">chatClient</span> <span class="hljs-operator">=</span> ChatClient.builder(chatModel)<br>    .defaultTools(weatherTool)<br>    .build();<br></code></pre></td></tr></table></figure>
+
+<h3 id="方式四：实现-ToolCallback-接口（完全自定义）"><a href="#方式四：实现-ToolCallback-接口（完全自定义）" class="headerlink" title="方式四：实现 ToolCallback 接口（完全自定义）"></a>方式四：实现 ToolCallback 接口（完全自定义）</h3><p>适合封装 MCP 工具或构建复杂的 Agent 应用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomToolCallback</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">ToolCallback</span> &#123;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> ToolDefinition <span class="hljs-title function_">getToolDefinition</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> ToolDefinition.builder()<br>            .name(<span class="hljs-string">&quot;customTool&quot;</span>)<br>            .description(<span class="hljs-string">&quot;自定义工具&quot;</span>)<br>            .inputSchema(<span class="hljs-string">&quot;&#123;...&#125;&quot;</span>)<br>            .build();<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> ToolMetadata <span class="hljs-title function_">getToolMetadata</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> ToolMetadata.builder()<br>            .returnDirect(<span class="hljs-literal">false</span>)<br>            .build();<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">call</span><span class="hljs-params">(String toolInput)</span> &#123;<br>        <span class="hljs-comment">// 解析 toolInput (JSON)，执行逻辑，返回结果</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;执行结果&quot;</span>;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">call</span><span class="hljs-params">(String toolInput, ToolContext toolContext)</span> &#123;<br>        <span class="hljs-comment">// 带上下文的执行，可访问会话历史等信息</span><br>        <span class="hljs-keyword">return</span> call(toolInput);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="注册和使用工具"><a href="#注册和使用工具" class="headerlink" title="注册和使用工具"></a>注册和使用工具</h2><h3 id="方式一：Builder-级别注册（全局默认）"><a href="#方式一：Builder-级别注册（全局默认）" class="headerlink" title="方式一：Builder 级别注册（全局默认）"></a>方式一：Builder 级别注册（全局默认）</h3><p>所有通过该 ChatClient 发起的请求都可使用这些工具。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Configuration</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AiConfig</span> &#123;<br><br>    <span class="hljs-meta">@Bean</span><br>    <span class="hljs-keyword">public</span> ChatClient <span class="hljs-title function_">chatClient</span><span class="hljs-params">(ChatModel chatModel, WeatherService weatherService)</span> &#123;<br>        <span class="hljs-keyword">return</span> ChatClient.builder(chatModel)<br>            .defaultTools(weatherService)  <span class="hljs-comment">// 注册默认工具</span><br>            .build();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="方式二：请求级别注册（按需使用）"><a href="#方式二：请求级别注册（按需使用）" class="headerlink" title="方式二：请求级别注册（按需使用）"></a>方式二：请求级别注册（按需使用）</h3><p>针对特定请求注册工具，会覆盖默认工具。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Service</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ChatService</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ChatClient chatClient;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> WeatherService weatherService;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> StockService stockService;<br><br>    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">chat</span><span class="hljs-params">(String userMessage)</span> &#123;<br>        <span class="hljs-keyword">return</span> chatClient.prompt()<br>            .user(userMessage)<br>            .tools(weatherService, stockService)  <span class="hljs-comment">// 本次请求可用的工具</span><br>            .call()<br>            .content();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="方式三：通过名称引用（需预先注册）"><a href="#方式三：通过名称引用（需预先注册）" class="headerlink" title="方式三：通过名称引用（需预先注册）"></a>方式三：通过名称引用（需预先注册）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 预先注册工具</span><br><span class="hljs-type">ChatClient</span> <span class="hljs-variable">chatClient</span> <span class="hljs-operator">=</span> ChatClient.builder(chatModel)<br>    .defaultToolCallbacks(weatherToolCallback)<br>    .build();<br><br><span class="hljs-comment">// 通过名称引用</span><br><span class="hljs-type">String</span> <span class="hljs-variable">response</span> <span class="hljs-operator">=</span> chatClient.prompt()<br>    .user(<span class="hljs-string">&quot;北京天气如何？&quot;</span>)<br>    .toolNames(<span class="hljs-string">&quot;getWeather&quot;</span>)<br>    .call()<br>    .content();<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="参数处理"><a href="#参数处理" class="headerlink" title="参数处理"></a>参数处理</h2><h3 id="ToolParam-注解详解"><a href="#ToolParam-注解详解" class="headerlink" title="@ToolParam 注解详解"></a>@ToolParam 注解详解</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">record</span> <span class="hljs-title class_">BookingRequest</span><span class="hljs-params">(</span><br><span class="hljs-params">    @ToolParam(description = &quot;出发城市&quot;)</span> String from,<br>    <span class="hljs-meta">@ToolParam(description = &quot;目的城市&quot;)</span> String to,<br>    <span class="hljs-meta">@ToolParam(description = &quot;出发日期，格式：yyyy-MM-dd&quot;)</span> String date,<br>    <span class="hljs-meta">@ToolParam(description = &quot;舱位类型&quot;, required = false)</span> String cabinClass<br>) &#123;&#125;<br><br><span class="hljs-meta">@Tool(description = &quot;查询航班信息&quot;)</span><br><span class="hljs-keyword">public</span> List&lt;Flight&gt; <span class="hljs-title function_">searchFlights</span><span class="hljs-params">(BookingRequest request)</span> &#123;<br>    <span class="hljs-comment">// 支持复杂对象作为参数</span><br>    <span class="hljs-keyword">return</span> flightService.search(request);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>📝 注意: 参数规则</strong></p>
+<ul>
+<li>默认所有参数为<strong>必需</strong>，除非显式标记 <code>required = false</code></li>
+<li>Spring AI 自动根据 Java 类型生成 JSON Schema</li>
+<li>支持基本类型、对象、集合等</li>
+</ul>
+</blockquote>
+<h3 id="自动-Schema-生成"><a href="#自动-Schema-生成" class="headerlink" title="自动 Schema 生成"></a>自动 Schema 生成</h3><p>Spring AI 根据方法签名自动生成输入 Schema：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// Java 方法</span><br><span class="hljs-meta">@Tool(description = &quot;Set a user alarm&quot;)</span><br><span class="hljs-keyword">void</span> <span class="hljs-title function_">setAlarm</span><span class="hljs-params">(<span class="hljs-meta">@ToolParam(description = &quot;Time in ISO-8601 format&quot;)</span> String time)</span><br><br><span class="hljs-comment">// 自动生成的 JSON Schema</span><br>&#123;<br>  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>,<br>  <span class="hljs-string">&quot;properties&quot;</span>: &#123;<br>    <span class="hljs-string">&quot;time&quot;</span>: &#123;<br>      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,<br>      <span class="hljs-string">&quot;description&quot;</span>: <span class="hljs-string">&quot;Time in ISO-8601 format&quot;</span><br>    &#125;<br>  &#125;,<br>  <span class="hljs-string">&quot;required&quot;</span>: [<span class="hljs-string">&quot;time&quot;</span>]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="returnDirect-机制"><a href="#returnDirect-机制" class="headerlink" title="returnDirect 机制"></a>returnDirect 机制</h2><h3 id="默认行为"><a href="#默认行为" class="headerlink" title="默认行为"></a>默认行为</h3><p>工具执行结果返回给 AI 模型，模型整合后再响应用户。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">用户 → 模型 → 调用工具 → 工具结果 → 模型整合 → 用户<br></code></pre></td></tr></table></figure>
+
+<h3 id="returnDirect-true"><a href="#returnDirect-true" class="headerlink" title="returnDirect &#x3D; true"></a>returnDirect &#x3D; true</h3><p>工具结果直接返回给用户，跳过模型后处理。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">用户 → 模型 → 调用工具 → 工具结果 → 用户（直接返回）<br></code></pre></td></tr></table></figure>
+
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>RAG 检索结果无需再加工</li>
+<li>某些工具作为 Agent 推理循环的终止点</li>
+<li>减少不必要的 Token 消耗</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Tool(description = &quot;获取图书馆营业时间&quot;, returnDirect = true)</span><br><span class="hljs-keyword">public</span> String <span class="hljs-title function_">getLibraryHours</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;营业时间：周一至周五 9:00-20:00，周末 10:00-18:00&quot;</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>⚠️ 警告: 多工具调用时的注意事项</strong><br>如果一次请求调用多个工具，<strong>所有工具</strong>都必须设置 <code>returnDirect = true</code> 才会直接返回。否则结果仍会发送给模型。</p>
+</blockquote>
+<hr>
+<h2 id="Dynamic-Tool-Discovery（动态工具发现）"><a href="#Dynamic-Tool-Discovery（动态工具发现）" class="headerlink" title="Dynamic Tool Discovery（动态工具发现）"></a>Dynamic Tool Discovery（动态工具发现）</h2><p>当应用注册了大量工具时（几十甚至上百个），将所有工具定义发送给 LLM 会消耗大量 Token 并影响性能。Spring AI 提供了<strong>动态工具发现</strong>机制来解决这个问题。</p>
+<h3 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h3><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">传统方式：注册 <span class="hljs-number">100</span> 个工具 → 全部发送给 <span class="hljs-keyword">LLM </span>→ Token 爆炸 💥<br><br>动态发现：注册 <span class="hljs-number">100</span> 个工具 → 只发送 ToolSearchTool → <span class="hljs-keyword">LLM </span>按需搜索 → 按需加载<br></code></pre></td></tr></table></figure>
+
+<h3 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h3><pre><code class=" mermaid">sequenceDiagram
+    participant U as 用户
+    participant C as ChatClient
+    participant S as ToolSearcher
+    participant L as LLM
+
+    Note over C,S: 启动时：索引所有工具，但不发送给 LLM
+    U-&gt;&gt;C: &quot;阿姆斯特丹天气如何？&quot;
+    C-&gt;&gt;L: Prompt + ToolSearchTool 定义
+    L-&gt;&gt;C: 调用 searchTools(&quot;weather&quot;)
+    C-&gt;&gt;S: 搜索匹配的工具
+    S-&gt;&gt;C: 返回 getWeather 工具定义
+    C-&gt;&gt;L: 补充 getWeather 工具定义
+    L-&gt;&gt;C: 调用 getWeather(&quot;Amsterdam&quot;)
+    C-&gt;&gt;U: &quot;阿姆斯特丹当前天气...&quot;
+</code></pre>
+
+<h3 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@SpringBootApplication</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Application</span> &#123;<br><br>    <span class="hljs-meta">@Bean</span><br>    CommandLineRunner <span class="hljs-title function_">demo</span><span class="hljs-params">(ChatClient.Builder builder, ToolSearcher toolSearcher)</span> &#123;<br>        <span class="hljs-keyword">return</span> args -&gt; &#123;<br>            <span class="hljs-comment">// 构建 ToolSearchToolCallAdvisor</span><br>            <span class="hljs-type">var</span> <span class="hljs-variable">advisor</span> <span class="hljs-operator">=</span> ToolSearchToolCallAdvisor.builder()<br>                .toolSearcher(toolSearcher)<br>                .build();<br><br>            <span class="hljs-type">ChatClient</span> <span class="hljs-variable">chatClient</span> <span class="hljs-operator">=</span> builder<br>                .defaultTools(<span class="hljs-keyword">new</span> <span class="hljs-title class_">MyTools</span>())  <span class="hljs-comment">// 注册大量工具，但不立即发送给 LLM</span><br>                .defaultAdvisors(advisor)     <span class="hljs-comment">// 启用动态工具搜索</span><br>                .build();<br><br>            <span class="hljs-type">var</span> <span class="hljs-variable">answer</span> <span class="hljs-operator">=</span> chatClient.prompt(<span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">                帮我规划今天在阿姆斯特丹穿什么。</span><br><span class="hljs-string">                请推荐现在营业的服装店。</span><br><span class="hljs-string">                &quot;&quot;&quot;</span>).call().content();<br><br>            System.out.println(answer);<br>        &#125;;<br>    &#125;<br><br>    <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MyTools</span> &#123;<br>        <span class="hljs-meta">@Tool(description = &quot;获取指定位置和时间的天气&quot;)</span><br>        <span class="hljs-keyword">public</span> String <span class="hljs-title function_">weather</span><span class="hljs-params">(String location,</span><br><span class="hljs-params">            <span class="hljs-meta">@ToolParam(description = &quot;格式：YYYY-MM-DDTHH:mm&quot;)</span> String atTime)</span> &#123;<br>            <span class="hljs-comment">// 实现</span><br>        &#125;<br><br>        <span class="hljs-meta">@Tool(description = &quot;获取指定位置和时间营业的服装店&quot;)</span><br>        <span class="hljs-keyword">public</span> List&lt;String&gt; <span class="hljs-title function_">clothing</span><span class="hljs-params">(String location,</span><br><span class="hljs-params">            <span class="hljs-meta">@ToolParam(description = &quot;格式：YYYY-MM-DDTHH:mm&quot;)</span> String openAtTime)</span> &#123;<br>            <span class="hljs-comment">// 实现</span><br>        &#125;<br><br>        <span class="hljs-meta">@Tool(description = &quot;获取指定位置的当前日期时间&quot;)</span><br>        <span class="hljs-keyword">public</span> String <span class="hljs-title function_">currentTime</span><span class="hljs-params">(String location)</span> &#123;<br>            <span class="hljs-comment">// 实现</span><br>        &#125;<br><br>        <span class="hljs-comment">// ... 可能有上百个工具</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="关键组件-1"><a href="#关键组件-1" class="headerlink" title="关键组件"></a>关键组件</h3><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ToolSearcher</code></td>
+<td>索引所有工具，提供搜索能力</td>
+</tr>
+<tr>
+<td><code>ToolSearchToolCallAdvisor</code></td>
+<td>Advisor，拦截请求并启用动态搜索</td>
+</tr>
+<tr>
+<td><code>ToolSearchTool</code></td>
+<td>暴露给 LLM 的元工具，用于搜索其他工具</td>
+</tr>
+</tbody></table>
+<h3 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h3><ul>
+<li>工具数量多（&gt;10 个）</li>
+<li>单次对话通常只用少数几个工具</li>
+<li>需要优化 Token 消耗和响应速度</li>
+</ul>
+<hr>
+<h2 id="工具执行生命周期"><a href="#工具执行生命周期" class="headerlink" title="工具执行生命周期"></a>工具执行生命周期</h2><h3 id="ToolCallingManager"><a href="#ToolCallingManager" class="headerlink" title="ToolCallingManager"></a>ToolCallingManager</h3><p><code>ToolCallingManager</code> 是管理工具执行的核心接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">ToolCallingManager</span> &#123;<br><br>    <span class="hljs-comment">// 从配置中解析工具定义</span><br>    List&lt;ToolDefinition&gt; <span class="hljs-title function_">resolveToolDefinitions</span><span class="hljs-params">(ToolCallingChatOptions chatOptions)</span>;<br><br>    <span class="hljs-comment">// 执行模型请求的工具调用</span><br>    ToolExecutionResult <span class="hljs-title function_">executeToolCalls</span><span class="hljs-params">(Prompt prompt, ChatResponse chatResponse)</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="内部执行-vs-用户控制执行"><a href="#内部执行-vs-用户控制执行" class="headerlink" title="内部执行 vs 用户控制执行"></a>内部执行 vs 用户控制执行</h3><h4 id="内部执行（默认）"><a href="#内部执行（默认）" class="headerlink" title="内部执行（默认）"></a>内部执行（默认）</h4><p>Spring AI 自动处理工具调用循环：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">String</span> <span class="hljs-variable">response</span> <span class="hljs-operator">=</span> chatClient.prompt()<br>    .user(<span class="hljs-string">&quot;北京和上海的天气如何？&quot;</span>)<br>    .tools(weatherService)<br>    .call()<br>    .content();<br><span class="hljs-comment">// Spring AI 自动：调用工具 → 返回结果给模型 → 获取最终响应</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="用户控制执行"><a href="#用户控制执行" class="headerlink" title="用户控制执行"></a>用户控制执行</h4><p>手动管理工具调用，适合需要自定义逻辑的场景：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">ChatOptions</span> <span class="hljs-variable">chatOptions</span> <span class="hljs-operator">=</span> ToolCallingChatOptions.builder()<br>    .toolCallbacks(<span class="hljs-keyword">new</span> <span class="hljs-title class_">WeatherService</span>())<br>    .internalToolExecutionEnabled(<span class="hljs-literal">false</span>)  <span class="hljs-comment">// 禁用内部执行</span><br>    .build();<br><br><span class="hljs-type">Prompt</span> <span class="hljs-variable">prompt</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Prompt</span>(List.of(<span class="hljs-keyword">new</span> <span class="hljs-title class_">UserMessage</span>(<span class="hljs-string">&quot;北京天气如何？&quot;</span>)), chatOptions);<br><span class="hljs-type">ChatResponse</span> <span class="hljs-variable">response</span> <span class="hljs-operator">=</span> chatModel.call(prompt);<br><br><span class="hljs-comment">// 手动检查和执行工具调用</span><br><span class="hljs-keyword">while</span> (response.hasToolCalls()) &#123;<br>    <span class="hljs-type">ToolExecutionResult</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> toolCallingManager.executeToolCalls(prompt, response);<br>    <span class="hljs-comment">// 自定义处理逻辑...</span><br>    prompt = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Prompt</span>(result.conversationHistory(), chatOptions);<br>    response = chatModel.call(prompt);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="完整实战示例"><a href="#完整实战示例" class="headerlink" title="完整实战示例"></a>完整实战示例</h2><h3 id="场景：智能客服系统"><a href="#场景：智能客服系统" class="headerlink" title="场景：智能客服系统"></a>场景：智能客服系统</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomerServiceTools</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> OrderRepository orderRepository;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ProductRepository productRepository;<br><br>    <span class="hljs-meta">@Tool(description = &quot;根据订单号查询订单状态&quot;)</span><br>    <span class="hljs-keyword">public</span> OrderInfo <span class="hljs-title function_">queryOrder</span><span class="hljs-params">(</span><br><span class="hljs-params">            <span class="hljs-meta">@ToolParam(description = &quot;订单号，格式：ORD-XXXXXXXX&quot;)</span> String orderId)</span> &#123;<br>        <span class="hljs-keyword">return</span> orderRepository.findById(orderId)<br>            .map(order -&gt; <span class="hljs-keyword">new</span> <span class="hljs-title class_">OrderInfo</span>(order.getStatus(), order.getEstimatedDelivery()))<br>            .orElseThrow(() -&gt; <span class="hljs-keyword">new</span> <span class="hljs-title class_">RuntimeException</span>(<span class="hljs-string">&quot;订单不存在&quot;</span>));<br>    &#125;<br><br>    <span class="hljs-meta">@Tool(description = &quot;查询商品库存&quot;)</span><br>    <span class="hljs-keyword">public</span> StockInfo <span class="hljs-title function_">checkStock</span><span class="hljs-params">(</span><br><span class="hljs-params">            <span class="hljs-meta">@ToolParam(description = &quot;商品SKU编码&quot;)</span> String sku,</span><br><span class="hljs-params">            <span class="hljs-meta">@ToolParam(description = &quot;仓库代码&quot;, required = false)</span> String warehouse)</span> &#123;<br>        <span class="hljs-keyword">return</span> productRepository.checkStock(sku, warehouse);<br>    &#125;<br><br>    <span class="hljs-meta">@Tool(description = &quot;提交退款申请&quot;, returnDirect = true)</span><br>    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">submitRefund</span><span class="hljs-params">(</span><br><span class="hljs-params">            <span class="hljs-meta">@ToolParam(description = &quot;订单号&quot;)</span> String orderId,</span><br><span class="hljs-params">            <span class="hljs-meta">@ToolParam(description = &quot;退款原因&quot;)</span> String reason)</span> &#123;<br>        <span class="hljs-comment">// 处理退款逻辑</span><br>        <span class="hljs-type">String</span> <span class="hljs-variable">refundId</span> <span class="hljs-operator">=</span> refundService.submit(orderId, reason);<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;退款申请已提交，退款单号：&quot;</span> + refundId + <span class="hljs-string">&quot;，预计 3-5 个工作日到账。&quot;</span>;<br>    &#125;<br>&#125;<br><br><span class="hljs-meta">@RestController</span><br><span class="hljs-meta">@RequestMapping(&quot;/api/chat&quot;)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ChatController</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ChatClient chatClient;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">ChatController</span><span class="hljs-params">(ChatModel chatModel, CustomerServiceTools tools)</span> &#123;<br>        <span class="hljs-built_in">this</span>.chatClient = ChatClient.builder(chatModel)<br>            .defaultSystem(<span class="hljs-string">&quot;你是一个专业的客服助手，请礼貌地帮助用户解决问题。&quot;</span>)<br>            .defaultTools(tools)<br>            .build();<br>    &#125;<br><br>    <span class="hljs-meta">@PostMapping</span><br>    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">chat</span><span class="hljs-params">(<span class="hljs-meta">@RequestBody</span> ChatRequest request)</span> &#123;<br>        <span class="hljs-keyword">return</span> chatClient.prompt()<br>            .user(request.message())<br>            .call()<br>            .content();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="与其他技术的关系"><a href="#与其他技术的关系" class="headerlink" title="与其他技术的关系"></a>与其他技术的关系</h2><figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs nix">┌─────────────────────────────────────────────────────────────┐<br>│                    Spring AI Tool Calling                    │<br>│         （Java 生态的 AI 工具调用统一抽象层）                 │<br>├─────────────────────────────────────────────────────────────┤<br>│                     各厂商 Function Calling                  │<br>│    OpenAI <span class="hljs-symbol">/</span> Claude <span class="hljs-symbol">/</span> 通义千问 <span class="hljs-symbol">/</span> Gemini <span class="hljs-symbol">/</span> 文心一言 等         │<br>└─────────────────────────────────────────────────────────────┘<br></code></pre></td></tr></table></figure>
+
+<p>Spring AI Tool Calling 的价值：</p>
+<ol>
+<li><strong>统一 API</strong>：屏蔽各厂商 Function Calling 的实现差异</li>
+<li><strong>Spring 友好</strong>：注解驱动、依赖注入、与 Spring 生态无缝集成</li>
+<li><strong>类型安全</strong>：自动 JSON Schema 生成，编译期检查</li>
+<li><strong>可扩展</strong>：通过 <code>ToolCallback</code> 接口对接任意工具来源（如 MCP）</li>
+</ol>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><table>
+<thead>
+<tr>
+<th>要点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>定义工具</strong></td>
+<td>声明式 <code>@Tool</code> 或编程式 <code>MethodToolCallback</code> &#x2F; <code>FunctionToolCallback</code></td>
+</tr>
+<tr>
+<td><strong>注册工具</strong></td>
+<td>Builder 级别（全局）或请求级别（按需）</td>
+</tr>
+<tr>
+<td><strong>动态发现</strong></td>
+<td><code>ToolSearchToolCallAdvisor</code> 实现按需加载，优化 Token</td>
+</tr>
+<tr>
+<td><strong>执行控制</strong></td>
+<td>默认内部自动循环，可切换为手动控制</td>
+</tr>
+<tr>
+<td><strong>返回策略</strong></td>
+<td><code>returnDirect=true</code> 可跳过模型后处理</td>
+</tr>
+<tr>
+<td><strong>核心接口</strong></td>
+<td><code>ToolCallback</code> 是扩展点，<code>ToolCallingManager</code> 管理生命周期</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><ul>
+<li>Agent 工具调用技术详解 - Function Calling &#x2F; MCP &#x2F; Skills 对比</li>
+<li>WebFlux 简介 - 响应式编程基础（Spring AI 支持响应式）</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Java/Spring/" class="category-chain-item">Spring</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Java/Spring/SpringAI/" class="category-chain-item">SpringAI</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Agent/" class="print-no-link">#Agent</a>
+      
+        <a href="/tags/FunctionCalling/" class="print-no-link">#FunctionCalling</a>
+      
+        <a href="/tags/AI/" class="print-no-link">#AI</a>
+      
+        <a href="/tags/SpringAI/" class="print-no-link">#SpringAI</a>
+      
+        <a href="/tags/ToolCalling/" class="print-no-link">#ToolCalling</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Tool Calling详解</div>
+      <div>https://zmmmmy.github.io/2026/01/28/Tool Calling详解/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZhiMy</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年1月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/02/09/AI-Coding%E9%97%AE%E9%A2%98%E5%BA%94%E5%AF%B9%E5%AE%9E%E8%B7%B5/" title="AI-Coding问题应对实践">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">AI-Coding问题应对实践</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/01/22/MCP%E5%B7%A5%E5%85%B7%E5%88%97%E8%A1%A8%E8%8E%B7%E5%8F%96%E6%9C%BA%E5%88%B6/" title="MCP工具列表获取机制">
+                        <span class="hidden-mobile">MCP工具列表获取机制</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/10.9.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.utils.listenDOMLoaded(function() {
+      Fluid.events.registerRefreshCallback(function() {
+        if ('mermaid' in window) {
+          mermaid.init();
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <span>© 2026</span> <i class="iconfont icon-love"></i> <a href="https://github.com/Zmmmmy" target="_blank" rel="nofollow noopener"><span>Zmmmmy</span></a> <span>|</span> <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <span>&</span> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
